@@ -1,0 +1,50 @@
+{% render 'swym-wishlist', section: section %}
+{% schema %}
+{
+  "name": "My Designs (Swym Merge)",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Wishlist"
+    },
+    {
+      "type": "text",
+      "id": "list_prefix",
+      "label": "List name prefix to include",
+      "default": "My Designs",
+      "info": "Lists whose name starts with this value will be included."
+    },
+    {
+      "type": "select",
+      "id": "mode",
+      "label": "Display mode",
+      "default": "merge",
+      "options": [
+        { "value": "merge", "label": "Merge items from multiple lists" },
+        { "value": "single", "label": "Single list (newest matching or first)" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_remove",
+      "label": "Show Remove button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_list_badge",
+      "label": "Show merge hint above the grid",
+      "default": false
+    }
+  ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "My Designs (Swym Merge)"
+    }
+  ]
+}
+{% endschema %}
+

@@ -1,0 +1,45 @@
+<style>
+  #spacer-{{ section.id }} {
+    height: {{ section.settings.height_mobile }}px;
+  }
+
+  @media (min-width: 769px) {
+    #spacer-{{ section.id }} {
+      height: {{ section.settings.height_desktop }}px;
+    }
+  }
+</style>
+
+<div id="spacer-{{ section.id }}" class="spacer bg-scheme-background" data-color-scheme="{{ section.settings.color_scheme }}">
+</div>
+
+{% schema %}
+{
+  "name": "Spacer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "height_mobile",
+      "label": "Height (Mobile)",
+      "default": "20"
+    },
+    {
+      "type": "text",
+      "id": "height_desktop",
+      "label": "Height (Desktop)",
+      "default": "40"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Spacer"
+    }
+  ]
+}
+{% endschema %}

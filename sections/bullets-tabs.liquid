@@ -1,0 +1,244 @@
+{% assign customSectionColors = false %}
+<section id="image-bullets-text-{{ section.id }}"
+  {% if section.settings.colorSettings == "scheme" %}
+  class="bg-scheme-background text-scheme-text {% if section.settings.use_gradient_background %}bg-scheme-gradient{% endif %}"
+  data-color-scheme="{{ section.settings.color_scheme }}"
+  {% else %}
+  {% assign customSectionColors = true %}
+  {% endif %}
+>
+    <div class="container m-auto bullets-tabs">
+      <h2 class="inline-heading-rte font-heading heading-standard  heading-style none">{{ section.settings.section_title }}</h2>
+      <div class="row lg:justify-normal justify-center">
+        <div class="col-bullets">
+          <div class="col-image">
+            {% for block in section.blocks %}
+              <div class="bullet-image-wrapper bullet-content-item" id="bullet-image-{{ block.id }}">
+                {% if block.settings.image %}
+                  <img
+                    src="{{ block.settings.image | img_url: 'master' }}"
+                    alt="{{ block.settings.title | escape }}"
+                  />
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+          <ul class="bullets-list">
+            <p class="bullets-tip">Tap <span class="small-bullet-marker">+</span> to know more</p>
+            {% for block in section.blocks %}
+              <div class="flex bullets-list-item" data-marker-color="{{ block.settings.marker_color }}">
+                <span class="bullet-marker">+</span>
+                <li class="font-heading" data-target="bullet-{{ block.id }}">
+                  {{ block.settings.title }}
+                </li>
+              </div>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="col col-text mt-[40]">
+          {% for block in section.blocks %}
+            <div class="bullet-text-wrapper bullet-content-item" id="bullet-text-{{ block.id }}">
+              <p class="bullet-text-title">{{ block.settings.content_title }}</p>
+              <p class="bullet-text">{{ block.settings.content }}</p>
+            </div>
+          {% endfor %}
+          <!-- Slider dots container -->
+          <div class="slider-dots">
+            {% for block in section.blocks %}
+              <span class="slider-dot" data-target="{{ forloop.index0 }}"></span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <style>
+      .bullet-text-wrapper.active {
+        display: block;
+        animation: slideIn 0.5s ease forwards;
+      }
+      @keyframes slideIn {
+        from {
+          transform: translateX(50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var section = document.getElementById('image-bullets-text-{{ section.id }}');
+        var bullets = section.querySelectorAll('.bullets-list-item');
+        var imageWrappers = section.querySelectorAll('.bullet-image-wrapper');
+        var textWrappers = section.querySelectorAll('.bullet-text-wrapper');
+        var sliderDots = section.querySelectorAll('.slider-dot');
+  
+        // Function to activate slide based on index
+        function activateSlide(index) {
+          bullets.forEach(function(bullet, i) {
+            if(i === index) {
+              bullet.classList.add('active-bullet');
+              var activeColor = bullet.getAttribute('data-marker-color');
+              var marker = bullet.querySelector('.bullet-marker');
+              if(marker && activeColor) {
+                marker.style.backgroundColor = activeColor;
+              }
+            } else {
+              bullet.classList.remove('active-bullet');
+              var marker = bullet.querySelector('.bullet-marker');
+              if(marker) {
+                marker.style.backgroundColor = 'transparent';
+              }
+            }
+          });
+          imageWrappers.forEach(function(wrapper, i) {
+            if(i === index) {
+              wrapper.classList.add('active');
+            } else {
+              wrapper.classList.remove('active');
+            }
+          });
+          textWrappers.forEach(function(wrapper, i) {
+            if(i === index) {
+              wrapper.classList.add('active');
+            } else {
+              wrapper.classList.remove('active');
+            }
+          });
+          sliderDots.forEach(function(dot, i) {
+            if(i === index) {
+              dot.classList.add('active-dot');
+            } else {
+              dot.classList.remove('active-dot');
+            }
+          });
+        }
+  
+        // Set default active slide (first one)
+        if(bullets.length > 0) {
+          activateSlide(0);
+        }
+  
+        // Bullet click events
+        bullets.forEach(function(bullet, index) {
+          bullet.addEventListener('click', function() {
+            activateSlide(index);
+          });
+        });
+  
+        // Slider dots click events
+        sliderDots.forEach(function(dot, index) {
+          dot.addEventListener('click', function() {
+            activateSlide(index);
+          });
+        });
+      });
+    </script>
+  
+{% if customSectionColors %}
+<style>
+  #image-bullets-text-{{ section.id }}{
+    background: {{section.settings.customBGColor }};
+    color: {{section.settings.customFontColor }}!important;
+  }
+  #image-bullets-text-{{ section.id }} a{
+    color: {{section.settings.customLinkColor }};
+  }
+</style>
+{% endif %}
+    {% schema %}
+    {
+      "name": "Image Bullets Text",
+      "settings": [
+        {
+          "id": "section_title",
+          "type": "text",
+          "label": "Bullet Section Title"
+        },
+    {
+      "type": "header",
+      "content": "t:common.settings.header_color"
+    },
+    {
+      "type": "select",
+      "id": "colorSettings",
+      "default": "scheme",
+      "label": "Section Color settings",
+          "options": [
+            {
+              "value": "scheme",
+              "label": "Scheme",
+            },
+            {
+              "value": "custom",
+              "label": "Custom",
+            }]
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme1",
+      "label": "t:common.settings.color_scheme.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_gradient_background",
+      "label": "t:common.settings.use_gradient_background.label"
+    },
+    {
+      "type": "color",
+      "id": "customBGColor",
+      "label": "Custom Background Color"
+    },
+    {
+      "type": "color",
+      "id": "customFontColor",
+      "label": "Custom Font Color"
+    },
+    {
+      "type": "color",
+      "id": "customLinkColor",
+      "label": "Custom Link Color"
+    }
+      ],
+      "blocks": [
+        {
+          "type": "bullet",
+          "name": "Bullet",
+          "settings": [  
+            {
+              "id": "title",
+              "type": "text",
+              "label": "Bullet Title"
+            },
+            {
+              "id": "content_title",
+              "type": "text",
+              "label": "Bullet Text Title"
+            },
+            {
+              "id": "content",
+              "type": "richtext",
+              "label": "Bullet Text"
+            },
+            {
+              "id": "image",
+              "type": "image_picker",
+              "label": "Bullet Image"
+            },
+            {
+              "id": "marker_color",
+              "type": "color",
+              "label": "Active Marker Background Color"
+            }
+          ]
+        }
+      ],
+      "max_blocks": 10,
+    }
+    {% endschema %}
+  </section>

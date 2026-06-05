@@ -1,0 +1,47 @@
+{% comment %} This snippet render by Layouthub- Easy Page Builder to use function of Google Analytic 4 {% endcomment %}
+
+<!-- GA4 script tags -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ ___layouthub_ga4_measurement_id___ }}"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', '{{ ___layouthub_ga4_measurement_id___ }}', { groups: 'layouthub' });
+</script>
+<!-- End GA4 script tags -->
+
+<!-- GA4 Snippet -->
+<script>
+    window.addEventListener('load', () => {
+        // fallback for gtag when not initialized
+        if (typeof window.gtag !== 'function') {
+            window.gtag = (str1, str2, obj) => {
+            }
+        }
+        // Poll queued events from pixel localStorage and forward to GA
+        const STORAGE_KEY = 'LH_STORAGE_KEY';
+        const INTERVAL = 2000;
+        async function flushQueuedEvents() {
+            try {
+                const raw = window.localStorage.getItem(STORAGE_KEY);
+                if (!raw) return;
+                const events = JSON.parse(raw);
+                if (!Array.isArray(events) || events.length === 0) return;
+                for (const ev of events) {
+                    if (!ev || !ev.name) continue;
+                    const params = ev.params || {};
+                    // attach template tag
+                    params.lh_template_event = "{{ template }}";
+                    gtag('event', ev.name, Object.assign({ app_event: 'layouthub', send_to: 'layouthub' }, params));
+                }
+                // Clear only if all sent
+                window.localStorage.removeItem(STORAGE_KEY);
+            } catch (e) {
+                // swallow to avoid breaking page
+            }
+        }
+        flushQueuedEvents();
+        setInterval(flushQueuedEvents, INTERVAL);
+    })
+</script>
+<!-- End GA4 Snippet -->

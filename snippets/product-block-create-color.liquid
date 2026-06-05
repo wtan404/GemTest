@@ -1,0 +1,30 @@
+{%- liquid
+  assign heading = block.settings.heading
+  assign image = block.settings.image | image_url
+  assign cta_text = block.settings.cta_text
+  assign cta_link = block.settings.cta_link
+-%}
+
+{%- if image != blank or heading != blank -%}
+  <div class="{{ block_base_classes }}"{{ block.shopify_attributes }}>
+    {%- if cta_link != blank -%}
+      <a href="{{- cta_link -}}" class="product-block-create-color__inner">
+    {%- else -%}
+      <div class="product-block-create-color__inner">
+    {%- endif -%}
+      {%- if image != blank -%}
+        <img src="{{- image -}}" alt="{{- image.alt -}}" class="product-block-create-color__image" width="63" height="64">
+      {%- endif -%}
+      <div class="flex-1">
+        {%- if heading != blank -%}
+          <h3 class="product-block-create-color__heading">{{- heading -}}</h3>
+        {%- endif -%}
+        <div class="link-animation product-block-create-color__link" title="{{- cta_text -}}">{{- cta_text -}}</div>
+      </div>
+    {%- if cta_link == blank -%}
+      </div>
+    {%- else -%}
+      </a>
+    {%- endif -%}
+  </div>
+{%- endif -%}

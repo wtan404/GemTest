@@ -1,0 +1,238 @@
+{% schema %}
+{
+    "name": "Featured Products",
+    "class": "wrap",
+    "settings": [{
+		"type": "header",
+		"content": "General Section Settings"
+	},{
+      "id": "homeProduct-margin",
+      "type": "text",
+      "label": "Section Margin(top and bottom)"
+    },{
+      "id": "homeProduct-padding",
+      "type": "text",
+      "label": "Section Padding"
+    },{
+      "id": "homeProduct-background",
+      "type": "color",
+      "label": "Section background Color",
+      "default": "#fff"
+    },{
+		"type": "header",
+		"content": "Section Content"
+	},{
+      "id": "homeProductTitle",
+      "type": "text",
+      "label": "Title For Section"
+    },{
+		"type": "select",
+		"id": "homeProductStyle",
+		"label": "Image Style",
+		"options": [{
+			"value": "0",
+			"label": "Square"
+		},{
+			"value": "100%",
+			"label": "Round"
+		}]
+	},{
+		"type": "select",
+		"id": "homeProductDesk",
+		"label": "Items per View (Desktop)",
+		"options": [{
+			"value": "3",
+			"label": "3"
+		},{
+			"value": "4",
+			"label": "4"
+		},{
+			"value": "5",
+			"label": "5"
+		}]
+	},{
+		"type": "select",
+		"id": "homeProductMobile",
+		"label": "Items per View (Mobile)",
+		"options": [{
+			"value": "1",
+			"label": "1"
+		},{
+			"value": "2",
+			"label": "2"
+		},{
+			"value": "3",
+			"label": "3"
+		}]
+	},{
+		"id": "autoplay",
+		"type": "checkbox",
+		"label": "Autoplay slider"
+	},{
+		"type": "header",
+		"content": "Desktop Controls"
+	},{
+		"id": "deskDots",
+		"type": "checkbox",
+		"label": "Desktop Pagination Dots"
+	},{
+		"id": "deskArrows",
+		"type": "checkbox",
+		"label": "Desktop Arrow Controls"
+	},{
+		"type": "header",
+		"content": "Mobile Controls"
+	},{
+		"id": "mobDots",
+		"type": "checkbox",
+		"label": "Mobile Pagination Dots"
+	},{
+		"id": "mobArrows",
+		"type": "checkbox",
+		"label": "Mobile Arrow Controls"
+	}],
+    "blocks": [
+    {
+        "type":"feat-item",
+        "name":"Featured Item",
+        "limit" : 9,
+        "settings": [{
+            "type": "product",
+            "id": "ftProductKey",
+            "label": "Select Product to Feature"
+        },{
+            "id": "ftProdImg",
+            "type": "image_picker",
+            "label": "Select Product Image",
+            "info": "Will display main product image if left blank"
+        },{
+            "id": "hoverImage",
+            "type": "image_picker",
+            "label": "Select Product Hover Image",
+            "info": "Will display 2nd product image if left blank"
+        }]
+    }],
+    "presets": [
+    {
+        "category": "Products",
+        "name": "Featured Products"
+    }]
+}
+{% endschema %}
+
+<style>
+    #shopify-section-{{section.id }} {margin: {{ section.settings.homeProduct-margin }} auto 0;padding:{{section.settings.homeProduct-padding}};background:{{section.settings.homeProduct-background}};}
+  
+	#homeFtProducts-{{ section.id }}{display:flex;flex-flow:row wrap;justify-content:space-between;}
+	#homeFtProducts-{{ section.id }} #ftProdHeading{margin:20px auto 10px}
+	#homeFtProducts .add_to_cart{position: relative; z-index: 2;padding: 10px 5px;}
+    #homeFtProducts-{{ section.id }} .featuredItem { display:flex;flex-direction:column;align-items:center;justify-content:center;position: relative; padding: 0 10px; margin:0 20px
+        flex:0 0 
+		{%- case section.settings.homeProductDesk -%}
+			{%- when '3' %} 24%
+			{%- when '4' %} 20%
+			{%- when '5' %} 15%
+		{%- endcase -%}; 
+	}
+	#homeFtProducts-{{ section.id }} .featuredItem .add_to_cart{font-size:14px;}
+	#homeFtProducts-{{ section.id }} .featuredTitle {font-size:16px;margin:10px auto;text-align:center;height: 50px;align-items: center;display: flex;}
+    #homeFtProducts-{{ section.id }} .featuredProdImg{border-radius:{{section.settings.homeProductStyle}};position:relative;overflow:hidden;}
+    #homeFtProducts-{{ section.id }} .featuredProdImg picture{display:flex;justify-content:center;align-items:center;}
+    #homeFtProducts-{{ section.id }} .ftHover{position: absolute;height: 100%;width:100%;transition:0.3s;opacity: 0!important;z-index: 2;left:0;top:0;}
+    #homeFtProducts-{{ section.id }} .featuredItem:hover .ftHover{opacity: 1!important; }
+	#homeFtProducts-{{ section.id }} h5{font-size:20px;text-align: center}
+	#homeFtProducts-{{ section.id }} .splide-prev, #homeFtProducts-{{ section.id }} .splide-next{height:50px;width:20px;z-index:1;}
+	#homeFtProducts-{{ section.id }} .splide-prev{left:0;}
+	#homeFtProducts-{{ section.id }} .splide-next{right:0;}
+	@media screen and (max-width:768px){
+		#homeFtProducts-{{ section.id }}  #ftProdHeading{margin:0 auto}
+		#homeFtProducts-{{ section.id }}  {padding:0 12px;}
+		#homeFtProducts-{{ section.id }}  .featuredTitle{display:flex;align-items: center;text-align: center;flex:0 0 50px}
+         #homeFtProducts-{{ section.id }} .featuredItem { margin:0}
+	}
+</style>
+<h2 id="ftProdHeading">{{section.settings.homeProductTitle}}</h2>
+<div id="homeFtProducts-{{ section.id }}">
+	{% for block in section.blocks %}
+     
+		{%- assign ftProd = all_products[block.settings.ftProductKey] -%}
+        {% assign prodAvail = true %}
+        {% assign markedItem = false %}
+        {% assign onSale = false %}
+        {% assign ogPrice = ftProd.price %}
+        
+        {% if ftProd.tags contains 'safetyBuffer' %}
+            {% assign prodAvail = false %}
+        {% endif %}
+        {% if ftProd.available and prodAvail == true %}
+          
+            {% if ftProd.tags contains 'saleSelect' %}
+                {% assign markedItem = true %}
+            {% endif %}
+            {% if ftProd.tags contains 'discounted' and ftProd.compare_at_price > ftProd.price %}
+                {% assign onSale = true %}
+                {% assign ogPrice = ftProd.compare_at_price %}
+            {% endif %}
+          
+            {% if markedItem and settings.discCover == "select" %}
+            	{% assign onSale = true %}
+            {% elsif settings.discCover == "global" %}
+            	{% unless markedItem %}
+            		{% assign onSale = true %}
+            	{% endunless %}
+            {% endif %}
+            {% assign ftImage = ftProd.featured_image %}
+            {% assign hoverImage = ftProd.images[1].src %}
+           
+            {%- if block.settings.ftProdImg -%}
+                {% assign ftImage = block.settings.ftProdImg %}
+            {%- endif -%} 
+            {%- if block.settings.hoverImage -%}
+                {% assign hoverImage = block.settings.hoverImage %}
+            {%- endif -%} 
+  
+		<a class="featuredItem" href="{{ftProd.url}}" >
+            <div class="featuredProdImg">
+                <picture>
+                    <img src="{{ftImage | img_url: '600x' , format: 'pjpg' }}" />
+                </picture>
+                <picture class="hide767 ftHover">
+                    <img src="{{hoverImage | img_url: '600x' , format: 'pjpg' }}" />
+                </picture>
+            </div>
+			<span class="featuredTitle">{{ ftProd.title | remove: ' InstaBake Foundation' | remove: ' Hydrating Concealer' | remove: ' (Makeup Setting Mist)' | remove: ' GELato Gel Eyeliner' | remove: ' So Icy Illuminator' | remove: ' Waterproof Mascara'  | remove: ' Creme Liquid Lipstick' }}</span>
+			{% render 'product-form', product: ftProd, singleAdd: true, onSale: onSale, ogPrice: ogPrice, markedItem: markedItem, prodAvail: prodAvail %}
+		</a>
+        {% endif %}
+	{% endfor %}
+</div>
+
+<script>
+	$(function(){
+      
+		if($(window).width() >= 767){
+			sliderInit = {{ section.settings.homeProductDesk }};
+		}else{
+			sliderInit = {{ section.settings.homeProductMobile }};
+		}
+		if($('#homeFtProducts-{{ section.id }} .featuredItem').length > sliderInit){
+			$('#homeFtProducts-{{ section.id }}').splide({
+				slidesToScroll: {{ section.settings.homeProductDesk }},
+				slidesToShow: sliderInit,
+				arrows: !{% if section.settings.deskArrows %}0{% else %}1{% endif %},
+				dots: !{% if section.settings.deskDots %}0{% else %}1{% endif %},
+				mobileFirst: !1,
+				responsive: [{
+					breakpoint: 767,
+					settings: {
+        				slidesToScroll: {{ section.settings.homeProductMobile }},
+						arrows: !{% if section.settings.mobArrows %}0{% else %}1{% endif %},
+						dots: !{% if section.settings.mobDots %}0{% else %}1{% endif %}
+					}
+				}]
+			});
+		} else {
+          $('#homeFtProducts-{{ section.id }}').addClass("static")
+        }
+	});
+</script>

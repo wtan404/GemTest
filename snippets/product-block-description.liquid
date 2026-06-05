@@ -1,0 +1,30 @@
+<div
+    class="product-block mt-5 first:mt-0 product-block-collapsible-tab"
+    x-data="{ open: false }"
+    {{ block.shopify_attributes }}
+>
+  <details
+    class="appearance-none border-b-general border-scheme-text py-2.5"
+    x-data="{ open: false }"
+    @toggle="open = $root.open"
+  >
+    <summary>
+      <div class=" flex items-center justify-between">
+        <div class=" flex items-center">
+            Description
+        </div>
+        <div class="ml-auto flex">
+          <span
+            class="m-auto inline-block h-3 w-3 transition"
+            :class="{ 'rotate-180' : open }"
+          >
+            {% render 'icon-chevron-down' %}
+          </span>
+        </div>
+      </div>
+    </summary>
+    <div class="rte my-5">
+        {{ product.description | newline_to_br }}
+    </div>
+  </details>
+</div>

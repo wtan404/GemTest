@@ -1,0 +1,269 @@
+{%- liquid
+  assign mobile_grid_cols = section.settings.products_per_row_mobile
+  assign shape_id = section.id
+  case section.settings.products_per_row_desktop
+    when 2
+      assign desktop_grid_cols = 'lg:grid-cols-2'
+    when 3
+      assign desktop_grid_cols = 'lg:grid-cols-3'
+    when 4
+      assign desktop_grid_cols = 'lg:grid-cols-4'
+    when 5
+      assign desktop_grid_cols = 'lg:grid-cols-5'
+  endcase
+
+  assign eager_loading_limit = mobile_grid_cols | plus: 0
+
+  if section.settings.display_on_card
+    assign desktop_sizes = 'calc((100vw / ' | append: section.settings.products_per_row_desktop | append: ') - 2.5rem)'
+
+    if section.settings.products_per_row_mobile == '2'
+      assign mobile_sizes = 'calc((100vw / ' | append: section.settings.products_per_row_mobile | append: ') - 1.25rem)'
+    else
+      assign mobile_sizes = 'calc((100vw / ' | append: section.settings.products_per_row_mobile | append: ') - 2.5rem)'
+    endif
+  else
+    assign desktop_sizes = 'calc(100vw / ' | append: section.settings.products_per_row_desktop | append: ')'
+    assign mobile_sizes = 'calc(100vw / ' | append: section.settings.products_per_row_mobile | append: ')'
+  endif
+
+  assign sizes = '(min-width: 990px) ' | append: desktop_sizes | append: ', ' | append: mobile_sizes
+  assign widths = '200, 350, 450, 750, 850, 960, 1280, 1440, 1536, 1706, 1782, 1920, 2560, 2880, 3000'
+-%}
+
+{% assign customSectionColors = false %}
+<section id="featured-collection-{{ section.id }}"
+  {% if section.settings.colorSettings == "scheme" %}
+  class="bg-scheme-background text-scheme-text {% if section.settings.use_gradient_background %}bg-scheme-gradient{% endif %}"
+  data-color-scheme="{{ section.settings.color_scheme }}"
+  {% else %}
+  {% assign customSectionColors = true %}
+  {% endif %}
+>
+  <div class="section-content z-10 px-section py-section-vertical-spacing">
+    {% unless section.settings.title == blank %}
+      <div class="mx-auto max-w-site">
+        <h2 class="mb-10 inline-heading-rte font-heading heading-standard heading-style break-words text-center {{ settings.heading_drop_shadow_style }}">
+          {{ section.settings.title }}
+        </h2>
+      </div>
+    {% endunless %}
+
+    <div class="max-w-site mx-auto">
+      <ul class="section-content-top-margin grid gap-theme {% if mobile_grid_cols == '2' %}grid-cols-2{% else %}grid-cols-1{% endif %} {{ desktop_grid_cols }}">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign collection = block.settings.collection
+
+            if collection == blank
+              continue
+            endif
+
+            assign loading = 'lazy'
+            if section.index <= 3 and forloop.index <= eager_loading_limit
+              assign loading = 'eager'
+            endif
+
+            assign image = block.settings.image | default: collection.image
+            assign title = block.settings.title | default: collection.title
+            assign products_count = collection.products_count
+          -%}
+
+          <li class="grid-item" {{ block.shopify_attributes }}>
+            <a class="flex-col gap-2 items-center" href="{{ collection.url }}">
+              <div class="mb-2">
+                {{
+                  image
+                  | image_url: width: 800
+                  | image_tag:
+                    class: '',
+                    onerror: 'this.style.color="currentColor"',
+                    onload: 'this.style.color="currentColor"',
+                    preload: preload,
+                    loading: loading,
+                    widths: widths,
+                    sizes: sizes
+                }}
+              </div>
+              <h3 class="font-main text-md break-words underline">
+                {{- title -}}
+              </h3>
+
+              <div class="font-heading text-md">
+                {%- if products_count <= 1 -%}
+                  {{ section.settings.singular_format | replace: '%count%', products_count }}
+                {%- else -%}
+                  {{ section.settings.plural_format | replace: '%count%', products_count }}
+                {%- endif -%}
+              </div>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+</section>
+
+{% if customSectionColors %}
+<style>
+  #collections-grid-{{ section.id }}{
+    background: {{section.settings.customBGColor }};
+    color: {{section.settings.customFontColor }}!important;
+  }
+  #collections-grid-{{ section.id }} a{
+    color: {{section.settings.customLinkColor }};
+  }
+</style>
+{% endif %}
+{% schema %}
+{
+  "name": "Collectionis Grid",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Heading",
+      "default": "Collections"
+    },
+    {
+      "type": "text",
+      "id": "singular_format",
+      "label": "Singular format",
+      "default": "%count% shade"
+    },
+    {
+      "type": "text",
+      "id": "plural_format",
+      "label": "Plural format",
+      "default": "%count% shades"
+    },
+    {
+      "type": "header",
+      "content": "t:common.settings.header_grid"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:common.settings.paragraph_these_settings_only"
+    },
+    {
+      "type": "select",
+      "id": "products_per_row_mobile",
+      "label": "t:common.settings.products_per_row_mobile.label",
+      "default": "1",
+      "options": [
+        {
+          "value": "1",
+          "label": "t:common.options.1.label"
+        },
+        {
+          "value": "2",
+          "label": "t:common.options.2.label"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "products_per_row_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "t:common.settings.products_per_row_desktop.label",
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "t:common.settings.header_color"
+    },
+    {
+      "type": "header",
+      "content": "t:common.settings.header_color"
+    },
+    {
+      "type": "select",
+      "id": "colorSettings",
+      "default": "scheme",
+      "label": "Section Color settings",
+          "options": [
+            {
+              "value": "scheme",
+              "label": "Scheme",
+            },
+            {
+              "value": "custom",
+              "label": "Custom",
+            }]
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme1",
+      "label": "t:common.settings.color_scheme.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_gradient_background",
+      "label": "t:common.settings.use_gradient_background.label"
+    },
+    {
+      "type": "color",
+      "id": "customBGColor",
+      "label": "Custom Background Color"
+    },
+    {
+      "type": "color",
+      "id": "customFontColor",
+      "label": "Custom Font Color"
+    },
+    {
+      "type": "color",
+      "id": "customLinkColor",
+      "label": "Custom Link Color"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Custom image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Custom title"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Grid",
+      "blocks": [
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        }
+      ]
+    } 
+  ],
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer",
+      "aside"
+    ]
+  }
+}
+{% endschema %}

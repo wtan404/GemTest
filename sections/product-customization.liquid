@@ -1,0 +1,894 @@
+{%- liquid
+  assign product = section.settings.product | default: product
+  assign base_product_image = section.settings.base_product_image  
+  assign min_quantity = section.settings.min_quantity | default: 1
+  assign printable_top = section.settings.printable_top | default: 20
+  assign printable_bottom = section.settings.printable_bottom | default: 20
+  assign printable_left = section.settings.printable_left | default: 20
+  assign printable_right = section.settings.printable_right | default: 20
+
+  # Set default color from section settings (remove # if present)
+  assign initial_color_raw = section.settings.initial_color | default: '#ffffff'
+  assign initial_color = initial_color_raw | remove: '#'
+
+  # Check if base product image is SVG
+  assign is_svg = false
+  if base_product_image
+    assign file_extension = base_product_image | split: '.' | last | downcase
+    if file_extension == 'svg'
+      assign is_svg = true
+    endif
+  endif
+-%}
+
+{%- render 'shape-defs',
+  shape: section.settings.image_shape,
+  shape_id: section.id,
+  blob_type: 1
+-%}
+
+<product-customization
+  class="product-customization-section section"
+  id="product-customization-section-{{ section.id }}"
+  data-section-id="{{ section.id }}"
+  {% if product %}data-product-id="{{ product.id }}"{% endif %}
+  {% if product and product.selected_or_first_available_variant %}data-variant-id="{{ product.selected_or_first_available_variant.id }}"{% endif %}
+  data-min-quantity="{{ min_quantity }}"
+  data-printable-top="{{ printable_top }}"
+  data-printable-bottom="{{ printable_bottom }}"
+  data-printable-left="{{ printable_left }}"
+  data-printable-right="{{ printable_right }}"
+  {% assign base_image_url = base_product_image | image_url: width: 1000 %}
+  data-base-product-image="{% if base_image_url contains '//' and base_image_url != blank %}{% unless base_image_url contains 'http' %}https:{% endunless %}{{ base_image_url }}{% else %}{{ base_image_url }}{% endif %}"
+  data-api-base-url="{{ section.settings.api_base_url }}"
+>
+
+  {% comment %} Check if base product image is available and is SVG {% endcomment %}
+  {% unless base_product_image and is_svg %}
+    <div class="section-content relative z-10 mx-auto max-w-site py-section-vertical-spacing lg:px-section">
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <strong>{{ 'sections.product_customization.configuration_required' | t }}</strong>
+        {% unless base_product_image %}
+          {{ 'sections.product_customization.config_upload_base_image' | t }}
+        {% else %}
+          {{ 'sections.product_customization.config_svg_required' | t }}
+        {% endunless %}
+      </div>
+    </div>
+    {% comment %} Early return - don't render the rest of the section {% endcomment %}
+  {% else %}
+  {{ 'product-customization.css' | asset_url | stylesheet_tag }}
+  {{ 'product-customization.js' | asset_url | script_tag }}
+
+  <div class="section-content relative z-10 mx-auto max-w-site py-section-vertical-spacing lg:px-section">
+    {% if section.settings.title != '' %}
+      <h2 class="inline-heading-rte font-heading heading-standard heading-style break-words px-section text-center lg:px-0 {{ settings.heading_drop_shadow_style }}">
+        {{ section.settings.title }}
+      </h2>
+    {% endif %}
+
+    <div class="{% if section.settings.title != '' %}section-content-top-margin{% endif %}">
+      <div class="product-customization-section-inner grid grid-cols-1 lg:grid-cols-2 px-section lg:px-0">
+        <!-- Left Column: Preview -->
+        <div class="customization-preview">
+          <div class="relative">
+            <div class="bottle-container relative w-full max-w-md mx-auto">
+              <img
+                id="base-product-image-{{ section.id }}"
+                {% assign img_src = base_product_image | image_url: width: 800 %}
+                src="{% if img_src contains '//' and img_src != blank %}{% unless img_src contains 'http' %}https:{% endunless %}{{ img_src }}{% else %}{{ img_src }}{% endif %}"
+                alt="Customizable product"
+                class="w-full h-auto transition-all duration-300"
+                loading="lazy"
+              >                <!-- Printable Area Overlay (Only visible in design mode) -->
+              {% if request.design_mode %}
+                <div
+                  id="printable-area-{{ section.id }}"
+                  class="printable-area-overlay absolute"
+                  style="
+                    top: {{ printable_top }}%;
+                    bottom: {{ printable_bottom }}%;
+                    left: {{ printable_left }}%;
+                    right: {{ printable_right }}%;
+                  "
+                >
+                  <div class="printable-area-label absolute top-0 left-0 -translate-y-full">
+                    {{ 'sections.product_customization.printable_area_label' | t }}
+                  </div>
+                </div>
+              {% endif %}
+
+              <!-- Logo Preview -->
+              <div
+                id="logo-preview-{{ section.id }}"
+                class="logo-preview absolute pointer-events-none transition-all duration-300 opacity-0"
+                style="
+                  top: {{ printable_top }}%;
+                  bottom: {{ printable_bottom }}%;
+                  left: {{ printable_left }}%;
+                  right: {{ printable_right }}%;
+                "
+              >
+                <img
+                  id="logo-image-{{ section.id }}"
+                  src=""
+                  alt="Custom logo"
+                  class="absolute w-auto h-auto transition-all duration-300"
+                  style="
+                    filter: brightness(0) invert(1);
+                    transform: translateX(-50%);
+                    left: 50%;
+                    bottom: 0%;
+                    max-width: 100%;
+                    max-height: 100%;
+                  "
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Customization Form -->
+        <div class="customization-form">
+          <div class="flex items-center gap-2">
+            {%- if section.settings.customization_image != blank -%}
+              {{ section.settings.customization_image
+                | image_url: width: 50
+                | image_tag: class: 'customization-image block z-0', loading: 'lazy', alt: section.settings.customization_image.alt
+              }}
+            {%- endif -%}
+            <h3 class="text-md font-semibold">
+              {{ section.settings.customization_title }}
+            </h3>
+          </div>
+          <div>
+            <span style="font-size:12px;margin-bottom:15px;">
+              Need Help? 
+              <a href="/pages/contact" style="text-decoration:underline;font-style: italic;">Speak with a Blank Beauty artist<a>
+            </span>
+          </div>
+          <form id="customization-form-{{ section.id }}" class="space-y-6">
+
+              <div id="error-message-{{ section.id }}" class="error-message hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <span id="error-text-{{ section.id }}"></span>
+              </div>
+            <!-- Color Customization -->
+            <div class="color-section form-section accordion-step" data-step="1" aria-expanded="true">
+              <div class="form-section-header" role="button" tabindex="0" aria-expanded="true">
+                <h4 class="text-base font-semibold form-section-title">
+                  <span class="form-section-step">1</span>
+                  <span>
+                    {% if section.settings.step_1_title != blank %}
+                      {{ section.settings.step_1_title }}
+                    {% else %}
+                      {{ 'sections.product_customization.color_label' | t }}
+                    {% endif %}
+                  </span>
+                </h4>
+                <div class="form-section-actions">
+                  <button type="button" class="next-step-btn" data-target-step="2" disabled>
+                    <span>{{ 'sections.product_customization.next_button' | t }}</span>
+                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M17.8058 11.1298L12.1808 16.7548C12.0047 16.931 11.7658 17.0299 11.5167 17.0299C11.2677 17.0299 11.0288 16.931 10.8527 16.7548C10.6766 16.5787 10.5776 16.3399 10.5776 16.0908C10.5776 15.8417 10.6766 15.6028 10.8527 15.4267L14.8769 11.4041H3.39252C3.14388 11.4041 2.90542 11.3053 2.7296 11.1295C2.55379 10.9537 2.45502 10.7152 2.45502 10.4666C2.45502 10.2179 2.55379 9.97947 2.7296 9.80365C2.90542 9.62784 3.14388 9.52907 3.39252 9.52907H14.8769L10.8542 5.50407C10.6781 5.32795 10.5792 5.08908 10.5792 4.84C10.5792 4.59093 10.6781 4.35206 10.8542 4.17594C11.0304 3.99982 11.2692 3.90088 11.5183 3.90088C11.7674 3.90088 12.0062 3.99982 12.1824 4.17594L17.8074 9.80094C17.8948 9.88816 17.9641 9.99178 18.0114 10.1059C18.0586 10.2199 18.0829 10.3422 18.0827 10.4657C18.0826 10.5892 18.058 10.7114 18.0105 10.8254C17.963 10.9394 17.8934 11.0428 17.8058 11.1298Z" fill="currentColor"/>
+                    </svg>
+                  </button>
+                  <svg class="accordion-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="form-section-content">
+                <p class="text-sm mb-3">
+                  {% if section.settings.color_instruction_text != blank %}
+                    {{ section.settings.color_instruction_text }}
+                  {% else %}
+                    {{ 'sections.product_customization.color_instruction' | t }}
+                  {% endif %}
+                </p>
+              <div class="logo-step__dropzone file-upload-dropzone  text-base" role="button" tabindex="0" data-target="color-image-upload-{{ section.id }}" aria-label="{{ 'sections.product_customization.color_file_upload_label' | t }}">
+                <div class="logo-step__dropicon" aria-hidden="true">
+                  {% render 'icon-upload' %}
+                </div>
+                <p class="logo-step__droptext">
+                  {% if section.settings.color_dropzone_text != blank %}
+                    {{ section.settings.color_dropzone_text | replace: 'Browse', '<button class="logo-step__browse" type="button">Browse</button>' }}
+                  {% else %}
+                    {{ 'sections.product_customization.color_browse_text' | t: browse_button: '<button class="logo-step__browse" type="button">' | append: 'sections.product_customization.color_browse_button' | t | append: '</button>' }}
+                  {% endif %}
+                </p>
+                <p class="logo-step__help">
+                  {% if section.settings.color_file_help_text != blank %}
+                    {{ section.settings.color_file_help_text }}
+                  {% else %}
+                    {{ 'sections.product_customization.color_file_help' | t }}
+                  {% endif %}
+                </p>
+              </div>
+              <div class="image-color-picker">
+                <div id="color-image-preview-{{ section.id }}" class="hidden color-image-preview">
+                  <canvas
+                    id="color-canvas-{{ section.id }}"
+                    class="color-canvas max-w-full h-auto"
+                    style="max-height: 500px;"
+                  ></canvas>
+                  <div id="color-tooltip-{{ section.id }}" class="color-tooltip hidden"></div>
+                  <div id="color-marker-{{ section.id }}" class="color-marker hidden" style="transform: translate(-50%, -50%);"></div>
+                </div>
+                <input
+                  type="file"
+                  id="color-image-upload-{{ section.id }}"
+                  accept="image/*"
+                  class="file-upload-input"
+                >
+                <div class="file-upload-wrapper">
+                  <button type="button" class="file-upload-button" data-target="color-image-upload-{{ section.id }}">Repick</button>
+                  
+                  <button type="button" class="remove-upload-button" data-action="remove-color">Remove</button> 
+                </div>
+              </div>
+              <div class="color-picker-container">
+                <label for="color-picker-{{ section.id }}" class="block text-sm font-medium mb-2">{{ 'sections.product_customization.color_selected_label' | t }}</label>
+                <div class="color-picker-container-content">
+                  <div class="flex items-center gap-3">
+                    <input
+                      type="color"
+                      id="color-picker-{{ section.id }}"
+                      value="#{{ initial_color }}"
+                      class="color-picker-input"
+                    >
+                    <div
+                      id="color-hex-{{ section.id }}"
+                      class="color-hex-display"
+                      data-value="{{ initial_color }}"
+                    >#{{ initial_color }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Color Name Field -->
+              <div class="color-name-section mt-4">
+                <label for="color-name-{{ section.id }}" class="block text-sm font-medium mb-2">
+                  {% if section.settings.color_name_label != blank %}
+                    {{ section.settings.color_name_label }}
+                  {% else %}
+                    {{ 'sections.product_customization.color_name_label' | t }}
+                  {% endif %}
+                  *
+                </label>
+                <input
+                  type="text"
+                  id="color-name-{{ section.id }}"
+                  required
+                  class="form-input"
+                  placeholder="{{ 'sections.product_customization.color_name_placeholder' | t }}"
+                  maxlength="50"
+                >
+              </div>
+              </div>
+            </div>
+
+            <!-- Logo Customization -->
+            <div class="logo-section form-section accordion-step" data-step="2" aria-expanded="false">
+              <div class="form-section-header" role="button" tabindex="0" aria-expanded="false">
+                <h4 class="text-base font-semibold form-section-title">
+                  <span class="form-section-step">2</span>
+                  <span>
+                    {% if section.settings.step_2_title != blank %}
+                      {{ section.settings.step_2_title }}
+                    {% else %}
+                      {{ 'sections.product_customization.logo_label' | t }}
+                    {% endif %}
+                  </span>
+                </h4>
+                <div class="form-section-actions">
+                  <button type="button" class="next-step-btn" data-target-step="3">
+                    <span>{{ 'sections.product_customization.next_button' | t }}</span>
+                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M17.8058 11.1298L12.1808 16.7548C12.0047 16.931 11.7658 17.0299 11.5167 17.0299C11.2677 17.0299 11.0288 16.931 10.8527 16.7548C10.6766 16.5787 10.5776 16.3399 10.5776 16.0908C10.5776 15.8417 10.6766 15.6028 10.8527 15.4267L14.8769 11.4041H3.39252C3.14388 11.4041 2.90542 11.3053 2.7296 11.1295C2.55379 10.9537 2.45502 10.7152 2.45502 10.4666C2.45502 10.2179 2.55379 9.97947 2.7296 9.80365C2.90542 9.62784 3.14388 9.52907 3.39252 9.52907H14.8769L10.8542 5.50407C10.6781 5.32795 10.5792 5.08908 10.5792 4.84C10.5792 4.59093 10.6781 4.35206 10.8542 4.17594C11.0304 3.99982 11.2692 3.90088 11.5183 3.90088C11.7674 3.90088 12.0062 3.99982 12.1824 4.17594L17.8074 9.80094C17.8948 9.88816 17.9641 9.99178 18.0114 10.1059C18.0586 10.2199 18.0829 10.3422 18.0827 10.4657C18.0826 10.5892 18.058 10.7114 18.0105 10.8254C17.963 10.9394 17.8934 11.0428 17.8058 11.1298Z" fill="currentColor"/>
+                    </svg>
+                  </button>
+                  <svg class="accordion-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="form-section-content">
+                <p class="block font-medium mb-4 logo-section-description">Set up Custom labeling or hit <b>Next</b> to Skip</p>
+                
+                <div class="customization-mode-toggle mb-6">
+                  <label class="mode-option">
+                    <input type="radio" name="customization_type_{{ section.id }}" value="logo" checked class="hidden">
+                    <span class="mode-label">Upload Logo</span>
+                  </label>
+                  <label class="mode-option">
+                    <input type="radio" name="customization_type_{{ section.id }}" value="text" class="hidden">
+                    <span class="mode-label">Custom Text</span>
+                  </label>
+                </div>
+
+                <div id="logo-upload-container-{{ section.id }}" class="customization-mode-content">
+                  <div class="logo-step__dropzone file-upload-dropzone text-base" role="button" tabindex="0" data-target="logo-upload-{{ section.id }}">
+                    <div class="logo-step__dropicon" aria-hidden="true">{% render 'icon-upload' %}</div>
+                    <p class="logo-step__droptext">
+                      {% if section.settings.logo_dropzone_text != blank %}
+                        {{ section.settings.logo_dropzone_text | replace: 'Browse', '<button class="logo-step__browse" type="button">Browse</button>' }}
+                      {% else %}
+                        {{ 'sections.product_customization.logo_browse_text' | t: browse_button: '<button class="logo-step__browse" type="button">' | append: 'sections.product_customization.logo_browse_button' | t | append: '</button>' }}
+                      {% endif %}
+                    </p>
+                    <p>
+                      Logo Images <b>MUST</b> be:
+                    </p>
+                    <ul>
+                      <li>
+                        {% if section.settings.logo_file_help_text != blank %}
+                          {{ section.settings.logo_file_help_text }}
+                        {% else %}
+                          {{ 'sections.product_customization.logo_file_help' | t }}
+                        {% endif %}
+                      </li>
+                      <li>
+                        {% if section.settings.logo_file_help_extended_text != blank %}
+                          {{ section.settings.logo_file_help_extended_text }}
+                        {% else %}
+                          {{ 'sections.product_customization.logo_file_help_extended' | t }}
+                        {% endif %}
+                      </li>
+                      <li>
+                        For best results, upload a single-color logo design with a transparent background <br/>
+                        Please avoid photos, gradients, or highly detailed artwork.
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="file-upload-wrapper mt-4">
+                    <input type="file" id="logo-upload-{{ section.id }}" accept="image/*" class="file-upload-input">
+                    <div class="file-upload-preview">
+                      <div id="logo-preview-image-{{ section.id }}" class="file-upload-logo"></div>
+                      <div id="logo-filename-{{ section.id }}" class="text-sm text-gray-600 file-upload-name"></div>
+                    </div>
+
+                    <div class="flex gap-3">
+                      <button type="button" class="file-upload-button" data-target="logo-upload-{{ section.id }}">Repick</button>
+                      <button type="button" class="remove-upload-button" data-action="remove-logo">Remove</button>
+                    </div>
+
+                  </div>
+                  
+                </div>
+
+                <div id="text-input-container-{{ section.id }}" class="customization-mode-content hidden">
+                  <label for="custom-text-{{ section.id }}" class="block text-sm font-medium mb-2">Enter your text:</label>
+                  <input 
+                    type="text" 
+                    id="custom-text-{{ section.id }}" 
+                    class="form-input" 
+                    placeholder="Type something..." 
+                    maxlength="30"
+                  >
+                  <div>
+                    <label for="custom-font-{{ section.id }}" class="block text-sm font-medium mb-2">Choose Font:</label>
+                    <select id="custom-font-{{ section.id }}" class="form-input">
+                      <option value="'Inter', sans-serif">Modern tech sans</option>
+                      <option value="Helvetica, Arial, sans-serif">Neutral/safe sans</option>
+                      <option value="Georgia, serif">Editorial serif</option>
+                      <option value="'Roboto', sans-serif">Friendly utility sans</option>
+                      <option value="'Playfair Display', serif">Luxury display serif</option>
+                    </select>
+                  </div>
+                  {% comment %}
+                  <div>
+                    <label for="custom-font-size-{{ section.id }}" class="block text-sm font-medium mb-2">Choose Size:</label>
+                    <select id="custom-font-size-{{ section.id }}" class="form-input text-sm">
+                      <option value="10">Small</option>
+                      <option value="14" selected>Med</option>
+                      <option value="18">Large</option>
+                    </select>
+                  </div>
+                  {% endcomment %}
+                  <p class="text-xs text-gray-500 mt-2">Up to 30 characters. We'll use a standard font for your preview.</p>
+                </div>
+                
+                <!-- Logo Positioning -->
+                <div id="logo-controls-{{ section.id }}" class="logo-controls space-y-4 hidden">
+                  <div>
+                    <div class="flex justify-between items-center">
+                      <label class="text-sm font-semibold">{{ 'sections.product_customization.logo_size_label_full' | t }}</label>
+                      <span class="js-logo-size-value text-sm text-gray-600 font-medium lg:hidden">50%</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-3">
+                      <input
+                        type="range"
+                        id="logo-size-{{ section.id }}"
+                        min="10"
+                        max="100"
+                        value="50"
+                        class="range-slider w-full"
+                      >
+                      <span class="js-logo-size-value text-sm text-gray-600 font-medium hidden lg:block">50%</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500 mt-1 hidden">
+                      <span>10%</span>
+                      <span>100%</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between items-center">
+                      <label class="text-sm font-semibold">{{ 'sections.product_customization.logo_position_label_full' | t }}</label>
+                      <span class="js-logo-position-value text-sm text-gray-600 font-medium lg:hidden">0%</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-3">
+                      <input
+                        type="range"
+                        id="logo-position-{{ section.id }}"
+                        min="0"
+                        max="100"
+                        value="0"
+                        class="range-slider w-full"
+                      >
+                      <span class="js-logo-position-value text-sm text-gray-600 font-medium hidden lg:block">0%</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500 mt-1 hidden">
+                      <span>Bottom</span>
+                      <span>Top</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="color-picker-container mb-4">
+                <div class="file-upload-wrapper">
+                  <input
+                    type="file"
+                    id="logo-upload-{{ section.id }}"
+                    accept="image/*"
+                    class="file-upload-input"
+                  >
+                  <div class="file-upload-preview">
+                    <div id="logo-preview-image-{{ section.id }}" class="file-upload-logo"></div>
+                    <div id="logo-filename-{{ section.id }}" class="text-sm text-gray-600 file-upload-name"></div>
+                  </div>
+                </div>
+                <div id="logo-warning-{{ section.id }}" class="hidden mt-2 text-sm text-red-600">
+                  {% if section.settings.logo_warning_text != blank %}
+                    {{ section.settings.logo_warning_text }}
+                  {% else %}
+                    {{ 'sections.product_customization.logo_warning' | t }}
+                  {% endif %}
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Checkout -->
+            <div class="email-section form-section accordion-step" data-step="3" aria-expanded="false">
+              <div class="form-section-header" role="button" tabindex="0" aria-expanded="false">
+                <h4 class="text-base font-semibold form-section-title">
+                  <span class="form-section-step">3</span>
+                  <span>
+                    {% if section.settings.step_3_title != blank %}
+                      {{ section.settings.step_3_title }}
+                    {% else %}
+                      {{ 'sections.product_customization.checkout_label' | t }}
+                    {% endif %}
+                  </span>
+                </h4>
+                <div class="form-section-actions">
+                  <svg class="accordion-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="form-section-content">
+                <span style="font-weight:bold;font-size:20px;text-align:center;display: block;">
+                  <u>All</u> wholesale orders qualify for <u>Free Shipping</u>
+                </span>
+                <label class="custom-checkbox">
+                  <input
+                    type="checkbox"
+                    id="acknowledgement-{{ section.id }}"
+                    required
+                  >
+                  <span class="text-sm">
+                    {{ 'sections.product_customization.acknowledgement_label' | t }}
+                  </span>
+                </label>
+                <!-- Variant Selection -->
+                {% if product and product.variants.size > 1 %}
+                <div class="variant-section form-section">
+                  <h4 class="text-lg font-semibold mb-4">{{ 'sections.product_customization.variant_label' | t }}</h4>
+                  <div>
+                    <label class="block text-sm font-medium mb-2">{{ 'sections.product_customization.variant_label' | t }} *</label>
+                    <select
+                      id="variant-select-{{ section.id }}"
+                      class="form-input"
+                      required
+                    >
+                      {% for variant in product.variants %}
+                        <option
+                          value="{{ variant.id }}"
+                          data-price="{{ variant.price }}"
+                          {% if variant == product.selected_or_first_available_variant %}selected{% endif %}
+                          {% unless variant.available %}disabled{% endunless %}
+                        >
+                          {{ variant.title }}
+                          {% unless variant.available %} - Sold Out{% endunless %}
+                          {% if variant.price != variant.compare_at_price and variant.compare_at_price > variant.price %}
+                            - {{ variant.price | money }} (was {{ variant.compare_at_price | money }})
+                          {% else %}
+                            - {{ variant.price | money }}
+                          {% endif %}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                {% endif %}
+                <!-- Quantity and Add to Cart -->
+                {% if product %}
+                <div class="flex flex-col items-center">
+                  <div class="w-full">
+                    <label class="block text-sm font-medium mb-2">{{ 'sections.product_customization.quantity_label' | t }}</label>
+                    <div class="quantity-wrapper">
+                      <button
+                        type="button"
+                        class="quantity-button"
+                        aria-label="&minus;"
+                        data-action="decrement"
+                        disabled
+                      >
+                      <div class="quantity-button-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 3">
+                          <path fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="3" d="M0 1.5h12.313" />
+                        </svg>
+                      </div>
+                    </button>
+                    <input
+                      type="number"
+                      class="quantity-input-custom input--no-border inline-block appearance-none border-0 bg-transparent text-center text-md text-scheme-text"
+                      id="quantity-{{ section.id }}"
+                      name="quantity"
+                      min="{{ min_quantity }}"
+                      value="{{ min_quantity }}"
+                      step="1"
+                    >
+                    <button
+                      type="button"
+                      class="quantity-button"
+                      aria-label="&plus;"
+                      data-action="increment"
+                    >
+                      <div class="quantity-button-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 13 13">
+                          <path stroke="currentColor" stroke-width="3" d="M.687 6.416H13M6.635 12.573V.26"/>
+                        </svg>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  id="add-to-cart-{{ section.id }}"
+                  disabled
+                  class="push-btn w-full mt-4 product-customization__button-atc"
+                >
+                  <span class="push-btn__surface w-full">
+                    <span id="add-to-cart-text-{{ section.id }}">
+                      {{ 'sections.product_customization.add_to_cart' | t }} -
+                    </span>
+                    <span id="price-data-{{ section.id }}" data-base-price="{{ product.price }}">
+                      {{ product.price | money }}
+                    </span>
+                    <div id="loading-spinner-{{ section.id }}" class="loading-spinner hidden">
+                      <svg class="animate-spin h-5 w-5 mx-auto" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    </div>
+                  </span>
+                </button>
+
+                <!-- Save my Design button -->
+                <button
+                  type="button"
+                  id="save-design-{{ section.id }}"
+                  disabled
+                  class="push-btn w-full product-customization__button-save mt-4"
+                >
+                  <span class="push-btn__surface push-btn__surface--secondary w-full">
+                    <span id="save-design-text-{{ section.id }}">{{ 'sections.product_customization.save_my_design' | t }}</span>
+                    <div class="save-design-icon">
+                      <svg class="h-5 w-5 icon-save" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19.6706 5.4736C17.6806 3.8336 14.7206 4.1236 12.8906 5.9536L12.0006 6.8436L11.1106 5.9536C9.29063 4.1336 6.32064 3.8336 4.33064 5.4736C2.05064 7.3536 1.93063 10.7436 3.97063 12.7836L11.6406 20.4536C11.8406 20.6536 12.1506 20.6536 12.3506 20.4536L20.0206 12.7836C22.0706 10.7436 21.9506 7.3636 19.6706 5.4736Z" stroke="currentColor" stroke-width="1.7px" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+                      </svg>
+                      <svg class="h-5 w-5 icon-saved" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19.6706 5.4736C17.6806 3.8336 14.7206 4.1236 12.8906 5.9536L12.0006 6.8436L11.1106 5.9536C9.29063 4.1336 6.32064 3.8336 4.33064 5.4736C2.05064 7.3536 1.93063 10.7436 3.97063 12.7836L11.6406 20.4536C11.8406 20.6536 12.1506 20.6536 12.3506 20.4536L20.0206 12.7836C22.0706 10.7436 21.9506 7.3636 19.6706 5.4736Z" stroke="currentColor" stroke-width="1.7px" fill="currentColor" stroke-linecap="round" stroke-linejoin="round"></path>
+                      </svg>
+                    </div>
+                  </span>
+                </button>
+                <div class="text-sm content-description mt-4 text-center">{{ 'sections.product_customization.quantity_description' | t: min: min_quantity }}</div>
+              </div>
+              </div>
+            </div>
+            {% else %}
+              <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
+                {{ 'sections.product_customization.config_select_product' | t }}
+              </div>
+            {% endif %}
+            </div>
+          </form>
+        </div>
+      </div>
+      </div>
+    </div>
+  {% endunless %}
+</product-customization>{% schema %}
+{
+  "name": "Product Customization",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    },
+    {
+      "type": "number",
+      "id": "min_quantity",
+      "label": "Minimum Wholesale Quantity",
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Customize Your Product"
+    },
+    {
+      "type": "text",
+      "id": "customization_title",
+      "label": "Customization Title",
+      "default": "Customize Bottle"
+    },
+    {
+      "type": "image_picker",
+      "id": "customization_image",
+      "label": "Customization Image"
+    },
+    {
+      "type": "header",
+      "content": "Copy Settings"
+    },
+    {
+      "type": "text",
+      "id": "step_1_title",
+      "label": "Color Step Title",
+      "default": "Create Your Color",
+      "info": "Title for the color selection step"
+    },
+    {
+      "type": "text",
+      "id": "color_instruction_text",
+      "label": "Color Step Instruction",
+      "default": "Upload your image and tap anywhere to select your custom color.",
+      "info": "Text that appears above the color selection dropzone"
+    },
+    {
+      "type": "text",
+      "id": "color_name_label",
+      "label": "Color Name Field Label",
+      "default": "Color Name",
+      "info": "Label for the color name input field"
+    },
+    {
+      "type": "text",
+      "id": "color_dropzone_text",
+      "label": "Color Upload Dropzone Text",
+      "default": "Drag & Drop or Browse Your Device",
+      "info": "Text that appears in the color image upload area"
+    },
+    {
+      "type": "text",
+      "id": "color_file_help_text",
+      "label": "Color File Help Text",
+      "default": "JPG, PNG, SVG (Max 50 MB)",
+      "info": "Help text for color image file requirements"
+    },
+    {
+      "type": "text",
+      "id": "step_2_title",
+      "label": "Logo Step Title",
+      "default": "Upload logo",
+      "info": "Title for the logo upload step"
+    },
+    {
+      "type": "text",
+      "id": "logo_dropzone_text",
+      "label": "Logo Upload Dropzone Text",
+      "default": "Drag & Drop or Browse Your Device",
+      "info": "Text that appears in the logo upload area"
+    },
+    {
+      "type": "text",
+      "id": "logo_file_help_text",
+      "label": "Logo File Help Text",
+      "default": "PNG, SVG (Max 10 MB).",
+      "info": "Help text for logo file requirements"
+    },
+    {
+      "type": "text",
+      "id": "logo_file_help_extended_text",
+      "label": "Logo File Extended Help Text",
+      "default": "Minimum resolution of 700px x 700px, 100+ ppcm recommended",
+      "info": "Extended help text for logo quality requirements"
+    },
+    {
+      "type": "text",
+      "id": "logo_warning_text",
+      "label": "Logo Quality Warning",
+      "default": "Warning: Logo image should be at least 700x700 pixels for best quality.",
+      "info": "Warning text shown when logo quality is low"
+    },
+    {
+      "type": "text",
+      "id": "step_3_title",
+      "label": "Checkout Step Title",
+      "default": "Checkout",
+      "info": "Title for the checkout step"
+    },
+    {
+      "type": "image_picker",
+      "id": "base_product_image",
+      "label": "Base Product Image (SVG Required)",
+      "info": "Complete product image with shape background and bottle as SVG format. Used for display and thumbnail generation."
+    },
+    {
+      "type": "color",
+      "id": "initial_color",
+      "label": "Default Color",
+      "default": "#ffffff",
+      "info": "Default color for the bottle background"
+    },
+    {
+      "type": "header",
+      "content": "Printable Area Settings"
+    },
+    {
+      "type": "range",
+      "id": "printable_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Top Bound",
+      "default": 20,
+      "info": "Distance from top of base product image"
+    },
+    {
+      "type": "range",
+      "id": "printable_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Bottom Bound",
+      "default": 20,
+      "info": "Distance from bottom of base product image"
+    },
+    {
+      "type": "range",
+      "id": "printable_left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Left Bound",
+      "default": 20,
+      "info": "Distance from left of base product image"
+    },
+    {
+      "type": "range",
+      "id": "printable_right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Right Bound",
+      "default": 20,
+      "info": "Distance from right of base product image"
+    },
+    {
+      "type": "header",
+      "content": "API Configuration"
+    },
+    {
+      "type": "text",
+      "id": "api_base_url",
+      "label": "API Base URL",
+      "default": "https://bb-pdp-customization.vercel.app/api",
+      "info": "Base URL for the customization API endpoints"
+    },
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        {
+          "value": "scheme_1",
+          "label": "Scheme 1"
+        },
+        {
+          "value": "scheme_2",
+          "label": "Scheme 2"
+        },
+        {
+          "value": "scheme_3",
+          "label": "Scheme 3"
+        },
+        {
+          "value": "scheme_4",
+          "label": "Scheme 4"
+        },
+        {
+          "value": "scheme_5",
+          "label": "Scheme 5"
+        }
+      ],
+      "default": "scheme_1"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_gradient_background",
+      "label": "Use gradient background",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "image_shape",
+      "label": "Image shape",
+      "options": [
+        {
+          "value": "natural",
+          "label": "Natural"
+        },
+        {
+          "value": "rounded",
+          "label": "Rounded"
+        },
+        {
+          "value": "blob_1",
+          "label": "Blob 1"
+        },
+        {
+          "value": "blob_2",
+          "label": "Blob 2"
+        },
+        {
+          "value": "blob_3",
+          "label": "Blob 3"
+        },
+        {
+          "value": "blob_4",
+          "label": "Blob 4"
+        }
+      ],
+      "default": "natural"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Customization"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,409 @@
+{%- liquid
+  assign max_width = section.settings.max_width
+  assign th_td_classes = 'w-[35vw] p-4 text-center border-general border-scheme-text lg:w-auto lg:p-5'
+  assign th_td_classes_heading = 'left-0 text-left w-[35vw] p-4 border-general border-scheme-text lg:w-auto lg:p-5'
+  assign highlight_classes = 'bg-[rgba(var(--color-highlight))] text-[rgba(var(--color-highlight-overlay))]'
+  
+  assign tableTitle1 = section.settings.column_0_name
+  assign tableTitle2 = section.settings.column_1_name
+  assign tableTitle3 = section.settings.column_2_name
+
+  assign priceCore1 = section.settings.column_priceCore_1 | times: 100.0 
+  assign priceCore2 = section.settings.column_priceCore_2 | times: 100.0 
+
+  assign discountType = section.settings.discountType
+
+  assign mobile_sizes = '35vw'
+  assign desktop_sizes = 'calc(100vw / 4)'
+  assign sizes = '(min-width: 990px) ' | append: desktop_sizes | append: ', ' | append: mobile_sizes
+
+  assign title_alignment_class = 'text-left'
+  if section.settings.title_alignment == 'center'
+    assign title_alignment_class = 'text-center'
+  elsif section.settings.title_alignment == 'right'
+    assign title_alignment_class = 'text-right'
+  endif
+-%}
+
+<section
+  class="relative overflow-hidden bg-scheme-background text-scheme-text {% if section.settings.use_gradient_background %}bg-scheme-gradient{% endif %}"
+  data-color-scheme="{{ section.settings.color_scheme }}"
+>
+  <div class="section-content py-section-vertical-spacing {% if section.settings.display_on_card %}px-section{% endif %} relative z-10 px-5 lg:px-[135px]">
+    <div class="{% if section.settings.display_on_card %}card{% endif %} mx-auto {{ max_width }}">
+      <div class="{% if section.settings.display_on_card %}card__surface p-5 lg:p-10{% endif %} section-content relative z-10 mx-auto">
+        
+        {% if section.settings.title != '' %}
+          <h2 class="inline-heading-rte font-heading heading-standard heading-style break-words {{ title_alignment_class }} {{ settings.heading_drop_shadow_style }}">
+            {{ section.settings.title }}
+          </h2>
+        {% endif %}
+        <div class="wholesalePriceTable" >
+          {%- if section.settings.accent_image != blank -%}
+            <div>
+                <img 
+                  src="{{ section.settings.accent_image | image_url: width: 600 }}"
+                  alt="{{ section.settings.accent_image.alt | escape }}"
+                  class="w-full h-auto object-contain"
+                  loading="lazy"
+                  style=" {%- if section.settings.image_position == 'left' -%}0{% else %}2{% endif %}"
+                />
+              </div>
+          {%- endif -%}
+          <div class="wholesaleTableRow">
+            {% if tableTitle1 != '' %}
+            <div class="tableCell">{{ section.settings.column_0_name }}</div>
+            {% endif %}
+            {% if tableTitle2 != '' %}
+            <div class="tableCell">{{ section.settings.column_1_name }}</div>
+            {% endif %}
+            {% if tableTitle3 != '' %}
+            <div class="tableCell">{{ section.settings.column_2_name }}</div>
+            {% endif %}
+          </div>
+          {%- assign rows = section.blocks | where: 'type', 'pricing_tier' -%}
+          {%- for row in rows -%}
+            {% assign discount1 = row.settings.discount1 |  times: 100.0 %}
+            {% assign discount2 = row.settings.discount2 |  times: 100.0 %}
+          <div class="wholesaleTableRow" >
+            {% if tableTitle1 != '' %}
+            <div class="tableCell">{{ row.settings.quantity_text }}</div>
+            {% endif %}
+            {% if tableTitle2 != '' %}
+            <div class="tableCell">
+              {% assign price1 = priceCore1 %} 
+              {% if discountType == 'fixed' %}
+                {% assign price1 = priceCore1 | minus: discount1 %}
+              {% elsif discountType == 'percentage' %}
+                {% assign price1 = priceCore1 | times: discount1 | divided_by: 100.0 %}
+              {% endif %}
+              {% assign costBasis1 = price1 | divided_by: priceCore1 | round: 2 %}
+              {% assign savings1 = 1.0 | minus: costBasis1 | round: 3 %}
+              {{price1 | money }} ( {{savings1 | times: 100.0 }}% Savings!)
+            </div>
+            {% endif %}
+            {% if tableTitle3 != '' %}
+            <div class="tableCell">
+              {% assign price2 = priceCore2 %} 
+              {% if discountType == 'fixed' %}
+                {% assign price2 = priceCore2 | minus: discount2  %}
+              {% elsif discountType == 'percentage' %}
+                {% assign price2 = priceCore2 | times: discount2 | divided_by: 100 %}
+              {% endif %}
+              {% assign costBasis2 = price2 | divided_by: priceCore2 | round: 2 %}
+              {% assign savings2 = 1.0 | minus: costBasis2 | round: 3 %}
+
+              {{price2 | money }} ( {{savings2 | times: 100.0 }}% Savings!)
+            </div>
+            {% endif %}
+          </div>
+          {%- endfor -%}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {%- liquid
+    for block in section.blocks
+      case block.type
+        when 'background_shape'
+          render 'block-background-shape', block: block
+        when 'background_pattern'
+          render 'block-background-pattern', block: block, scheme: section.settings.color_scheme
+      endcase
+    endfor
+  -%}
+</section>
+<style>
+  .wholesalePriceTable{display: flex;flex-flow: column;}
+  .wholesaleTableRow{display: flex;flex:0 0 100%}
+  .wholesaleTableRow .tableCell{
+    flex: 1 1 32%;
+    border: 1px solid #666;
+    padding:10px;
+  }
+
+</style>
+{%- liquid
+  assign stickers = section.blocks | where: 'type', 'sticker'
+  assign shape_dividers = section.blocks | where: 'type', 'shape_divider'
+  for sticker in stickers
+    render 'block-sticker', block: sticker
+  endfor
+  for shape_divider in shape_dividers
+    render 'block-shape-divider', block: shape_divider
+  endfor
+-%}
+
+{% schema %}
+{
+  "name": "Bulk Pricing Table",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Bulk pricing"
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Title alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "discountType",
+      "label": "Discount Type",
+      "options": [
+        {
+          "value": "fixed",
+          "label": "Fixed"
+        },
+        {
+          "value": "percentage",
+          "label": "Percentage"
+        }
+      ],
+      "default": "fixed"
+    },
+    {
+      "type": "header",
+      "content": "Columns"
+    },
+    {
+      "type": "text",
+      "id": "column_0_name",
+      "label": "Column name"
+    },
+    {
+      "type": "text",
+      "id": "column_1_name",
+      "label": "Column Name (Item A)"
+    },
+    {
+      "type": "number",
+      "id": "column_priceCore_1",
+      "label": "Regular Pricing 1"
+    },
+    {
+      "type": "text",
+      "id": "column_2_name",
+      "label": "Column Name (Item B)"
+    },
+    {
+      "type": "number",
+      "id": "column_priceCore_2",
+      "label": "Regular Pricing 2"
+    },
+    {
+      "type": "header",
+      "content": "Image Accent"
+    },
+    {
+      "type": "image_picker",
+      "id": "accent_image",
+      "label": "Accent image (PNG)",
+      "info": "Upload a PNG image to display as an accent element"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "display_on_card",
+      "label": "Display on card",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "max_width",
+      "label": "Maximum width",
+      "options": [
+        {
+          "value": "",
+          "label": "None"
+        },
+        {
+          "value": "max-w-xl",
+          "label": "Small"
+        },
+        {
+          "value": "max-w-2xl",
+          "label": "Medium"
+        },
+        {
+          "value": "max-w-4xl",
+          "label": "Large"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Color"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme1",
+      "label": "Color scheme"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_gradient_background",
+      "label": "Use gradient background"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Pricing Tier",
+      "type": "pricing_tier",
+      "settings": [
+        {
+          "type": "text",
+          "id": "quantity_text",
+          "label": "Quantity",
+          "info": "Enter the quantity range or value"
+        },
+        {
+          "type": "number",
+          "id": "discount1",
+          "label": "Discount - Item A"
+        },
+        {
+          "type": "number",
+          "id": "discount2",
+          "label": "Discount - Item B"
+        }
+      ]
+    },
+    {
+      "name": "Background Shape",
+      "type": "background_shape",
+      "limit": 5,
+      "settings": [
+        {
+          "type": "select",
+          "id": "shape",
+          "label": "Shape",
+          "options": [
+            {
+              "value": "circle",
+              "label": "Circle"
+            },
+            {
+              "value": "square",
+              "label": "Square"
+            },
+            {
+              "value": "triangle",
+              "label": "Triangle"
+            }
+          ],
+          "default": "circle"
+        }
+      ]
+    },
+    {
+      "name": "Background Pattern",
+      "type": "background_pattern",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "pattern",
+          "label": "Pattern",
+          "options": [
+            {
+              "value": "dots",
+              "label": "Dots"
+            },
+            {
+              "value": "lines",
+              "label": "Lines"
+            }
+          ],
+          "default": "dots"
+        }
+      ]
+    },
+    {
+      "name": "Sticker",
+      "type": "sticker",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "New"
+        }
+      ]
+    },
+    {
+      "name": "Shape Divider",
+      "type": "shape_divider",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style",
+          "options": [
+            {
+              "value": "wave",
+              "label": "Wave"
+            },
+            {
+              "value": "curve",
+              "label": "Curve"
+            }
+          ],
+          "default": "wave"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer",
+      "aside"
+    ]
+  }
+}
+{% endschema %}

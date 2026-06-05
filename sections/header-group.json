@@ -1,0 +1,121 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "Header",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "settings": {
+        "home_page_only": false,
+        "display": "scrolling_text",
+        "text": "🧣🍷We listened! NEW Winter Jelly Shades 🫐☃️ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎  ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎  📦Free Shipping on Orders over $35‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎  ‎ ‎",
+        "link": "shopify://collections/winter-jellies",
+        "color_scheme": "scheme2",
+        "use_gradient_background": false,
+        "repeat_text": true,
+        "shape_between_text": "none",
+        "animate_shape_between_text": true,
+        "speed": 130,
+        "direction": ""
+      }
+    },
+    "header": {
+      "type": "header",
+      "blocks": {
+        "simple_link_HCALUw": {
+          "type": "simple_link",
+          "settings": {
+            "nav_title": "Wholesale",
+            "nav_url": "https://blankbeauty.com/pages/collab?view=wholesale-lp",
+            "nav_special": false
+          }
+        },
+        "simple_link_rB7qyP": {
+          "type": "simple_link",
+          "settings": {
+            "nav_title": "Shop All",
+            "nav_url": "shopify://collections/shop-all",
+            "nav_special": false
+          }
+        },
+        "shop_nav_RbBfyT": {
+          "type": "shop_nav",
+          "settings": {
+            "nav_title": "Shop By Type",
+            "nav_url": "",
+            "nav_src": "2026-main",
+            "nav_ft": "",
+            "nav_ftIMG": "shopify://shop_images/69F73C9F-B386-410F-8ED8-6671CC629FF9.jpg",
+            "nav_special": false
+          }
+        },
+        "button_list_yVbNwX": {
+          "type": "button_list",
+          "settings": {
+            "nav_title": "Collections",
+            "nav_url": "shopify://collections",
+            "nav_src": "shop-collections",
+            "showFT": true,
+            "ftTitle": "Collections",
+            "navFt1": "winter-jellies",
+            "navFtImg1": "shopify://shop_images/3_fab27eb8-2f17-41c2-aa1b-4e065ea304bf.png",
+            "navFt2": "bestselling-bundles",
+            "navFtImg2": "shopify://shop_images/2_f26f8110-7042-4594-9bd3-7ee38556d2c2.png",
+            "navFt3": "warm-spices",
+            "nav_special": false
+          }
+        }
+      },
+      "block_order": [
+        "simple_link_HCALUw",
+        "simple_link_rB7qyP",
+        "shop_nav_RbBfyT",
+        "button_list_yVbNwX"
+      ],
+      "settings": {
+        "secondary_linklist": "secondary-menu-dev",
+        "header_layout": "navigation_left_logo_center",
+        "header_show_search": true,
+        "sticky_header": true,
+        "show_icons": true,
+        "enable_overlay_on_homepage": false,
+        "enable_overlay_on_collection_pages": false,
+        "enable_overlay_on_product_pages": false,
+        "overlay_color_scheme": "scheme-fb072d47-ffd8-4e3a-ae02-ee8afc21da23",
+        "transparent_when_overlaid_and_stuck": true,
+        "overlay_show_separator_border": false,
+        "overlay_first_section_padding_top_desktop": 6,
+        "overlay_first_section_padding_top_mobile": 6,
+        "color_scheme": "scheme1",
+        "navDropTextColor": "#ffffff",
+        "navDropBG": "#000000",
+        "navColor": "",
+        "navColorHover": "",
+        "navBottomBorder": false,
+        "navBottomBorderColor": "",
+        "navAllButton": "",
+        "navAllTextColor": "",
+        "sidebar_show_footer_menu": false,
+        "sidebar_show_social_icons": true,
+        "nav_featured_item": true,
+        "nav_featured_url": "shopify://pages/create-your-custom-color",
+        "nav_featured_label": "create a color+",
+        "nav_featured_position": "first_item_in_navigation",
+        "nav_featured_button_color": "",
+        "nav_featured_button_shadow": false
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "header"
+  ]
+}

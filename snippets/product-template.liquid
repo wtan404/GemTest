@@ -1,0 +1,877 @@
+{% liquid
+  assign section_color = section.settings.color_scheme
+  assign current_variant = product.selected_or_first_available_variant
+  assign featured_media = product.media.first | default: product.featured_media
+  assign color_custom = product.metafields.custom_fields.hex
+  assign models = product.media | where: 'media_type', 'model'
+  assign gallery_images = section.blocks | where: 'type', 'gallery_images'
+  assign image_index = 0
+  assign media_count = 0
+
+  for block in gallery_images
+    for i in (1..10)
+      assign media_key = 'image_' | append: i
+      assign media = block.settings[media_key]
+      if media != blank
+        assign media_count = media_count | plus: 1
+      endif
+    endfor
+  endfor
+
+  assign images_size = product.media | where: 'media_type', 'image' | size
+  assign product_media_size = product.media | size
+
+  if images_size < product_media_size
+    assign has_interactive_media = true
+  else
+    assign has_interactive_media = false
+  endif
+
+  assign final_media_count = product.media.size | plus: media_count
+  assign final_featured_media_id = 0
+
+  if section.settings.crop != ''
+    assign ratio_1 = section.settings.crop | split: ' ' | first | split: '' | last | plus: 0.0
+    assign ratio_2 = section.settings.crop | split: ' ' | last | split: '' | last | plus: 0.0
+    assign tallest_media_aspect_ratio = ratio_1 | divided_by: ratio_2
+  else
+    assign tallest_media_aspect_ratio = product.media | map: 'aspect_ratio' | sort | first
+  endif
+
+  assign desktop_sizes_base = 'calc((100vw / 12) * ' | append: media_desktop_cols | append: ')'
+
+  if product.media.size <= 1
+    assign desktop_sizes = desktop_sizes_base
+  elsif section.settings.thumbnails_position == 'under'
+    assign desktop_sizes = desktop_sizes_base
+
+    if section.settings.thumbnail_size == 'standard'
+      assign thumbnails_per_row = 5
+    else
+      assign thumbnails_per_row = 4
+    endif
+
+    assign desktop_thumbnails_sizes = 'calc(' | append: desktop_sizes_base | append: ' / ' | append: thumbnails_per_row | append: ')'
+  else
+    if section.settings.thumbnail_size == 'standard'
+      assign thumbnails_col_width = 2
+    else
+      assign thumbnails_col_width = 3
+    endif
+
+    assign media_inner_col_width = 12 | minus: thumbnails_col_width
+
+    assign desktop_thumbnails_sizes = 'calc((' | append: desktop_sizes_base | append: ' / 12) * ' | append: thumbnails_col_width | append: ')'
+
+    assign desktop_sizes = 'calc((' | append: desktop_sizes_base | append: ' / 12) * ' | append: media_inner_col_width | append: ')'
+  endif
+
+  assign mobile_width_class = section.settings.media_mobile_width
+  case mobile_width_class
+    when 'w-4/5'
+      assign mobile_sizes = '80vw'
+    when 'w-3/4'
+      assign mobile_sizes = '75vw'
+    when 'w-2/3'
+      assign mobile_sizes = '67vw'
+    when 'w-1/2'
+      assign mobile_sizes = '50vw'
+    else
+      assign mobile_sizes = '100vw'
+  endcase
+
+  assign sizes = '(min-width: 990px) ' | append: desktop_sizes | append: ', ' | append: mobile_sizes
+
+  assign product_form_id = 'product-form-' | append: section.id
+  assign media_desktop_width = section.settings.desktop_media_width | split: '_' | first
+  assign content_desktop_width = section.settings.desktop_media_width | split: '_' | last
+  assign media_desktop_cols = section.settings.desktop_media_width | split: '_' | first | split: '' | last | plus: 0
+
+  if media_desktop_width == 'lg:col-span-6'
+    assign custom_content = 'custom-content'
+  endif
+%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --max-possible-width: min(var(--max-site-width), 100vw);
+    --column-width: calc((var(--max-possible-width) - (var(--section-x-padding) * 2)  - var(--grid-gap)*11) / 12);
+    --media-width: calc((var(--column-width) * {{ media_desktop_cols }}) + (var(--grid-gap) * {{ media_desktop_cols | minus: 1 }}));
+    --media-column-width: calc((var(--media-width) - (calc(var(--grid-gap)/2)*11)) / 12);
+    --feature-media-width: calc((var(--media-width) - (var(--media-column-width)*2) - (calc(var(--grid-gap)/2)*2)));
+    --largest-media-aspect-ratio: {{ tallest_media_aspect_ratio }};
+    --thumbnails-height:  calc(var(--feature-media-width) / var(--largest-media-aspect-ratio));
+    --custom-color: {{ color_custom }}
+  }
+</style>
+
+<data-island
+  class="product-main relative overflow-hidden bg-scheme-background text-scheme-text {% if section.settings.use_gradient_background %}bg-scheme-gradient{% endif %}"
+  data-color-scheme="{{ section_color }}"
+  role="banner"
+  x-data="
+    Object.assign(
+      Product({
+        product: {{ product | json | escape }},
+        variant: {{ current_variant | json | escape }},
+        featuredMediaID: {{ final_featured_media_id | json }},
+        mediaCount: {{ final_media_count | json }},
+        template: {{ template | json | escape }},
+        thumbnailsPosition: {{ section.settings.thumbnails_position | json | escape }},
+        showThumbnailsOnMobile: {{ section.settings.show_thumbnails_on_mobile | json }}
+      })
+      {% if section.settings.enable_rename %}
+      ,{
+        isRenaming: false,
+        newName: '{{ product.title | escape }}',
+        renameStatus: 'idle', // idle, loading, success, error
+        renameError: '',
+        renameProduct() {
+          if (this.renameStatus === 'loading') return;
+          this.renameStatus = 'loading';
+          this.renameError = '';
+          const productId = {{ product.id }};
+          const url = `https://us-central1-beauty-by-me-4fc72.cloudfunctions.net/createBbShopifyProducts/renameProduct?productId=${productId}&newName=${encodeURIComponent(this.newName)}`;
+
+          fetch(url)
+            .then(response => {
+              if (!response.ok) {
+                return response.json().then(errorData => {
+                  throw new Error(errorData.message || `Request failed with status ${response.status}`);
+                }).catch(() => {
+                  throw new Error(`Request failed with status ${response.status}`);
+                });
+              }
+              return response.json();
+            })
+            .then(data => {
+              this.renameStatus = 'success';
+              this.product.title = this.newName;
+              this.isRenaming = false;
+              setTimeout(() => { this.renameStatus = 'idle' }, 2000);
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              this.renameStatus = 'error';
+              this.renameError = error.message || 'An error occurred.';
+            });
+        },
+        cancelRename() { this.isRenaming = false; this.newName = this.product.title; this.renameStatus = 'idle'; this.renameError = ''; }
+      }
+      {% endif %}
+    )
+  "
+  src="product"
+  data-product-root="{{ section.id }}"
+>
+  <div class="section-content relative z-10 mx-auto max-w-site py-section-vertical-spacing lg:px-section">
+    {% if section.settings.title != '' %}
+      <h2 class="inline-heading-rte font-heading heading-standard  heading-style break-words text-center {{ settings.heading_drop_shadow_style }}">
+        {{ section.settings.title }}
+      </h2>
+    {% endif %}
+
+    <div class="{% if is_feature %}{% if section.settings.title != '' %}section-content-top-margin{% endif %}{% endif %}">
+      <div class="product-main__grid grid grid-cols-1 lg:grid-cols-12 {{ custom_content }}">
+        <div class="product-media relative col-span-full {{ media_desktop_width }}">
+          {% assign shape_id = section.id %}
+          {%- render 'collection-shape-defs',
+            shape: section.settings.image_shape,
+            section_id: shape_id,
+            item_count: product.media.size
+          -%}
+          <div class="{%- if section.settings.thumbnails_position != 'left' -%}product-thumbnail--bottom{%- endif -%}">
+            <div class="relative grid grid-cols-1 gap-3 lg:grid-cols-12 lg:gap-12">
+              <div class="product-thumbnail__content {% if section.settings.thumbnails_position == 'left' %}{% if section.settings.thumbnail_size == 'standard' %}col-span-2{% else %}col-span-3{% endif %}{% else %}col-span-full{% endif %}{% if section.settings.show_thumbnails_on_mobile == true %} show-on-mobile{% endif %}">
+                {%- assign thumbnails_id = 'thumbnails-' | append: section.id -%}
+                {%- render 'collection-shape-defs',
+                  shape: section.settings.thumbnail_shape,
+                  section_id: thumbnails_id,
+                  item_count: final_media_count
+                -%}
+
+                <div class="thumbnails-container">
+                  <data-island
+                    id="slideshow-thumbnails-{{ section.id }}"
+                    class="splide splide--thumbnails"
+                    x-data="ProductThumbnails"
+                  >
+                    <div class="splide__track h-full">
+                      {%- if section.settings.thumbnails_position == 'left' -%}
+                        <div
+                          class="thumbnails-overflow-indicator-top pointer-events-none absolute left-0 right-0 top-0 z-[2] h-24 w-full bg-gradient-to-b from-scheme-background to-scheme-background-0 transition-opacity duration-150"
+                          :class="{ 'opacity-0' : firstVisible }"
+                        ></div>
+                      {%- endif -%}
+                      <ul class="w-full splide__list h-full {% if section.settings.thumbnail_size == 'standard' %}grid-cols-5{% else %}grid-cols-4{% endif %}">
+                        {%- assign current_media_index = 0 -%}
+                        {%- for media in product.media -%}
+                          {%- render 'product-thumbnail',
+                            media: media,
+                            section: section,
+                            media_id: current_media_index,
+                            thumbnails_id: thumbnails_id,
+                            index: current_media_index,
+                            featured_media: featured_media,
+                            sizes: desktop_thumbnails_sizes
+                          -%}
+                          {%- assign current_media_index = current_media_index | plus: 1 -%}
+                        {%- endfor -%}
+
+                        {% for block in gallery_images %}
+                          {%- for i in (1..10) -%}
+                            {%- assign media_key = 'image_' | append: i -%}
+                            {%- assign media_setting = block.settings[media_key] -%}
+                            {%- if media_setting != blank -%}
+                              {%- render 'product-thumbnail',
+                                media: media_setting,
+                                section: section,
+                                media_id: current_media_index,
+                                thumbnails_id: thumbnails_id,
+                                index: current_media_index,
+                                featured_media: featured_media,
+                                sizes: desktop_thumbnails_sizes
+                              -%}
+                              {%- assign current_media_index = current_media_index | plus: 1 -%}
+                            {%- endif -%}
+                          {%- endfor -%}
+                        {% endfor %}
+                      </ul>
+                      {%- if section.settings.thumbnails_position == 'left' -%}
+                        <div
+                          class="thumbnails-overflow-indicator-bottom pointer-events-none absolute bottom-0 left-0 right-0 z-[2] h-24 w-full bg-gradient-to-t from-scheme-background to-scheme-background-0 transition-opacity duration-150"
+                          :class="{ 'opacity-0' : lastVisible }"
+                        ></div>
+                      {%- endif -%}
+                    </div>
+                  </data-island>
+                </div>
+              </div>
+
+              <div class="{% if section.settings.thumbnails_position == 'left' %}{% if section.settings.thumbnail_size == 'standard' %}lg:col-span-10 lg:col-start-3{% else %}lg:col-span-9 lg:col-start-4{% endif %}{% else %}row-start-1 col-span-full{% endif %} min-w-[0]">
+                <div
+                  id="slideshow-{{ section.id }}"
+                  class="splide splide--product [&:not(.is-initialized)]:visible"
+                  data-drag-disabled="{{ has_interactive_media }}"
+                  data-first-media="{{ final_featured_media_id }}"
+                  {% if section.settings.thumbnails_position != 'left' %}
+                    data-ltr
+                  {% endif %}
+                  data-thumbnails="slideshow-thumbnails-{{ section.id }}"
+                  {% if section.settings.media_mobile_width == 'w-4/5' %}
+                    data-two-slides-visible-on-mobile
+                  {% endif %}
+                >
+                  <div class="splide__track">
+                    <ul class="feature-media-list splide__list w-full lg:relative lg:grid" role="list">
+                      {%- assign current_media_index = 0 -%}
+                      {%- for media in product.media -%}
+                        {% liquid
+                          if section.settings.image_shape == 'blob'
+                            assign shape_id = section.id | append: '-' | append: current_media_index
+                          endif
+                        %}
+                        <li
+                          class="feature-media-item block max-lg:[.splide:not(.is-active)_&]:hidden lg:hidden {{ section.settings.media_mobile_width }} splide__slide px-section lg:w-full lg:px-0"
+                          data-media-id="{{ current_media_index }}"
+                          x-transition.opacity.duration.200ms
+                          x-show="isMaxLgBreakpoint || currentMediaId == {{ current_media_index }}"
+                          :class="{ 'lg:hidden' : currentMediaId != {{ current_media_index }} }"
+                          {% if media.media_type == 'image' %}
+                            data-product-media-type-image
+                            data-product-image-index="{{ image_index }}"
+                            {% assign image_index = image_index | plus: 1 %}
+                          {% endif %}
+                        >
+                          <div
+                            {% if section.settings.enable_image_zoom and media.media_type == 'image' %}
+                              @click.prevent="openZoom('{{ current_media_index }}')"
+                              @keyup.space.prevent="openZoom('{{ current_media_index }}')"
+                              @keyup.enter.prevent="openZoom('{{ current_media_index }}')"
+                              class="cursor-zoom-in"
+                              tabindex="0"
+                              role="button"
+                            {% endif %}
+                          >
+                            {% render 'media', media: media, shape_id: shape_id, sizes: sizes, loading: 'lazy', crop: section.settings.crop, image_shape: section.settings.image_shape, index: current_media_index, preload: forloop.first, product: product %}
+                          </div>
+                        </li>
+                        {%- assign current_media_index = current_media_index | plus: 1 -%}
+                      {%- endfor -%}
+
+                      {% for block in gallery_images %}
+                        {%- liquid
+                          if section.settings.image_shape == 'blob'
+                            assign shape_id = section.id | append: '-' | append: current_media_index
+                          endif
+                          assign hex_color_position = block.settings.hex_color_position
+                        -%}
+                        {%- for i in (1..10) -%}
+                          {%- assign media_key = 'image_' | append: i -%}
+                          {%- assign media_setting = block.settings[media_key] -%}
+                          {%- if media_setting != blank -%}
+                            {%- liquid
+                              if hex_color_position == i
+                                assign hex_custom = 'custom-color'
+                              else
+                                assign hex_custom = ''
+                              endif
+                            -%}
+                            <li
+                              class="feature-media-item {{ hex_custom }} block max-lg:[.splide:not(.is-active)_&]:hidden lg:hidden {{ section.settings.media_mobile_width }} splide__slide px-section lg:w-full lg:px-0"
+                              data-media-id="{{ current_media_index }}"
+                              x-transition.opacity.duration.200ms
+                              x-show="isMaxLgBreakpoint || currentMediaId == {{ current_media_index }}"
+                              :class="{ 'lg:hidden' : currentMediaId != {{ current_media_index }} }"
+                              data-product-media-type-image
+                              data-product-image-index="{{ image_index }}"
+                              {% assign image_index = image_index | plus: 1 %}
+                            >
+                              <div
+                                {% if section.settings.enable_image_zoom %}
+                                  @click.prevent="openZoom('{{ current_media_index }}')"
+                                  @keyup.space.prevent="openZoom('{{ current_media_index }}')"
+                                  @keyup.enter.prevent="openZoom('{{ current_media_index }}')"
+                                  class="cursor-zoom-in"
+                                  tabindex="0"
+                                  role="button"
+                                {% endif %}
+                              >
+                                {% render 'media', media: media_setting, shape_id: shape_id, sizes: sizes, loading: 'lazy', crop: section.settings.crop, image_shape: section.settings.image_shape, index: current_media_index, preload: false, product: product %}
+                              </div>
+                            </li>
+                            {%- assign current_media_index = current_media_index | plus: 1 -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+                {% # theme-check-disable VariableName %}
+                {% # https://github.com/Shopify/theme-tools/issues/397 %}
+                {% assign first_3d_model = product.media | where: 'media_type', 'model' | first %}
+                {% # theme-check-enable VariableName %}
+                {%- if first_3d_model -%}
+                  <div class="mt-2.5 px-section lg:mb-0">
+                    <button
+                      aria-label="{{ 'products.media.view_in_your_space_label' | t }}"
+                      class="push-btn w-full"
+                      data-shopify-xr
+                      data-shopify-model3d-id="{{ first_3d_model.id }}"
+                      data-shopify-title="{{ product.title }}"
+                      data-shopify-xr-hidden
+                    >
+                      <span class="push-btn__surface inline-block w-full">
+                        <span class="-mt-0.5 inline-block w-6 align-middle">
+                          {% render 'icon-model' %}
+                        </span>
+                        <span class="text-sm">
+                          {{- 'products.media.view_in_your_space' | t -}}
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                {%- endif -%}
+                {%- comment -%}
+                 {%- #commenting out, trying to fix double navigation -%}
+                <div class="splide__arrows hidden">
+                  {%- render 'splide-navigation' -%}
+                </div>
+                {%- endcomment -%}
+                {%- if section.settings.show_slideshow_arrows -%}
+                  <div class="px-section splide__arrows items-center justify-end gap-2 text-right lg:px-0">
+                    <div class="controls relative z-10 ml-auto inline-block {% if settings.button_shadow_direction contains 'top' %}pt-button-shadow{% else %}pb-button-shadow{% endif %}">
+                      <div class="flex gap-2">
+                        <button
+                          class="push-btn"
+                          @click="changeMedia('prev')"
+                          @keydown.space="changeMedia('prev')"
+                          @keydown.left.prevent="changeMedia('prev')"
+                          @keydown.enter="changeMedia('prev')"
+                          :class="{'opacity-50 pointer-events-none': currentMediaId == 0}"
+                        >
+                          <span class="sr-only">
+                            {{- 'sections.slideshow.previous_slide' | t -}}
+                          </span>
+                          <span class="push-btn__surface p-0 shadow-none align-bottom">
+                            <span class="block size-8 md:size-12">
+                              {%- render 'icon-previous-new' -%}
+                            </span>
+                          </span>
+                        </button>
+                        <button
+                          class="push-btn"
+                          @click="changeMedia('next')"
+                          @keydown.space="changeMedia('next')"
+                          @keydown.right.prevent="changeMedia('next')"
+                          @keydown.enter="changeMedia('next')"
+                          :class="{'opacity-50 pointer-events-none': currentMediaId == mediaCount - 1}"
+                        >
+                          <span class="sr-only">
+                            {{- 'sections.slideshow.next_slide' | t -}}
+                          </span>
+                          <span class="push-btn__surface p-0 shadow-none align-bottom">
+                            <span class="block size-8 md:size-12">
+                              {%- render 'icon-next-new' -%}
+                            </span>
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-block-container product-content col-span-full relative {{ content_desktop_width }} px-section lg:px-0 ">
+          {%- assign last_block_was_card = false -%}
+
+          {% for block in section.blocks %}
+            {%- liquid
+              if block.type == 'variant_picker' and product.has_only_default_variant and block.settings.enable_product_sibling == false
+                continue
+              endif
+
+              assign block_base_classes = 'product-block mt-5 first:mt-0 product-block-' | append: block.type | replace: '_', '-'
+              assign is_card = block.settings.display_on_card | default: false
+              assign card_start = false
+
+              if is_card
+                if forloop.first or last_block_was_card == false
+                  assign card_start = true
+                endif
+              endif
+            -%}
+            {%- capture card_wrapper_html -%}
+              <div class="{{ block_base_classes }} {% if settings.card_shadow_direction contains 'top' %}pt-card-shadow{% else %}pb-card-shadow{% endif %}">
+                <div class="card">
+                  <div class="card__surface p-5">
+                    ||__card-content__||
+                  </div>
+                </div>
+              </div>
+            {%- endcapture -%}
+
+            {%- if section.blocks.size > 1 -%}
+              {%- if card_start -%}
+                {{- card_wrapper_html | split: '||__card-content__||' | first -}}
+              {%- endif -%}
+            {%- endif -%}
+
+            {% case block.type %}
+              {% when '@app' %}
+                <div class="{{ block_base_classes }}" {{ block.shopify_attributes }}>
+                  {% render block %}
+                </div>
+              {% when 'title' %}
+                <div
+                  class="{{ block_base_classes }} break-words"
+                  {{ block.shopify_attributes }}
+                >
+                  {% assign header_tag = 'h1' %}
+                  {% if is_feature %}
+                    {% assign header_tag = 'h2' %}
+                  {% endif %}
+                  {% if section.settings.enable_rename %}
+                    <div x-show="!isRenaming">
+                      <div class="flex items-baseline gap-4 wtTest">
+                        {%- if is_feature -%}
+                          <a href="{{ product.url }}">
+                        {%- endif -%}
+                        <{{ header_tag }} class="font-heading heading-feature {{ block.settings.text_align }}" x-text="product.title">
+                          {{ product.title }}
+                        </{{ header_tag }}>
+                        
+                        <h3>{{ product.type }}</h3>
+                        {%- if is_feature -%}
+                          </a>
+                        {%- endif -%}
+                        <div x-show="renameStatus === 'success'" x-cloak class="text-green-600 flex items-center gap-1 transition-opacity" x-transition:enter-start="opacity-0" x-transition:leave-end="opacity-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                          <span class="text-sm">Updated!</span>
+                        </div>
+                      </div>
+                      <a href="#" @click.prevent="isRenaming = true; newName = product.title; renameStatus = 'idle'; $nextTick(() => $refs.renameInput.focus())" class="text-sm theme-underline mt-1 inline-block">Rename Color</a>
+                    </div>
+
+                    <div x-show="isRenaming" x-cloak @keydown.escape.window="cancelRename()">
+                      <div class="flex items-center gap-2">
+                        <input type="text" x-model="newName" x-ref="renameInput" @keydown.enter.prevent="renameProduct()" class="input w-full" :class="{ 'border-scheme-error': renameStatus === 'error' }">
+
+                        <button @click="renameProduct()" class="push-btn flex-shrink-0" :disabled="renameStatus === 'loading'">
+                          <span class="push-btn__surface p-2">
+                            <template x-if="renameStatus !== 'loading'">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                            </template>
+                            <template x-if="renameStatus === 'loading'">
+                              <svg class="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                            </template>
+                          </span>
+                        </button>
+
+                        <button @click="cancelRename()" class="push-btn flex-shrink-0">
+                            <span class="push-btn__surface p-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </span>
+                        </button>
+                      </div>
+
+                      <p x-show="renameStatus === 'error'" x-text="renameError" class="text-scheme-error text-sm mt-1"></p>
+                    </div>
+                  {% else %}
+                    {%- if is_feature -%}
+                      <a href="{{ product.url }}">
+                    {%- endif -%}
+                    <{{ header_tag }} class="font-heading heading-feature {{ block.settings.text_align }}">
+                      {{ product.title }}
+                    </{{ header_tag }}>
+                    <h3 style="text-decoration:underline;font-style:italic;letter-spacing:1px;">{{ product.type }}</h3>
+                    {%- if is_feature -%}
+                      </a>
+                    {%- endif -%}
+                  {% endif %}
+                </div>
+              {% when 'price' %}
+                {%- if block.settings.show_review_text -%}
+                <div class="flex-row"  style="align-items:center">
+                  {%- if block.settings.review_snippet -%}
+                    {{ block.settings.review_snippet }}
+                  {%- else -%}
+                    {%- render 'review-text' -%}
+                  {%- endif -%}
+                   {% if block.settings.additional_text != blank %}
+                    <span style="margin-left:20px;"> | </span>
+                    <span class="rte">
+                      {{ block.settings.additional_text }}
+                    </span>
+                    {% endif %}
+                </div>
+                {%- endif -%}
+                <div class="flex prodCoreDets">
+                {% render 'product-block-price',
+                  product: product,
+                  current_variant: current_variant,
+                  block: block,
+                  block_base_classes: block_base_classes
+                %}
+              {% when 'quantity_selector' %}
+                {% render 'product-block-quantity',
+                  product_form_id: product_form_id,
+                  label_class: label_class,
+                  block: block,
+                  block_base_classes: block_base_classes
+                %}
+                </div>
+              {% when 'variant_picker' %}
+                {%- liquid
+                  if block.settings.enable_product_sibling
+                    render 'product-sibling', product: product
+                  else
+                    if block.settings.hide_option_labels
+                      assign label_class = 'sr-only'
+                    else
+                      assign label_class = 'block font-secondary text-scheme-text text-sm'
+                    endif
+                    render 'product-block-variant-picker', product: product, block: block, label_class: label_class, block_base_classes: block_base_classes
+                  endif
+                -%}
+              {% when 'buy_buttons' %}
+                {% render 'product-block-buy-buttons',
+                  product: product,
+                  product_form_id: product_form_id,
+                  label_class: label_class,
+                  current_variant: current_variant,
+                  block: block,
+                  block_base_classes: block_base_classes
+                %}
+              {%- when 'vendor' -%}
+                {% render 'product-block-vendor',
+                  product: product,
+                  block: block,
+                  block_base_classes: block_base_classes
+                %}
+              {%- when 'star_rating' -%}
+                {% render 'product-block-star-rating',
+                  product: product,
+                  block: block,
+                  block_base_classes: block_base_classes
+                %}
+              {%- when 'text' -%}
+                {% render 'product-block-text', block: block, block_base_classes: block_base_classes %}
+              {%- when 'description' -%}
+                {% render 'product-block-description',
+                  product: product,
+                  block: block,
+                  block_base_classes: block_base_classes
+                %}
+              {%- when 'inventory_status' -%}
+                {% render 'product-block-inventory-status',
+                  product: product,
+                  block: block,
+                  block_base_classes: block_base_classes
+                %}
+              {%- when 'popup' -%}
+                {% render 'product-block-popup', block: block, block_base_classes: block_base_classes %}
+              {%- when 'collapsible_tab' -%}
+                {% render 'product-block-collapsible-tab', block: block, block_base_classes: block_base_classes %}
+              {%- when 'icon_row' -%}
+                {% render 'product-block-icon-row', block: block, block_base_classes: block_base_classes %}
+              {%- when 'image_row' -%}
+                {% render 'product-block-image-row', block: block, block_base_classes: block_base_classes %}
+              {%- when 'nutritional_information' -%}
+                {% render 'product-block-nutritional-information',
+                  block: block,
+                  block_base_classes: block_base_classes
+                %}
+              {%- when 'horizontal_bar_chart' -%}
+                {% render 'product-block-horizontal-bar-chart',
+                  block: block,
+                  block_base_classes: block_base_classes
+                %}
+              {%- when 'comparative_scale' -%}
+                {% render 'product-block-comparative-scale', block: block, block_base_classes: block_base_classes %}
+              {%- when 'complementary' -%}
+                {% liquid
+                  if recommendations.products_count == 1
+                    assign grid_cols_class = 'grid-cols-1'
+                  else
+                    unless block.settings.product_tile_style == 'mini'
+                      assign remainder = recommendations.products_count | modulo: 2
+                      case remainder
+                        when 0
+                          assign grid_cols_class = 'grid-cols-2'
+                        else
+                          assign grid_cols_class = 'grid-cols-3'
+                      endcase
+                    endunless
+                  endif
+
+                  assign shape_id = block.id
+                  if settings.product_tile_media_shape == 'blob'
+                    assign shape_id = block.id | append: '-' | append: forloop.index0
+                  endif
+
+                  assign enable_quick_buy = false
+                  if block.settings.product_tile_style == 'mini'
+                    assign shape = settings.product_tile_mini_media_shape
+                    assign enable_quick_buy = block.settings.enable_quick_buy
+                  else
+                    assign shape = settings.product_tile_media_shape
+
+                    assign content_desktop_cols = content_desktop_width | split: '' | last | plus: 0
+
+                    assign complementary_desktop_sizes_base = 'calc((100vw / 12) * ' | append: content_desktop_cols | append: ')'
+
+                    assign complementary_grid_cols = grid_cols_class | split: '' | last | plus: 0
+
+                    assign complementary_desktop_sizes = 'calc(' | append: complementary_desktop_sizes_base | append: ' / ' | append: complementary_grid_cols | append: ')'
+
+                    assign complementary_mobile_sizes = 'calc(100vw / ' | append: complementary_grid_cols | append: ')'
+
+                    assign complementary_sizes = '(min-width: 990px) ' | append: complementary_desktop_sizes | append: ', ' | append: complementary_mobile_sizes
+                  endif
+                %}
+
+                {%- render 'collection-shape-defs',
+                  shape: shape,
+                  section_id: block.id,
+                  item_count: recommendations.products_count
+                -%}
+                <div
+                  class="{{ block_base_classes }} text-sm"
+                  {{ block.shopify_attributes }}
+                >
+                  {%- if recommendations.performed and recommendations.products_count > 0 -%}
+                    <div class="related-products">
+                      {%- if block.settings.block_heading != blank -%}
+                        <h2 class="font-heading break-word heading-secondary mb-5">
+                          {{ block.settings.block_heading }}
+                        </h2>
+                      {%- endif -%}
+                      <ul class="mt-5 grid {{ grid_cols_class }} gap-5">
+                        {%- for product in recommendations.products -%}
+                          {%- if block.settings.product_tile_style == 'mini' -%}
+                            {%- render 'product-tile-mini',
+                              product: product,
+                              shape_id: shape_id,
+                              index: forloop.index0,
+                              enable_quick_buy: enable_quick_buy
+                            -%}
+                          {%- else -%}
+                            {%- render 'product-tile',
+                              product: product,
+                              shape_id: shape_id,
+                              index: forloop.index0,
+                              enable_quick_buy: enable_quick_buy,
+                              loading: 'eager',
+                              sizes: complementary_sizes
+                            -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+                      </ul>
+                    </div>
+                  {% else %}
+                    {% capture section_url %}{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ block.settings.product_list_limit }}&intent=complementary{% endcapture %}
+                    <data-island
+                      class="related-products"
+                      x-data
+                      x-html="
+                        $fetchedFragment(
+                          '{{ section_url }}',
+                          '.related-products',
+                          {% if request.design_mode %}
+                            null,
+                            true
+                          {% endif %}
+                        )
+                      "
+                      on="idle"
+                    ></data-island>
+                  {% endif %}
+                </div>
+              {%- when 'share_buttons' -%}
+                <div
+                  class="{{ block_base_classes }}"
+                  {{ block.shopify_attributes }}
+                >
+                  {% render 'social-sharing',
+                    share_title: product.title,
+                    share_permalink: product.url,
+                    share_image: product
+                  %}
+                </div>
+              {%- when 'liquid' -%}
+                <div
+                  class="{{ block_base_classes }}"
+                  {{ block.shopify_attributes }}
+                >
+                  {{ block.settings.liquid }}
+                </div>
+              {%- when 'tags' -%}
+                {% render 'product-block-tags',
+                  product: product,
+                  block: block,
+                  block_base_classes: block_base_classes
+                %}
+              {%- when 'create_color' -%}
+                {% render 'product-block-create-color', block: block, block_base_classes: block_base_classes %}
+              {%- when 'features_list' -%}
+                {% render 'product-block-features-list', block: block, block_base_classes: block_base_classes %}
+              {%- when 'dot_rating' -%}
+                {% render 'product-block-dot-rating', block: block, block_base_classes: block_base_classes %}
+              {%- when 'tabs' -%}
+                {% render 'product-block-tabs', block: block, block_base_classes: block_base_classes %}
+              {%- when 'information_list' -%}
+                {% render 'product-block-information-list', block: block, block_base_classes: block_base_classes %}
+              {%- when 'spacer' -%}
+                {% render 'product-block-spacer', block: block %}
+            {% endcase %}
+
+            {%- liquid
+              if block.settings.display_on_card
+                assign last_block_was_card = true
+              else
+                assign last_block_was_card = false
+              endif
+
+              assign card_end = false
+
+              assign next_index = forloop.index0 | plus: 1
+              assign next_block = section.blocks[next_index]
+
+              assign next_block_type = next_block.type
+
+              if next_block_type == 'variant_picker' and product.has_only_default_variant
+                assign next_index = next_index | plus: 1
+                assign next_block = section.blocks[next_index]
+              endif
+
+              if is_card
+                if next_block and next_block.settings.display_on_card == true
+                  assign card_end = false
+                else
+                  assign card_end = true
+                endif
+              endif
+
+              if card_end
+                echo card_wrapper_html | split: '||__card-content__||' | last
+              endif
+            -%}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {%- liquid
+    for block in section.blocks
+      case block.type
+        when 'background_shape'
+          render 'block-background-shape', block: block
+        when 'background_pattern'
+          render 'block-background-pattern', block: block, scheme: section.settings.color_scheme
+      endcase
+    endfor
+
+    if section.settings.enable_image_zoom
+      render 'photoswipe'
+    endif
+  -%}
+</data-island>
+
+{%- liquid
+  assign stickers = section.blocks | where: 'type', 'sticker'
+  assign shape_dividers = section.blocks | where: 'type', 'shape_divider'
+  for sticker in stickers
+    render 'block-sticker', block: sticker
+  endfor
+  for shape_divider in shape_dividers
+    render 'block-shape-divider', block: shape_divider
+  endfor
+-%}
+
+{% if models.size %}
+  <script type="application/json" id="ModelJson-{{ section.id }}">
+    {{ product.media | where: 'media_type', 'model' | json }}
+  </script>
+  <script>
+    window.ProductModel = {
+      loadShopifyXR() {
+        Shopify.loadFeatures([
+          {
+            name: 'shopify-xr',
+            version: '1.0',
+            onLoad: this.setupShopifyXR.bind(this),
+          },
+        ]);
+      },
+
+      setupShopifyXR(errors) {
+        if (errors) return;
+
+        if (!window.ShopifyXR) {
+          document.addEventListener('shopify_xr_initialized', () => this.setupShopifyXR());
+          return;
+        }
+
+        document.querySelectorAll('[id^="ModelJson-"]').forEach((modelJSON) => {
+          window.ShopifyXR.addModels(JSON.parse(modelJSON.textContent));
+          modelJSON.remove();
+        });
+        window.ShopifyXR.setupXRElements();
+      },
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (Shopify.designMode) {
+        document.querySelectorAll('[data-shopify-xr-hidden]').forEach((element) => element.classList.add('hidden'));
+      }
+      if (window.ProductModel) window.ProductModel.loadShopifyXR();
+    });
+  </script>
+{% endif %}

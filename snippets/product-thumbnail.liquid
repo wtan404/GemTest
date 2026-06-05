@@ -1,0 +1,57 @@
+{%- liquid
+  assign shape_id = thumbnails_id
+
+  if section.settings.thumbnail_shape == 'blob'
+    assign shape_id = thumbnails_id | append: '-' | append: index
+  endif
+
+  if media_id == hex_color_position
+    assign hex_custom = 'custom-color'
+  endif
+-%}
+
+<li
+  class="product-thumbnail-list-item {{ hex_custom }} {% if media_id == 0 %}product-thumbnail-list-item--active{% endif %} relative splide__slide {% if settings.media_shadow_direction contains 'left' %} pt-media-shadow-half{% else %}pb-media-shadow-half{% endif %} {% if settings.media_shadow_direction contains 'left' %}lg:pl-media-shadow-half{% else %}pr-media-shadow-half{% endif %}"
+  data-media-id="{{ media_id }}"
+  :class="{ 'product-thumbnail-list-item--active' : {{ media_id }} === currentMediaId }"
+  {% if index == 0 %}
+    x-ref="firstThumbnail"
+    data-first-thumbnail
+  {% endif %}
+  {% if is_last %}
+    x-ref="lastThumbnail"
+    data-last-thumbnail
+  {% endif %}
+>
+  <a
+    role="button"
+    class="media-thumbnail block"
+    href="{{ media | image_url }}"
+    @click.prevent="currentMediaId = {{ media_id }}"
+    @keydown.space="currentMediaId = {{ media_id }}"
+    @keydown.enter="currentMediaId = {{ media_id }}"
+  >
+    <div class="media--small relative">
+      {%- liquid
+        assign loading = 'lazy'
+
+        if section.index <= 3
+          assign loading = 'eager'
+        endif
+      -%}
+
+      {%- render 'media-image',
+        media: media,
+        shape_id: shape_id,
+        shape: section.settings.thumbnail_shape,
+        crop: section.settings.thumbnail_crop,
+        is_card: section.settings.hide_media_shadow,
+        container_id: section.id,
+        index: index,
+        media_image_id: media_id,
+        loading: loading,
+        sizes: sizes
+      -%}
+    </div>
+  </a>
+</li>

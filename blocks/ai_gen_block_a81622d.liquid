@@ -1,0 +1,227 @@
+{% doc %}
+  @prompt
+    create a module that consists of one cta button. the settings allow us to choose the text and destination. It inherits the styles from primary button., please use the same button style as the "create a color+" button in the header
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-cta-module-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: {{ block.settings.alignment }};
+    align-items: center;
+    padding: {{ block.settings.padding_top }}px {{ block.settings.padding_horizontal }}px {{ block.settings.padding_bottom }}px {{ block.settings.padding_horizontal }}px;
+  }
+
+  .ai-cta-button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: none;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    padding: 12px 24px;
+    min-height: 44px;
+  }
+
+  .ai-cta-button-surface-{{ ai_gen_id }} {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: var(--button-border-radius);
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    text-align: center;
+    font-size: var(--font-size-base);
+    line-height: var(--base-line-height);
+    text-transform: var(--button-text-transform);
+    background: rgb(var(--color-scheme-accent-1));
+    color: rgb(var(--color-scheme-accent-1-contrast));
+    box-shadow: inset 0 0 0 var(--button-border-width) rgb(var(--color-button-border));
+    box-sizing: border-box;
+    transition: transform 0.1s cubic-bezier(0.215, 0.61, 0.355, 1), background-color 0.3s, color 0.3s;
+    font-family: var(--button-font-stack);
+    font-weight: var(--button-font-weight);
+    font-style: var(--button-font-style);
+    letter-spacing: var(--button-letter-spacing);
+  }
+
+  .ai-cta-button-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    left: var(--button-drop-shadow-left-size);
+    top: var(--button-drop-shadow-top-size);
+    height: 100%;
+    width: 100%;
+    border-radius: var(--button-border-radius);
+    display: var(--button-shadow-display);
+    background-color: rgb(var(--color-button-shadow));
+    background-image: var(--color-button-shadow);
+    border-width: var(--button-shadow-border-width);
+    border-color: rgb(var(--color-button-border));
+    z-index: -1;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ai-cta-button-{{ ai_gen_id }}:hover .ai-cta-button-surface-{{ ai_gen_id }} {
+      transform: translate(var(--button-hover-left-size), var(--button-hover-top-size));
+      background: rgb(var(--color-scheme-accent-1));
+      color: rgb(var(--color-scheme-accent-1-contrast));
+      opacity: 0.8;
+    }
+  }
+
+  .ai-cta-button-{{ ai_gen_id }}:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-cta-module-{{ ai_gen_id }} {
+      padding: {{ block.settings.padding_top | times: 0.8 }}px {{ block.settings.padding_horizontal | times: 0.8 }}px {{ block.settings.padding_bottom | times: 0.8 }}px {{ block.settings.padding_horizontal | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-cta-module-{{ ai_gen_id }} bg-scheme-background text-scheme-text" data-color-scheme="{{ block.settings.color_scheme }}" {{ block.shopify_attributes }}>
+  {% if block.settings.button_text != blank %}
+    {% if block.settings.button_link != blank %}
+      <a
+        href="{{ block.settings.button_link }}"
+        class="ai-cta-button-{{ ai_gen_id }} push-btn"
+        {% if block.settings.open_in_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
+      >
+        <span class="ai-cta-button-surface-{{ ai_gen_id }}">
+          {{ block.settings.button_text }}
+        </span>
+      </a>
+    {% else %}
+      <button
+        class="ai-cta-button-{{ ai_gen_id }} push-btn"
+        type="button"
+        disabled
+        style="opacity: 0.6; cursor: not-allowed;"
+      >
+        <span class="ai-cta-button-surface-{{ ai_gen_id }}">
+          {{ block.settings.button_text }}
+        </span>
+      </button>
+    {% endif %}
+  {% else %}
+    <button
+      class="ai-cta-button-{{ ai_gen_id }} push-btn"
+      type="button"
+      disabled
+      style="opacity: 0.6; cursor: not-allowed;"
+    >
+      <span class="ai-cta-button-surface-{{ ai_gen_id }}">
+        Add button text
+      </span>
+    </button>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "CTA button",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Open link in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Button alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 20
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme1",
+      "label": "Color scheme"
+    }
+  ],
+  "presets": [
+    {
+      "name": "CTA button"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}

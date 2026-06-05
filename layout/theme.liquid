@@ -1,0 +1,510 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+  <head>
+
+
+<!-- LAYOUTHUB-V2-HEADER --> 
+{%- render 'layouthub-header' -%}
+<!-- END LAYOUTHUB-V2-HEADER -->
+{{ "layouthub-jquery.min.js" | asset_url | script_tag }}
+{% comment  %}
+ {% endcomment  %}
+<!-- Start of Shoplift scripts -->
+{% render 'shoplift' %}
+<!-- End of Shoplift scripts -->
+
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-54PJH46');</script>
+<!-- End Google Tag Manager -->
+
+ {%- render 'layouthub_header' -%}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+
+    {%- liquid
+      assign main_font = settings.type_main_font
+      assign main_font_bold = main_font | font_modify: 'weight', 'bold'
+      assign heading_font = settings.type_heading_font
+      assign subheading_font = settings.type_subheading_font
+    -%}
+
+    {%- if settings.favicon != blank -%}
+      <link
+        rel="icon"
+        type="image/png"
+        href="{{ settings.favicon | image_url: width: '32x32' }}"
+      >
+    {%- endif -%}
+
+    {%- unless settings.type_header_font.system?
+      and settings.type_body_font.system?
+    -%}
+      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {%- endunless -%}
+
+    <title>
+      {{ page_title }}
+      {%- if current_tags %}
+        &ndash; tagged "{{ current_tags | join: ', ' }}"
+      {%- endif -%}
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %}
+        &ndash; {{ shop.name -}}
+      {%- endunless -%}
+    </title>
+
+    {% if page_description %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+
+    {%- render 'meta-tags' -%}
+    {%- render 'web-fonts' -%}
+
+    <script type="esms-options">
+      {
+        "noLoadEventRetriggers": true
+      }
+    </script>
+
+    <script>
+      if (
+        !(HTMLScriptElement.supports && HTMLScriptElement.supports('importmap'))
+      ) {
+        const importMapShimScriptEl = document.createElement('script');
+        importMapShimScriptEl.src = '{{ 'es-module-shims.bundle.min.js' | asset_url }}'
+        importMapShimScriptEl.async = true;
+
+        document.currentScript.after(importMapShimScriptEl);
+      }
+    </script>
+    <script type="importmap">
+      {
+        "imports": {
+          "vendor": "{{ 'vendor.bundle.min.js' | asset_url }}",
+          "data-island": "{{ 'data-island.bundle.js' | asset_url }}",
+          "product": "{{ 'island-product.bundle.js' | asset_url }}",
+          "product-model": "{{ 'island-product-model.bundle.js' | asset_url }}"
+        }
+      }
+    </script>
+
+    {{ content_for_header }}
+
+    {{ 'base.bundle.css' | asset_url | stylesheet_tag: preload: true }}
+
+    {% render 'js-bridge' %}
+
+    <script>
+      document.documentElement.className =
+        document.documentElement.className.replace('no-js', 'js');
+    </script>
+
+    <script>
+      function debounce(fn, wait) {
+        let t;
+        return (...args) => {
+          clearTimeout(t);
+          t = setTimeout(() => fn.apply(this, args), wait);
+        };
+      }
+    </script>
+
+    <script src="{{ 'utils.js' | asset_url }}" defer></script>
+
+    {% if request.design_mode %}
+      <script src="{{ 'shapes-animations.js' | asset_url }}" defer></script>
+      <script
+        src="{{ 'theme-editor-support.js' | asset_url }}"
+        type="module"
+      ></script>
+    {% endif %}
+
+    {% if template contains 'customers' %}
+      {% comment %}theme-check-disable ParserBlockingScript{% endcomment %}
+      {{ 'shopify_common.js' | shopify_asset_url | script_tag }}
+      {{ 'customer_area.js' | shopify_asset_url | script_tag }}
+      {% comment %}theme-check-enable ParserBlockingScript{% endcomment %}
+    {% endif %}
+
+    <script>
+      window.themeEventsDebugMode = false;
+    </script>
+    <script src="{{ 'theme-events.js' | asset_url }}" async defer></script>
+
+    <style>
+      :root {
+        --max-site-width: 1200px;
+      }
+    </style>
+
+    {% style %}
+      {%- unless settings.type_heading_custom -%}
+        {{ heading_font | font_face: font_display: 'swap' }}
+      {%- endunless -%}
+
+      {%- unless settings.type_main_custom -%}
+        {{ main_font | font_face: font_display: 'swap' }}
+      {%- endunless -%}
+
+      {%- unless settings.type_subheading_custom -%}
+        {{ subheading_font | font_face: font_display: 'swap' }}
+      {%- endunless -%}
+
+      {%- liquid
+        assign main_font_bolder = main_font | font_modify: 'weight', 'bolder'
+        assign main_font_italic = main_font | font_modify: 'style', 'italic'
+        assign main_font_bold_italic = main_font_bold | font_modify: 'style', 'italic'
+
+        if main_font_bold
+          echo main_font_bold | font_face: font_display: 'swap'
+        endif
+        if main_font_italic
+          echo main_font_italic | font_face: font_display: 'swap'
+        endif
+        if main_font_bold_italic
+          echo main_font_bold_italic | font_face: font_display: 'swap'
+        endif
+        if main_font_bolder
+          echo main_font_bolder | font_face: font_display: 'swap'
+        endif
+      -%}
+
+      {% if settings.heading_uppercase -%}
+        {%- capture heading_capitalize -%}uppercase{%- endcapture -%}
+      {% else -%}
+        {%- capture heading_capitalize -%}none{%- endcapture -%}
+      {% endif -%}
+      {%- capture heading_letterspacing -%}{{ settings.heading_letterspacing | divided_by: 1000.0 }}{% unless settings.heading_letterspacing == 0 -%}em{% endunless -%}{%- endcapture -%}
+
+      :root {
+        {% if settings.type_heading_custom %}
+          --heading-font-stack: {{ settings.type_heading_custom_font }}, {{ heading_font.fallback_families }};
+        {%- else -%}
+          --heading-font-stack: {{ heading_font.family }}, {{ heading_font.fallback_families }};
+        {% endif %}
+
+        --heading-font-weight: {{ heading_font.weight }};
+        --heading-font-style: {{ heading_font.style }};
+        --heading-letterspacing: {{ heading_letterspacing }};
+        --heading-capitalize: {{ heading_capitalize }};
+
+        {% if settings.type_main_custom %}
+          --main-font-stack: {{ settings.type_main_custom_font }}, {{ main_font.fallback_families }};
+        {% else %}
+          --main-font-stack: {{ main_font.family }}, {{ main_font.fallback_families }};
+        {% endif %}
+
+        --main-font-weight: {{ main_font.weight }};
+        --main-font-style: {{ main_font.style }};
+
+        {% if settings.type_subheading_custom %}
+          --subheading-font-stack: {{ settings.type_subheading_custom_font }}, {{ subheading_font.fallback_families }};
+        {% else %}
+          --subheading-font-stack: {{ subheading_font.family }}, {{ subheading_font.fallback_families }};
+        {% endif %}
+      }
+    {% endstyle %}
+
+    {%- liquid
+      render 'css-bridge'
+      render 'critical-css'
+    -%}
+
+    <style id="manual-critical-css">
+      [x-cloak] {
+        display: none;
+      }
+
+      data-island {
+        display: block;
+      }
+
+      [data-parallax-container] {
+        will-change: opacity;
+        opacity: 0;
+        transition: opacity 0.2s cubic-bezier(0.215, 0.61, 0.355, 1);
+      }
+      .no-js [data-parallax-container],
+      [data-parallax-container].animated {
+        opacity: 1;
+      }
+
+      @media (prefers-reduced-motion) {
+        [data-parallax-container] {
+          opacity: 1;
+        }
+      }
+    </style>
+
+    {% # theme-check-disable AssetPreload %}
+    {% unless heading_font.system? %}
+      <link
+        rel="preload"
+        as="font"
+        href="{{ heading_font | font_url }}"
+        type="font/woff2"
+        crossorigin
+      >
+    {% endunless %}
+    {% unless main_font.system? %}
+      <link
+        rel="preload"
+        as="font"
+        href="{{ main_font | font_url }}"
+        type="font/woff2"
+        crossorigin
+      >
+    {% endunless %}
+    <script>
+
+!function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);
+rdt('init','a2_i0fozqwxogu9');
+rdt('track', 'PageVisit');
+
+{% if template.type contains 'product' %}
+  rdt('track', 'ViewContent', {
+    products: [{
+      id:  {{product.product.selected_or_first_available_variant}},
+      category:  {{product.type}},
+      name:  {{product.title}},
+    }]
+  });
+{% endif  %}
+
+    $( document ).ready(function() {
+      $('.add-to-cart-btn').click(function() {
+        console.log('add to cart clicked');
+        /*console.log($(this).closest('.product-block').sibling('.title').find('h1').value);
+        console.log($(this).closest('.product-block').sibling('.product-block-quantity-selector').find('input[name="quantity"]').value);
+        rdt('track', 'AddToCart', {
+          value: $(this).closest('.product-block').sibling('.title').find('h1').value,
+          itemCount: $(this).closest('.product-block').sibling('.product-block-quantity-selector').find('input[name="quantity"]').value
+        });*/
+      });
+    });
+    </script>
+    {% # theme-check-enable AssetPreload %}
+  </head>
+
+  <body data-color-scheme="scheme1">
+
+    <a class="skip-link" href="#MainContent">
+      {{- 'general.accessibility.skip_to_content' | t -}}
+    </a>
+    {%- sections 'header-group' -%}
+    {% render 'header-group-support' %}
+    <main id="MainContent" class="overflow-hidden">
+      <!--LayoutHub-Workspace-Start-->{{ content_for_layout }}<!--LayoutHub-Workspace-End-->
+    </main>
+
+    {%- sections 'footer-group' -%}
+    {%- sections 'overlay-group' -%}
+    {%- render 'rebuy-product-addon-template' -%}
+
+    <div
+      id="screenreader-announce"
+      class="sr-only"
+      aria-live="polite"
+      role="status"
+    ></div>
+
+    <ul hidden>
+      <li id="a11y-refresh-page-message">
+        {{ 'general.accessibility.refresh_page' | t }}
+      </li>
+      <li id="a11y-selection-message">
+        {{ 'general.accessibility.selection_help' | t }}
+      </li>
+    </ul>
+
+    {% comment %} Modal containers {% endcomment %}
+    {% liquid
+      render 'left-drawer'
+      render 'right-drawer'
+      render 'modal'
+      render 'popup'
+    %}
+
+    {%- if settings.cart_type == 'modal' -%}
+      {% render 'drawer-cart' %}
+    {%- endif -%}
+
+    <script src="{{ 'global.bundle.js' | asset_url }}" type="module"></script>
+	{{ 'blankLibraries.js' | asset_url | script_tag }}
+  
+	<script>
+	(function() {
+    /*
+		var jtc = {			
+			{% if template contains 'product' %}
+			product_type: "{{product.type}}",
+			product_name: "{{product.title}}",
+			product_id: "{{product.id}}",
+			product_price: "{{product.price | money_without_currency}}",
+			{% endif %}
+			page_type: "{{template.name}}"
+		};
+    */
+		GlobalHeader.init();
+		{% comment %}
+		//Sliders.init();
+		coreUI.init();
+		bbModal.init();
+		{% if settings.purchaseOffers != 'none' %}
+		var coreItems = [],
+            giftItems = [],
+			giftVariants;
+{% if settings.globalOfferCore != '' %}
+        {% assign globalOfferCore = settings.globalOfferCore | split: ',' %}
+		{% if settings.globalOfferTrigger == 'collection' %}      
+        {% for group in globalOfferCore %}
+          	{% for product in collections[group].products %}
+        coreItems.push({{ product.variants.first.id }});
+            {% endfor %}
+        {% endfor %}
+		{% elsif settings.globalOfferTrigger == 'products' %}
+        {% for product in globalOfferCore %}
+        coreItems.push({{ product }});
+        {% endfor %}
+		{% endif %}
+{% endif %}
+        
+		{% if settings.globalOfferGiftSelection == 'collection' %}
+        
+        {% assign globalOfferGifts =  settings.globalOfferGifts | split: ','  %}	
+        {% assign variantTrigger = 'Concealer','Foundation','Matte','Gloss', 'Setting Powder'| split: ','%}
+        {% for giftGroup in globalOfferGifts %}
+        	{% for product in collections[giftGroup].products %}
+				{% if product.available %}
+        giftItems.push({
+          	"gift_id" : "{{product.variants.first.id}}",
+          	"gift_title":"{{product.title}}",
+          	"gift_collection":"{{giftGroup}}",
+          	"gift_prod_type":"{{product.type}}",
+          	"gift_img":"{{product.images[0].src}}",
+            {% if product.metafields.cfield['swatch_shade'] %}
+          	"gift_shade":"{{product.metafields.cfield['swatch_shade'] }}",
+            {% endif %}		
+            {% if giftGroup contains 'whip' %}
+
+				{% if product.title contains 'Metallic' %}
+          	"gift_lip":"metallic",
+				{% elsif product.title contains 'Creme'%}
+          	"gift_lip":"creme",
+				{% elsif product.title contains 'Gloss'%}
+          	"gift_lip":"gloss",
+				{% else %}
+          	"gift_lip":"matte",
+				{% endif %}
+            {% endif %}
+        });
+				{% endif %}
+      
+			{% endfor %}
+		{% endfor %}
+		
+		{% elsif settings.globalOfferGiftSelection == 'products'%}
+            {% assign globalOfferGifts = settings.globalOfferGifts | split: ',' %}
+            {% for gift in globalOfferGifts %}      
+			giftItems.push({
+				"gift_id" : "{{giftItem.variants.first.id}}",
+				"gift_title":"{{giftItem.title}}",
+				"gift_collection":"{{gift}}",
+				"gift_img":"{{giftItem.images[0].src}}",
+				{% if gift contains 'matte' or gift contains 'gloss' or gift contains 'instabake' %}
+					{% if gift.metafields.cfield['swatch_shade'] %}
+				"gift_shade":"{{gift.metafields.cfield['swatch_shade'] }}",
+					{% endif %}		
+
+				{% if gift.title contains 'Metallic' %}
+				"gift_lip":"metallic",
+				{% elsif gift.title contains 'Creme'%}
+				"gift_lip":"creme",
+				{% elsif gift.title contains 'Gloss'%}
+				"gift_lip":"gloss",
+				{% else %}
+				"gift_lip":"matte",
+				{% endif %}
+				{% endif %}
+			});
+            {% endfor %}
+            
+		{% endif %}
+		
+		var fallBackGift =  {{all_products[settings.defaultGWP].variants.first.id }};
+        purchaseOffer.init(giftItems, coreItems, '{{settings.purchaseOffers}}', fallBackGift);   
+		bbCheckout.init(fallBackGift, false);
+	{% else %}
+		bbCheckout.init();
+	{% endif %}
+	{%- if settings.globalSearch -%}Search.init();{% endif %}
+		Overlay.init();
+		CartQTY.init();
+		QtyChangerAtc.init();
+		AddToCart.init();
+		{% endcomment %}
+	{% if template contains 'collection' %}
+		/*
+		$('.quick_shop').fancybox({
+			beforeShow: function() {
+				var qViewGallery = $('#' + $(this.element).data('gallery'));
+				qViewGallery.splide({
+					variableWidth: !1,
+					slidesToScroll: 1,
+					slidesToShow: 1,
+					dots: !0
+				});
+			},
+			afterClose: function() {
+				var qViewGallery = $('#' + $(this.element).data('gallery'));
+				qViewGallery.splide("unsplide");
+			}
+		});
+		*/
+	{% endif %}
+      	//eventTracking.init(jtc);
+		//BackToTop.init();
+{%comment %}
+	{% if settings.bunOffer %}
+		bundleTrack.init({{coreItem}}{% if settings.bunOffAmt1 %},{{settings.bunOffAmt1}}{% endif %}{% if settings.bunOffAmt2 %},{{settings.bunOffAmt2}}{% endif %}{% if settings.bunOffAmt3 %},{{settings.bunOffAmt3}}{% endif %}{% if settings.bunOffKey1 %},{{settings.bunOffKey1}}{% endif %}{% if settings.bunOffKey2 %},{{settings.bunOffKey2}}{% endif %}{% if settings.bunOffKey3 %},{{settings.bunOffKey3}}{% endif %});
+		bbBundle.init();
+	{% endif%}
+{% endcomment %}
+	}());
+		/*
+ $('.cartTrig').on('click', function(){
+  $('#rebuy-cart').addClass("is-visible");
+});
+		*/
+</script>
+
+    {%- if settings.custom_javascript != blank -%}
+      {{- settings.custom_javascript -}}
+    {%- endif -%}
+  {%- render 'layouthub_footer' -%} 
+ </body>
+
+
+
+
+
+
+
+<!-- LAYOUTHUB-V2-FOOTER --> 
+{%- render 'layouthub-footer' -%}
+<!-- END LAYOUTHUB-V2-FOOTER -->
+  <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-54PJH46"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+  {%- render 'marker-io' -%}
+</html>

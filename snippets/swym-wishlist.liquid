@@ -1,0 +1,30 @@
+{{ 'swym-wishlist.css' | asset_url | stylesheet_tag }}
+<script defer src="{{ 'swym-wishlist.js' | asset_url }}"></script>
+
+<section id="swym-storefront-layout-section-container"
+  class="designs"
+  data-filter-by-prefix="false"
+  data-list-prefix="{{ section.settings.list_prefix | escape }}"
+  data-mode="{{ section.settings.mode }}"
+  data-show-remove="{{ section.settings.show_remove }}"
+  data-currency="{{ shop.currency }}"
+>
+  <div class="designs__header swym-storefront-layout-header">
+    <h2 class="swym-storefront-layout-title">
+      {{ section.settings.title | default: 'Wishlist' }}
+      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="15" viewBox="0 0 17 15" fill="none">
+        <path d="M2.04363 2.00013C4.54368 -0.499876 7.71029 2.33346 8.54363 3.50012C9.21029 2.00012 12.5437 0.500119 14.5437 2.00013C18.6166 5.05486 12.5437 12.0001 8.54363 14.0001C4.04367 11.5001 -1.29179 5.3355 2.04363 2.00013Z" fill="currentColor"></path>
+      </svg>
+    </h2>
+    <div id="my-designs-count" class="swym-storefront-layout-total-list-items-count"></div>
+  </div>
+
+  <div class="designs__grid swym-storefront-layout-body" id="my-designs-grid" aria-live="polite">
+    <div class="designs__loader" id="my-designs-loader">
+      <div class="designs__spinner" aria-hidden="true"></div>
+      <span class="designs__loaderText">{{ 'sections.product_customization.loading_wishlist' | t }}</span>
+    </div>
+  </div>
+
+  <div class="designs__empty" id="my-designs-empty" style="display:none;">No designs yet.</div>
+</section>

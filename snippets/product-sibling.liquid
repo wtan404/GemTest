@@ -1,0 +1,33 @@
+{%- liquid
+  for collection in product.collections 
+    assign collection_json = collection | json
+    unless collection_json contains 'rules'
+      assign manual_collection = collection
+      break
+    endunless
+  endfor
+-%}
+
+{%- if manual_collection.all_products_count > 0 -%}
+  <product-sibling class="product-sibling">
+    <legend class="product-sibling__title">
+      <a href="{{ manual_collection.url }}">
+        <b>{{ manual_collection.title | capitalize | replace: '_', ' ' }} collection: </b>
+      </a>
+      <span data-sibling-vabel-value>{{ product.title }}</span>
+    </legend>
+    <ul class="product-sibling__items">
+      {%- for sibling_product in manual_collection.products -%}
+        {%- liquid assign hex = sibling_product.metafields.custom_fields.hex -%}
+		      <!--{{hex}}-->
+        {%- if sibling_product.title != blank -%}
+          <li class="product-sibling__item{% if sibling_product.id == product.id %} selected{% endif %}">
+            <a class="product-sibling__item-link" style="background-color: {{ hex }}" href="{{ sibling_product.url }}" data-sibling-product-title>
+              {{- sibling_product.title -}}
+            </a>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  </product-sibling>
+{%- endif -%}

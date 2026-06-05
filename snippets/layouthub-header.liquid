@@ -1,0 +1,10 @@
+{% assign lh_v2_header = false %}
+{% capture lh_global_style %}{% render 'lh-global-style' %}{% endcapture %}
+{% unless lh_global_style contains 'Liquid error' %}
+{{ lh_global_style }}
+{% endunless %}
+{% capture lh_ab_snippet %}{% render 'layouthub-ab-testing' %}{% endcapture %}
+    {% unless lh_ab_snippet contains 'Liquid error' %}
+    {{ lh_ab_snippet }}
+    {% endunless %}
+{% assign lh_v2_header = true %}

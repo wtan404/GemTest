@@ -1,0 +1,43 @@
+{%- liquid
+  assign label_class = 'sr-only'
+  if block.settings.show_label
+    assign label_class = 'block font-secondary text-scheme-text text-sm'
+  endif
+-%}
+<data-island
+  class="flex lg:items-center lg:justify-start"
+  x-data="Quantity"
+  {{ block.shopify_attributes }}
+>
+    <label class="{{ label_class }}  pr-2.5 lg:w-1/4 lg:shrink-0 xl:w-1/5" for="Quantity-{{ section.id }}">
+      {{- 'products.product.quantity' | t -}}
+    </label>
+    <div class="flex flex-nowrap" style="padding:0 10px;background:#fff;overflow:hidden;border:1px solid #000;border-radius:25px;flex:0 0 120px;justify-content:space-between">
+      <button
+        aria-label="&minus;"
+        @click.prevent.stop="decrement"
+        style="font-size:20px"
+      >
+          -
+      </button>
+      <input
+        type="number"
+        class="input--no-border block max-w-[3rem] appearance-none border-0 bg-transparent p-2 text-center text-md text-scheme-text"
+        form="{{ product_form_id }}"
+        id="Quantity-{{ section.id }}"
+        name="quantity"
+        x-model.number.fill="quantity"
+        x-ref="quantityInput"
+        min="1"
+        value="1"
+        step="1"
+      >
+      <button
+        aria-label="&plus;"
+        @click.prevent.stop="increment"
+        style="font-size:20px"
+      >
+          +
+      </button>
+    </div>
+</data-island>

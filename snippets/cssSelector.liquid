@@ -1,0 +1,18 @@
+{% case template.name %}
+{% comment %}
+{% when 'product'%}
+	{{ 'products.css' | asset_url | stylesheet_tag }}
+{% endcomment %}
+{% when 'collection' %}
+	{{ 'collection.css' | asset_url | stylesheet_tag }}
+{% comment %}
+{% when 'blog' or 'article'%}
+	{{ 'blog.css' | asset_url | stylesheet_tag }}
+{% when 'cart'%}
+	{{ 'cart.scss.css' | asset_url | stylesheet_tag }}
+{% when 'login' or 'register' or 'activate_account' or 'reset_password' %}
+	{{ 'forms.css' | asset_url | stylesheet_tag }}
+{% when 'account' or 'addresses' %}
+	{{ 'custAcct.css' | asset_url | stylesheet_tag }}
+{% endcomment %}
+{% endcase %}

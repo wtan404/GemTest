@@ -1,0 +1,558 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "max_width": "medium",
+        "display_on_card": true,
+        "color_scheme": "",
+        "use_gradient_background": false
+      }
+    },
+    "image_with_text_kkGURJ": {
+      "type": "image-with-text",
+      "disabled": true,
+      "name": "t:sections.image_with_text.name",
+      "settings": {
+        "max_width": "",
+        "display_on_card": false,
+        "image": "shopify://shop_images/image_20.png",
+        "crop": "aspect-w-3 aspect-h-4",
+        "image_shape": "default",
+        "blob_type": 1,
+        "rotate_image": 0,
+        "image_position": "right",
+        "image_max_width_mobile": "",
+        "image_max_width_desktop": "mobile_max_width",
+        "image_size": "third",
+        "disable_media_style": false,
+        "title": "Build-a-Box",
+        "heading_size": "heading-feature",
+        "richtext": "<h1>Create your perfect polish party:</h1><p><strong>Two perfect trios?</strong> Iconic.</p><p><strong>Three darling duos?</strong> We love a matched set.</p><p><strong>A moody mix of six?</strong> You do hue.</p><p>Whether you’re building a vibe, gifting a friend, or just feeding your color craving, you can mix and match any six shades from our library of <strong>fan-made & Blank-curated </strong>faves. Once you hit six, the $9 off is automatically applied in your cart. No codes, no fuss, just a bottle on us. :)</p><p>Now go on—bundle up.</p>",
+        "text_alignment": "text-left",
+        "button_link": "",
+        "button_label": "Shop Now",
+        "color_scheme": "",
+        "use_gradient_background": false
+      }
+    },
+    "17417152109be28c69": {
+      "type": "apps",
+      "blocks": {
+        "rebuy_personalization_engine_rebuy_widget_z3gLmA": {
+          "type": "shopify://apps/rebuy-personalization-engine/blocks/rebuy-widget/a26ae9b9-933b-40bf-bbc6-bf1220bbc4dc",
+          "settings": {
+            "enabled": true,
+            "id": "228041",
+            "product_id_enabled": true,
+            "collection_id_enabled": false
+          }
+        }
+      },
+      "block_order": [
+        "rebuy_personalization_engine_rebuy_widget_z3gLmA"
+      ],
+      "disabled": true,
+      "custom_css": [
+        ".no-image-link-row {text-align: center;}"
+      ],
+      "settings": {
+        "apply_vertical_spacing": true,
+        "apply_horizontal_spacing": false,
+        "display_on_card": false,
+        "content_width_desktop": "lg:w-full",
+        "color_scheme": "scheme2",
+        "use_gradient_background": false
+      }
+    },
+    "image_with_text_overlay_3G6MVk": {
+      "type": "image-with-text-overlay",
+      "custom_css": [
+        ".font-subheading {font-family: \"ABCFavorit\" !important; font-weight: 350; font-style: book; font-size: 16px; line-height: 140%; letter-spacing: 0%;}",
+        "@media screen and (max-width: 800px) {.font-subheading {align-content: center; text-align: center; } h2 {text-align: center; } .relative {text-align: center; }}"
+      ],
+      "name": "t:sections.image_with_text_overlay.name",
+      "settings": {
+        "image": "shopify://shop_images/Desktop.gif",
+        "image_mobile": "shopify://shop_images/Mobile.gif",
+        "video_margin_right": "20px",
+        "display_on_card": false,
+        "display_content_below_image_on_mobile": false,
+        "style": "full",
+        "height": "natural",
+        "place_content": "lg:place-content-center-start",
+        "mobile_place_content": "place-content-start-start",
+        "text_align": "text-left",
+        "is_collection_content": false,
+        "collection_content_background": "rgba(0, 0, 0, 0.32)",
+        "logo_width": 100,
+        "title": "Your signature color for big occasions",
+        "heading_size": "heading-standard",
+        "richtext": "Planning a special event, launch party, or corporate giveaway? Give your custom nail polish a custom bottle.",
+        "cta_url": "https://blankbeauty.com/pages/create-your-custom-color",
+        "cta_text": "create your custom polish",
+        "color_scheme": "",
+        "use_gradient_background": false
+      }
+    },
+    "product_customization_P8z7Xe": {
+      "type": "product-customization",
+      "custom_css": [
+        "{padding-bottom: 40px;}"
+      ],
+      "name": "Product Customization",
+      "settings": {
+        "product": "wholesale-bulk",
+        "title": "Customize Your Product",
+        "customization_title": "Customize Bottle",
+        "customization_image": "shopify://shop_images/image_597_1_48c5675f-a87a-44f3-be33-dccc7850407c.svg",
+        "step_1_title": "Create Your Color",
+        "color_instruction_text": "Upload your image and tap anywhere to select your custom color.",
+        "color_name_label": "Color Name",
+        "color_dropzone_text": "Drag & Drop or Browse Your Device",
+        "color_file_help_text": "JPG, PNG, SVG (Max 50 MB)",
+        "step_2_title": "Upload logo",
+        "logo_dropzone_text": "Drag & Drop or Browse Your Device",
+        "logo_file_help_text": "PNG, SVG (Max 10 MB).",
+        "logo_file_help_extended_text": "Minimum resolution of 700px x 700px, 100+ ppcm recommended",
+        "logo_warning_text": "Warning: Logo image should be at least 700x700 pixels for best quality.",
+        "step_3_title": "Checkout",
+        "base_product_image": "shopify://shop_images/base-image.svg",
+        "initial_color": "#ffffff",
+        "printable_top": 50,
+        "printable_bottom": 22,
+        "printable_left": 33,
+        "printable_right": 33,
+        "api_base_url": "https://bb-pdp-customization.vercel.app/api",
+        "color_scheme": "scheme_2",
+        "use_gradient_background": true,
+        "image_shape": "rounded"
+      }
+    },
+    "text_columns_with_images_KkqpT8": {
+      "type": "text-columns-with-images",
+      "blocks": {
+        "column_ixJJ4j": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "video": "shopify://files/videos/howVid1.c24ecf8a380867c94d62.mp4",
+            "layout": "image-top",
+            "title": "",
+            "title_font": "font-heading",
+            "title_size": "heading-secondary",
+            "secondary_title": "",
+            "text": "<p>Upload your photo and sample an exact color from it</p>",
+            "cta_link": "",
+            "cta_text": "",
+            "override_section_color_scheme": true,
+            "color_scheme": "scheme3"
+          }
+        },
+        "column_M9YrMF": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "video": "shopify://files/videos/howVid2.f60f39e98fb117cc6fd1.mp4",
+            "layout": "image-top",
+            "title": "",
+            "title_font": "font-heading",
+            "title_size": "heading-secondary",
+            "secondary_title": "",
+            "text": "<p>Name your polish and upload your logo to be printed on the bottle</p>",
+            "cta_link": "",
+            "cta_text": "",
+            "override_section_color_scheme": true,
+            "color_scheme": "scheme3"
+          }
+        },
+        "column_UwL77x": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "video": "shopify://files/videos/howVid3.75006d6baa211e469b96.mp4",
+            "layout": "image-top",
+            "title": "",
+            "title_font": "font-heading",
+            "title_size": "heading-secondary",
+            "secondary_title": "",
+            "text": "<p>Preview your bottle, pick your quantity, and add it to your cart</p>",
+            "cta_link": "",
+            "cta_text": "",
+            "override_section_color_scheme": true,
+            "color_scheme": "scheme3"
+          }
+        }
+      },
+      "block_order": [
+        "column_ixJJ4j",
+        "column_M9YrMF",
+        "column_UwL77x"
+      ],
+      "custom_css": [
+        "{padding-bottom: : 40px;}"
+      ],
+      "name": "t:sections.text_columns_with_images.name",
+      "settings": {
+        "display_on_card": true,
+        "slideshow_on_mobile": true,
+        "enable_center_slide": false,
+        "title": "How it works:",
+        "description": "",
+        "crop": "",
+        "image_shape": "default",
+        "show_index_on_blocks": true,
+        "index_shape": "circle",
+        "video_play_in_sequence": false,
+        "color_scheme": "scheme2",
+        "use_gradient_background": true
+      }
+    },
+    "feature_text_with_offset_images_bHQYrk": {
+      "type": "feature-text-with-offset-images",
+      "blocks": {
+        "image_xUJN36": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Component_33.png",
+            "crop": "",
+            "image_shape": "default",
+            "blob_type": 1,
+            "rotate_image": -8,
+            "disable_media_style": false
+          }
+        },
+        "image_xhWTU7": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Container.png",
+            "crop": "",
+            "image_shape": "default",
+            "blob_type": 1,
+            "rotate_image": 8,
+            "disable_media_style": false
+          }
+        }
+      },
+      "block_order": [
+        "image_xUJN36",
+        "image_xhWTU7"
+      ],
+      "disabled": true,
+      "name": "t:sections.feature_text_with_offset_images.name",
+      "settings": {
+        "title": "Your signature color for big occasions",
+        "mobile_text_scale": 3,
+        "desktop_text_scale": 5,
+        "apply_effects": false,
+        "max_width_heading": "max-w-lg",
+        "richtext": "Planning a special event, launch party, or corporate giveaway? Give your custom nail polish a custom bottle.",
+        "button_link": "https://blankbeauty.com/pages/create-your-custom-color",
+        "button_label": "create your custom polish",
+        "image_width_mobile": 50,
+        "layout_gap_mobile": 5,
+        "layout_vertical_spacing_mobile": 10,
+        "image_width_desktop": 40,
+        "layout_gap_desktop": 15,
+        "layout_vertical_spacing_desktop": 0,
+        "color_scheme": "scheme2",
+        "use_gradient_background": false
+      }
+    },
+    "feature_text_with_image_ND7B8F": {
+      "type": "feature-text-with-image",
+      "disabled": true,
+      "name": "t:sections.feature_text_with_image.name",
+      "settings": {
+        "title": "",
+        "mobile_text_scale": 3,
+        "desktop_text_scale": 7,
+        "apply_effects": false,
+        "max_width_heading": "max-w-2xl",
+        "button_link": "",
+        "button_label": "Shop Now",
+        "image": "shopify://shop_images/CleanShot_2025-08-19_at_14.58.01.png",
+        "crop": "",
+        "image_shape": "default",
+        "blob_type": 1,
+        "rotate_image": 0,
+        "disable_media_style": false,
+        "max_width_image_mobile": 100,
+        "image_offset_mobile": 2.5,
+        "max_width_image_desktop": 80,
+        "image_offset_desktop": 6,
+        "color_scheme": "scheme2",
+        "use_gradient_background": false
+      }
+    },
+    "bulk_pricing_table_QWKaez": {
+      "type": "bulk-pricing-table",
+      "blocks": {
+        "pricing_tier_gU3KgD": {
+          "type": "pricing_tier",
+          "settings": {
+            "quantity_text": "20–50",
+            "discount1": 0,
+            "discount2": 0
+          }
+        },
+        "pricing_tier_6Pcz4N": {
+          "type": "pricing_tier",
+          "settings": {
+            "quantity_text": "50-99",
+            "discount1": 0.9,
+            "discount2": 8
+          }
+        },
+        "pricing_tier_KbPLFC": {
+          "type": "pricing_tier",
+          "settings": {
+            "quantity_text": "100–249",
+            "discount1": 1.8,
+            "discount2": 9.8
+          }
+        },
+        "pricing_tier_D8nDYK": {
+          "type": "pricing_tier",
+          "settings": {
+            "quantity_text": "250–1000",
+            "discount1": 2.7,
+            "discount2": 11.6
+          }
+        },
+        "pricing_tier_4wCK8a": {
+          "type": "pricing_tier",
+          "settings": {
+            "quantity_text": "1000+",
+            "discount1": 3,
+            "discount2": 12
+          }
+        }
+      },
+      "block_order": [
+        "pricing_tier_gU3KgD",
+        "pricing_tier_6Pcz4N",
+        "pricing_tier_KbPLFC",
+        "pricing_tier_D8nDYK",
+        "pricing_tier_4wCK8a"
+      ],
+      "name": "Bulk Pricing Table",
+      "settings": {
+        "title": "Bulk pricing",
+        "title_alignment": "left",
+        "discountType": "fixed",
+        "column_0_name": "Item Count",
+        "column_1_name": "Price per Bottle",
+        "column_priceCore_1": 9,
+        "column_2_name": "Price Per Bottle w/ Customization",
+        "column_priceCore_2": 18,
+        "image_position": "right",
+        "display_on_card": false,
+        "max_width": "max-w-4xl",
+        "color_scheme": "scheme2",
+        "use_gradient_background": false
+      }
+    },
+    "image_with_text_63nGWV": {
+      "type": "image-with-text",
+      "custom_css": [
+        "h2 {font-family: \"Nib Pro\"; font-weight: 400; font-size: 40px; leading-trim: NONE; line-height: 110.00000000000001%; letter-spacing: 0%;}",
+        "h4 {font-family: \"ABCFavorit\"; font-weight: 350; font-style: Italic; font-size: 20px; leading-trim: NONE; line-height: 140%; letter-spacing: 0%;}"
+      ],
+      "name": "t:sections.image_with_text.name",
+      "settings": {
+        "max_width": "",
+        "display_on_card": false,
+        "image": "shopify://shop_images/Vector.png",
+        "crop": "",
+        "image_shape": "default",
+        "blob_type": 1,
+        "rotate_image": 0,
+        "image_position": "left",
+        "image_max_width_mobile": "",
+        "image_max_width_desktop": "full",
+        "image_size": "half",
+        "disable_media_style": false,
+        "title": "For every moment that matters",
+        "heading_size": "heading-small",
+        "richtext": "<h4>Bridal Parties & Favors</h4><p>Matching nails for the big day? Yes, please. Name your shade, add your initials or logo, and make it personal.</p><h4>Launch Parties & Events</h4><p>Every party needs a signature color. Give guests something to rave about.</p><h4>Baby Showers & Gender Reveals</h4><p>Celebrate the little one on the way with a custom bottle that marks the moment.</p>",
+        "text_alignment": "text-left",
+        "button_link": "",
+        "button_label": "Shop Now",
+        "color_scheme": "scheme2",
+        "use_gradient_background": false
+      }
+    },
+    "rich_text_zxzLLp": {
+      "type": "rich-text",
+      "custom_css": [
+        "h2 {margin-bottom: -40px;}"
+      ],
+      "name": "t:sections.rich_text.name",
+      "settings": {
+        "title": "Colors made to be shared",
+        "html_title": "",
+        "heading_type": "font-heading",
+        "heading_size": "heading-standard",
+        "rich_text": "",
+        "display_on_card": false,
+        "content_width_desktop": "lg:w-2/3",
+        "button_link": "",
+        "button_label": "Shop Now",
+        "color_scheme": "scheme2",
+        "use_gradient_background": false
+      }
+    },
+    "apps_MFzgwh": {
+      "type": "apps",
+      "blocks": {
+        "tolstoy_shoppable_video_quiz_carousel_block_WprUd6": {
+          "type": "shopify://apps/tolstoy-ads-image-video/blocks/carousel-block/06fa8282-42ff-403e-b67c-1936776aed11",
+          "settings": {
+            "publishId": "sq688eaon2rvn"
+          }
+        }
+      },
+      "block_order": [
+        "tolstoy_shoppable_video_quiz_carousel_block_WprUd6"
+      ],
+      "custom_css": [
+        "{margin-top: -20px;}"
+      ],
+      "settings": {
+        "apply_vertical_spacing": true,
+        "apply_horizontal_spacing": true,
+        "display_on_card": false,
+        "content_width_desktop": "lg:w-full",
+        "color_scheme": "scheme2",
+        "use_gradient_background": false
+      }
+    },
+    "1756120924d566dbfb": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_a81622d_Nb88F8": {
+          "type": "ai_gen_block_a81622d",
+          "settings": {
+            "button_text": "create your custom polish",
+            "button_link": "shopify://pages/create-your-custom-color",
+            "open_in_new_tab": false,
+            "alignment": "center",
+            "padding_top": 0,
+            "padding_bottom": 20,
+            "padding_horizontal": 20,
+            "color_scheme": "scheme-98cb2938-1693-4eef-baa6-3e8108f35af8"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_a81622d_Nb88F8"
+      ],
+      "custom_css": [
+        ".push-btn {margin-top: -30px;}"
+      ],
+      "settings": {}
+    },
+    "faq_WXXDUN": {
+      "type": "faq",
+      "blocks": {
+        "question_Wr8Vmf": {
+          "type": "question",
+          "settings": {
+            "icon": "none",
+            "title": "How long does it take to receive my order?",
+            "answer": "<p>Use this text to share the answer to the question with your customers.</p>"
+          }
+        },
+        "question_qg6kfV": {
+          "type": "question",
+          "settings": {
+            "icon": "none",
+            "title": "Do you offer bulk discounts?",
+            "answer": "<p>Use this text to share the answer to the question with your customers.</p>"
+          }
+        },
+        "question_UjRxr6": {
+          "type": "question",
+          "settings": {
+            "icon": "none",
+            "title": "Is there a minimum order quantity?",
+            "answer": "<p>Use this text to share the answer to the question with your customers.</p>"
+          }
+        },
+        "question_NnTQUx": {
+          "type": "question",
+          "settings": {
+            "icon": "none",
+            "title": "Do you ship internationally?",
+            "answer": "<p>Use this text to share the answer to the question with your customers.</p>"
+          }
+        },
+        "question_RwTEiq": {
+          "type": "question",
+          "settings": {
+            "icon": "none",
+            "title": "What kind of logo file should I upload?",
+            "answer": "<p>Use this text to share the answer to the question with your customers.</p>"
+          }
+        },
+        "question_xtD9xP": {
+          "type": "question",
+          "settings": {
+            "icon": "none",
+            "title": "Are your polishes safe and non-toxic?",
+            "answer": "<p>Use this text to share the answer to the question with your customers.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "question_Wr8Vmf",
+        "question_qg6kfV",
+        "question_UjRxr6",
+        "question_NnTQUx",
+        "question_RwTEiq",
+        "question_xtD9xP"
+      ],
+      "custom_css": [
+        "h3 {margin-bottom: -6px !important; margin-top: -6px;}"
+      ],
+      "name": "t:sections.faq.name",
+      "settings": {
+        "display_on_card": false,
+        "heading_text_style": "body",
+        "two_columns_desktop": false,
+        "title": "Frequently asked questions",
+        "richtext": "",
+        "color_scheme": "scheme2",
+        "use_gradient_background": false
+      }
+    }
+  },
+  "order": [
+    "main",
+    "image_with_text_kkGURJ",
+    "17417152109be28c69",
+    "image_with_text_overlay_3G6MVk",
+    "product_customization_P8z7Xe",
+    "text_columns_with_images_KkqpT8",
+    "feature_text_with_offset_images_bHQYrk",
+    "feature_text_with_image_ND7B8F",
+    "bulk_pricing_table_QWKaez",
+    "image_with_text_63nGWV",
+    "rich_text_zxzLLp",
+    "apps_MFzgwh",
+    "1756120924d566dbfb",
+    "faq_WXXDUN"
+  ]
+}

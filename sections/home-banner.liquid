@@ -1,0 +1,87 @@
+{% schema %}
+{
+    "name": "Main Slider",
+    "settings": [{
+        "type": "header",
+        "content": "Build Home Page slider"
+    }],
+    "blocks": [{
+        "type":"heroSlider-local",
+        "name":"Local Slides",
+        "settings": [{
+            "id": "homeSlideLocal",
+            "type": "image_picker",
+            "label": "Slide Image"
+        },{
+            "id": "homeSlideMobLocal",
+            "type": "image_picker",
+            "label": "Mobile Slide Image"
+        },{
+            "id": "homeSlideCTALocal",
+            "type": "url",
+            "label": "Block CTA Link"
+        }]
+    },{
+        "type":"heroSlider-intl",
+        "name":"International Slides",
+        "settings": [{
+            "id": "homeSlideIntl",
+            "type": "image_picker",
+            "label": "Slide Image"
+        },{
+            "id": "homeSlideMobIntl",
+            "type": "image_picker",
+            "label": "Mobile Slide Image"
+        },{
+            "id": "homeSlideCTAIntl",
+            "type": "url",
+            "label": "Block CTA Link"
+        }]
+    }],
+    "presets": [{
+        "category": "Sliders",
+        "name": "Home Slider"
+    }]
+}
+{% endschema %}
+<style>
+@media screen and (max-width:480px)
+{
+  .js-home-banner  .arrow-icon {top:calc(50% - 72px);}
+  .homeSlide-img {width: 600px;}
+}
+</style>
+
+<div class="home-banner" role="region" aria-roledescription="carousel" aria-label="Blank Beauty Main Slider">
+</div>
+
+<script>
+    $(function(){
+        {% assign localCounter = 0 %}
+        {% assign intlCounter = 0 %}
+        var sliderJ = {
+                "local" : {},
+                "international" : {}
+            },
+            localTar = sliderJ['local'],
+            intlTar = sliderJ['international'];
+        {% for block in section.blocks %}
+            {% if block.type == "heroSlider-local" %}
+                {% assign localCounter = localCounter | plus: 1 %}
+                localTar["slide{{localCounter}}"] = {
+                    "desktopImage" : "//cdn.shopify.com/s/files/1/0736/4041/{{block.settings.homeSlideLocal}}",
+                    "mobileImage" : "//cdn.shopify.com/s/files/1/0736/4041/{{block.settings.homeSlideMobLocal}}",
+                    "linkTarget" : "{{block.settings.homeSlideCTALocal}}"
+                }
+            {% elsif block.type == "heroSlider-intl" %}
+                {% assign intlCounter = intlCounter | plus: 1 %}
+                intlTar["slide{{intlCounter}}"] = {
+                    "desktopImage" : "//cdn.shopify.com/s/files/1/0736/4041/{{block.settings.homeSlideIntl}}",
+                    "mobileImage" : "//cdn.shopify.com/s/files/1/0736/4041/{{block.settings.homeSlideMobIntl}}",
+                    "linkTarget" : "{{block.settings.homeSlideCTAIntl}}"
+                }
+            {% endif %}
+        {% endfor %}
+        localStorage.setItem('heroSlider',  JSON.stringify(sliderJ));
+    });
+</script>

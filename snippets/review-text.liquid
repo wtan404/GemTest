@@ -1,0 +1,12 @@
+{%- liquid
+  assign rating_count = product.metafields.reviews.rating_count
+  assign rating = product.metafields.reviews.rating.value
+  assign badge = product.metafields.judgeme.badge
+-%}
+
+<div class="jdgm-widget jdgm-preview-badge {% if rating_count == blank %}no-review{% endif %}" data-id='{{ product.id }}'>
+  {%- if rating != blank -%}
+    <span class="jdgm-all-reviews-rating__score">{{- rating -}}</span>
+  {%- endif -%}
+  {{- badge -}}
+</div>

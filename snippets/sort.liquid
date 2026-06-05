@@ -1,0 +1,76 @@
+{% assign sort_friendly = results.sort_options[0].name %}
+{% for option in results.sort_options %}
+  {% if option.value == sort_by %}
+    {% assign sort_friendly = option.name %}
+  {% endif %}
+{% endfor %}
+<form id="sortForm">
+<div class="flex items-center gap-4 w-full justify-between sm:justify-end">
+  <div 
+    x-data="{ 
+      open: false, 
+      sortValue: '{{ sort_by | escape }}', 
+      sortLabel: '{{ sort_friendly | escape }}'
+    }" 
+    class="relative flex items-center text-left gap-6"
+  >
+    <button
+      @click="open = !open"
+      type="button"
+      class="inline-flex items-center space-x-1 text-sm font-medium text-gray-700 hover:text-gray-900"
+    >
+      <span class="mr-[16]"> <span class="flex items-center"> <svg class="mr-[16] hidden lg:inline-block" width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.833 3.50006C2.833 3.28115 2.87612 3.06438 2.95989 2.86213C3.04367 2.65988 3.16646 2.47611 3.32125 2.32132C3.47605 2.16652 3.65982 2.04373 3.86207 1.95996C4.06432 1.87618 4.28109 1.83307 4.5 1.83307C4.71891 1.83307 4.93568 1.87618 5.13793 1.95996C5.34018 2.04373 5.52395 2.16652 5.67875 2.32132C5.83354 2.47611 5.95633 2.65988 6.04011 2.86213C6.12388 3.06438 6.167 3.28115 6.167 3.50006C6.167 3.94218 5.99137 4.36619 5.67875 4.67881C5.36612 4.99144 4.94212 5.16706 4.5 5.16706C4.05788 5.16706 3.63388 4.99144 3.32125 4.67881C3.00863 4.36619 2.833 3.94218 2.833 3.50006ZM2.05 4.00006H0.5C0.367392 4.00006 0.240215 3.94739 0.146447 3.85362C0.0526785 3.75985 0 3.63267 0 3.50006C0 3.36746 0.0526785 3.24028 0.146447 3.14651C0.240215 3.05274 0.367392 3.00006 0.5 3.00006H2.05C2.16476 2.43492 2.47136 1.92683 2.91787 1.56188C3.36438 1.19692 3.92332 0.997559 4.5 0.997559C5.07668 0.997559 5.63562 1.19692 6.08213 1.56188C6.52864 1.92683 6.83524 2.43492 6.95 3.00006H15.5C15.6326 3.00006 15.7598 3.05274 15.8536 3.14651C15.9473 3.24028 16 3.36746 16 3.50006C16 3.63267 15.9473 3.75985 15.8536 3.85362C15.7598 3.94739 15.6326 4.00006 15.5 4.00006H6.95C6.83524 4.56521 6.52864 5.0733 6.08213 5.43825C5.63562 5.80321 5.07668 6.00257 4.5 6.00257C3.92332 6.00257 3.36438 5.80321 2.91787 5.43825C2.47136 5.0733 2.16476 4.56521 2.05 4.00006ZM13.167 10.5001C13.167 10.0579 12.9914 9.63394 12.6787 9.32132C12.3661 9.00869 11.9421 8.83307 11.5 8.83307C11.0579 8.83307 10.6339 9.00869 10.3213 9.32132C10.0086 9.63394 9.833 10.0579 9.833 10.5001C9.833 10.9422 10.0086 11.3662 10.3213 11.6788C10.6339 11.9914 11.0579 12.1671 11.5 12.1671C11.9421 12.1671 12.3661 11.9914 12.6787 11.6788C12.9914 11.3662 13.167 10.9422 13.167 10.5001ZM11.5 8.00006C12.0763 7.99995 12.635 8.19896 13.0815 8.56341C13.5279 8.92787 13.8347 9.43538 13.95 10.0001H15.5C15.6326 10.0001 15.7598 10.0527 15.8536 10.1465C15.9473 10.2403 16 10.3675 16 10.5001C16 10.6327 15.9473 10.7599 15.8536 10.8536C15.7598 10.9474 15.6326 11.0001 15.5 11.0001H13.95C13.8352 11.5652 13.5286 12.0733 13.0821 12.4383C12.6356 12.8032 12.0767 13.0026 11.5 13.0026C10.9233 13.0026 10.3644 12.8032 9.91787 12.4383C9.47136 12.0733 9.16476 11.5652 9.05 11.0001H0.5C0.367392 11.0001 0.240215 10.9474 0.146447 10.8536C0.0526785 10.7599 0 10.6327 0 10.5001C0 10.3675 0.0526785 10.2403 0.146447 10.1465C0.240215 10.0527 0.367392 10.0001 0.5 10.0001H9.05C9.16527 9.43538 9.47209 8.92787 9.91855 8.56341C10.365 8.19896 10.9237 7.99995 11.5 8.00006Z" fill="black"></path></svg> Sort by:</span></span>
+      <span x-text="sortLabel"></span>
+      <svg 
+        class="w-4 h-4 transition-transform duration-300" 
+        :class="{ 'rotate-180': open }" 
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24"
+      >
+        <path d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+    <div
+      x-show="open"
+      @click.away="open = false"
+      x-cloak
+      x-transition:enter="transition ease-out duration-200"
+      x-transition:enter-start="opacity-0 transform -translate-y-2"
+      x-transition:enter-end="opacity-100 transform translate-y-0"
+      x-transition:leave="transition ease-in duration-150"
+      x-transition:leave-start="opacity-100 transform translate-y-0"
+      x-transition:leave-end="opacity-0 transform -translate-y-2"
+      class="absolute top-1/2 left-0 mt-2 w-48 rounded-md shadow bg-white border border-gray-200 z-10"
+    >
+      <ul class="py-1 text-sm text-gray-700">
+        {%- for option in results.sort_options -%}
+          <li>
+            <label class="block w-full cursor-pointer px-4 py-2 hover:bg-gray-100">
+              <input
+                type="radio"
+                class="sr-only"
+                name="sort_by"
+                form="sortForm"
+                value="{{ option.value | escape }}"
+                data-label="{{ option.name | escape }}"
+                {% if option.value == sort_by %} checked {% endif %}
+                @change="
+                  sortValue = $event.target.value;
+                  sortLabel = $event.target.dataset.label;
+                  filterFormSubmit($event, 'sort');
+                  open = false;
+                "
+              >
+              <span>{{ option.name }}</span>
+            </label>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </div>
+  <div class="text-sm text-gray-500">
+    {{ products_count }} products
+  </div>
+</div>
+</form>

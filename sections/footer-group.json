@@ -1,0 +1,90 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "footer",
+  "name": "Footer",
+  "sections": {
+    "17447420466ee7fa56": {
+      "type": "apps",
+      "blocks": {
+        "klaviyo_email_marketing_sms_form_embed_block_9LyxpG": {
+          "type": "shopify://apps/klaviyo-email-marketing-sms/blocks/form-embed-block/2632fe16-c075-4321-a88b-50b567f42507",
+          "settings": {
+            "formId": "TWpFBv"
+          }
+        }
+      },
+      "block_order": [
+        "klaviyo_email_marketing_sms_form_embed_block_9LyxpG"
+      ],
+      "disabled": true,
+      "settings": {
+        "apply_vertical_spacing": true,
+        "apply_horizontal_spacing": true,
+        "display_on_card": false,
+        "content_width_desktop": "lg:w-full",
+        "color_scheme": "",
+        "use_gradient_background": false
+      }
+    },
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "newsletter-0": {
+          "type": "newsletter",
+          "settings": {
+            "newsletter_heading": "Let's keep in touch. Sign up for a FREE polish"
+          }
+        },
+        "tagline_and_social_links_D7jge4": {
+          "type": "tagline_and_social_links",
+          "settings": {
+            "tagline": "♡ from Knoxville, TN",
+            "show_social_icons": true
+          }
+        },
+        "menus_ryb7Ez": {
+          "type": "menus",
+          "settings": {
+            "show_menu_headings": false,
+            "linklist_1": "new-footer",
+            "linklist_2": "",
+            "linklist_3": ""
+          }
+        },
+        "logo_3wMgLT": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/yourcoloriscalling_1.png",
+            "logo_max_width": 400
+          }
+        }
+      },
+      "block_order": [
+        "newsletter-0",
+        "tagline_and_social_links_D7jge4",
+        "menus_ryb7Ez",
+        "logo_3wMgLT"
+      ],
+      "settings": {
+        "two_columns_layout": true,
+        "show_payment_icons": false,
+        "show_country_selector": false,
+        "show_locale_selector": true,
+        "color_scheme": "scheme1",
+        "use_gradient_background": true
+      }
+    }
+  },
+  "order": [
+    "17447420466ee7fa56",
+    "footer"
+  ]
+}

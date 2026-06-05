@@ -1,0 +1,3507 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Switch - Blank Build",
+    "theme_version": "3.1.5",
+    "theme_author": "Switch (WT;Blank Beauty)",
+    "theme_documentation_url": "https://help.switchthemes.co/shapes/",
+    "theme_support_url": "https://help.switchthemes.co/"
+  },
+  {
+    "name": "General",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Branding"
+      },
+      {
+        "type": "image_picker",
+        "id": "logoMain",
+        "label": "Main Site Logo"
+      },
+      {
+        "type": "range",
+        "id": "logo_max_width",
+        "min": 20,
+        "max": 400,
+        "step": 10,
+        "unit": "px",
+        "label": "t:common.settings.logo_max_width.label",
+        "default": 100
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "t:settings_schema.favicon.settings.favicon.label",
+        "info": "t:settings_schema.favicon.settings.favicon.info"
+      },
+      {
+        "type": "color_scheme_group",
+        "id": "color_schemes",
+        "definition": [
+          {
+            "type": "color",
+            "id": "text",
+            "label": "t:settings_schema.colors.settings.text.label",
+            "default": "#162317"
+          },
+          {
+            "type": "color",
+            "id": "text_contrast",
+            "label": "t:settings_schema.colors.settings.text_contrast.label",
+            "default": "#162317"
+          },
+          {
+            "type": "color",
+            "id": "background",
+            "label": "t:settings_schema.colors.settings.background.label",
+            "default": "#f4fbf2"
+          },
+          {
+            "type": "color_background",
+            "id": "gradient",
+            "label": "t:settings_schema.colors.settings.gradient.label"
+          },
+          {
+            "type": "header",
+            "content": "t:settings_schema.colors.settings.accent_1.label"
+          },
+          {
+            "type": "color",
+            "id": "accent_1",
+            "label": "t:settings_schema.colors.settings.accent.label",
+            "default": "#eb3131"
+          },
+          {
+            "type": "color",
+            "id": "accent_1_contrast",
+            "label": "t:settings_schema.colors.settings.contrast.label",
+            "default": "#eb3131"
+          },
+          {
+            "type": "header",
+            "content": "t:settings_schema.colors.settings.accent_2.label"
+          },
+          {
+            "type": "color",
+            "id": "accent_2",
+            "label": "t:settings_schema.colors.settings.accent.label",
+            "default": "#eb3131"
+          },
+          {
+            "type": "color",
+            "id": "accent_2_contrast",
+            "label": "t:settings_schema.colors.settings.contrast.label",
+            "default": "#eb3131"
+          },
+          {
+            "type": "header",
+            "content": "t:settings_schema.colors.settings.cards.label"
+          },
+          {
+            "type": "color",
+            "id": "card_text",
+            "label": "t:settings_schema.colors.settings.text.label",
+            "default": "#ffffff"
+          },
+          {
+            "type": "color",
+            "id": "card",
+            "label": "t:settings_schema.colors.settings.background.label",
+            "default": "#ffffff"
+          }
+        ],
+        "role": {
+          "text": "text",
+          "background": "background",
+          "primary_button": "text",
+          "on_primary_button": "text_contrast",
+          "primary_button_border": "text",
+          "secondary_button": "card",
+          "on_secondary_button": "card_text",
+          "secondary_button_border": "card",
+          "icons": "text",
+          "links": "text"
+        }
+      },
+      {
+        "type": "header",
+        "content": "t:common.settings.header_layout"
+      },
+      {
+        "type": "color_scheme",
+        "id": "drawer_color_scheme",
+        "default": "scheme1",
+        "label": "t:settings_schema.colors.settings.drawer_color_scheme.label"
+      },
+      {
+        "type": "header",
+        "content": "t:common.settings.selected_text.label"
+      },
+      {
+        "type": "select",
+        "id": "selected_text_background_color",
+        "label": "t:common.settings.background_color.label",
+        "options": [
+          {
+            "value": "text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "accent_1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "accent_2",
+            "label": "t:common.options.accent_2.label"
+          }
+        ],
+        "default": "accent_1"
+      }
+    ]
+  },  
+  {
+    "name": "t:settings_schema.typography.name",
+    "settings": [
+      {
+        "type": "metaobject_list",
+        "id": "preload_web_fonts",
+        "label": "t:settings_schema.typography.settings.preload_web_fonts.label",
+        "metaobject_type": "web_font"
+      },
+      {
+        "type": "metaobject_list",
+        "id": "web_fonts",
+        "label": "t:settings_schema.typography.settings.web_fonts.label",
+        "metaobject_type": "web_font"
+      },
+      {
+        "type": "range",
+        "id": "base_font_size",
+        "min": 13,
+        "max": 22,
+        "step": 1,
+        "unit": "px",
+        "label": "t:settings_schema.typography.settings.base_font_size.label",
+        "default": 16
+      },
+      {
+        "type": "range",
+        "id": "base_line_height",
+        "min": 1,
+        "max": 2,
+        "step": 0.1,
+        "label": "t:settings_schema.typography.settings.base_line_height.label",
+        "default": 1.2
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.typography.settings.header_headings"
+      },
+      {
+        "type": "checkbox",
+        "id": "type_heading_custom",
+        "label": "t:settings_schema.typography.settings.type_heading_custom.label",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "type_heading_custom_font",
+        "label": "t:settings_schema.typography.settings.type_heading_custom_font.label"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_heading_font",
+        "label": "t:settings_schema.typography.settings.type_heading_font.label",
+        "default": "prompt_n9"
+      },
+      {
+        "type": "checkbox",
+        "id": "heading_uppercase",
+        "label": "t:settings_schema.typography.settings.heading_uppercase.label"
+      },
+      {
+        "type": "range",
+        "id": "heading_letterspacing",
+        "min": -50,
+        "max": 200,
+        "step": 25,
+        "label": "t:settings_schema.typography.settings.heading_letterspacing.label",
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "heading_line_height",
+        "min": 0.7,
+        "max": 1.5,
+        "step": 0.1,
+        "label": "t:settings_schema.typography.settings.heading_line_height.label",
+        "default": 0.9
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.typography.settings.header_standard_headings"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.typography.settings.paragraph_used_for_section"
+      },
+      {
+        "type": "range",
+        "id": "mobile_standard_heading_scale",
+        "min": -2,
+        "max": 5,
+        "step": 1,
+        "label": "t:settings_schema.typography.settings.mobile_standard_heading_scale.label",
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "desktop_standard_heading_scale",
+        "min": -2,
+        "max": 7,
+        "step": 1,
+        "label": "t:settings_schema.typography.settings.desktop_standard_heading_scale.label",
+        "default": 0
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.typography.settings.header_feature_headings"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.typography.settings.paragraph_used_for_product"
+      },
+      {
+        "type": "range",
+        "id": "mobile_feature_heading_scale",
+        "min": -2,
+        "max": 7,
+        "step": 1,
+        "label": "t:settings_schema.typography.settings.mobile_feature_heading_scale.label",
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "desktop_feature_heading_scale",
+        "min": -2,
+        "max": 11,
+        "step": 1,
+        "label": "t:settings_schema.typography.settings.desktop_feature_heading_scale.label",
+        "default": 0
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.typography.settings.header_secondary_headings"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.typography.settings.paragraph_used_for_blog"
+      },
+      {
+        "type": "range",
+        "id": "mobile_secondary_heading_scale",
+        "min": -2,
+        "max": 4,
+        "step": 1,
+        "label": "t:settings_schema.typography.settings.mobile_secondary_heading_scale.label",
+        "default": 2
+      },
+      {
+        "type": "range",
+        "id": "desktop_secondary_heading_scale",
+        "min": -2,
+        "max": 7,
+        "step": 1,
+        "label": "t:settings_schema.typography.settings.desktop_secondary_heading_scale.label",
+        "default": 2
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.typography.settings.header_main"
+      },
+      {
+        "type": "checkbox",
+        "id": "type_main_custom",
+        "label": "t:settings_schema.typography.settings.type_main_custom.label",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "type_main_custom_font",
+        "label": "t:settings_schema.typography.settings.type_main_custom_font.label"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_main_font",
+        "label": "t:settings_schema.typography.settings.type_main_font.label",
+        "default": "inter_n4"
+      },
+      {
+        "type": "header",
+        "content": "Subheading"
+      },
+      {
+        "type": "checkbox",
+        "id": "type_subheading_custom",
+        "label": "Custom Subheading Font",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "type_subheading_custom_font",
+        "label": "Custom Font"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_subheading_font",
+        "label": "Subheading Font",
+        "default": "prompt_n9"
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.typography.settings.header_extras"
+      },
+      {
+        "type": "select",
+        "id": "header_font",
+        "label": "t:settings_schema.typography.settings.header_font.label",
+        "options": [
+          {
+            "value": "font-main",
+            "label": "t:settings_schema.typography.settings.header_font.options.body.label"
+          },
+          {
+            "value": "font-heading",
+            "label": "t:settings_schema.typography.settings.header_font.options.heading.label"
+          }
+        ],
+        "default": "font-main"
+      },
+      {
+        "type": "checkbox",
+        "id": "header_uppercase",
+        "label": "t:settings_schema.typography.settings.header_uppercase.label"
+      },
+      {
+        "type": "select",
+        "id": "button_font",
+        "label": "t:settings_schema.typography.settings.button_font.label",
+        "options": [
+          {
+            "value": "main",
+            "label": "t:common.options.body.label"
+          },
+          {
+            "value": "heading",
+            "label": "t:common.options.heading.label"
+          }
+        ],
+        "default": "main"
+      },
+      {
+        "type": "checkbox",
+        "id": "button_uppercase",
+        "label": "t:settings_schema.typography.settings.button_uppercase.label"
+      },
+      {
+        "type": "select",
+        "id": "sticker_font",
+        "label": "t:settings_schema.typography.settings.sticker_font.label",
+        "options": [
+          {
+            "value": "font-main",
+            "label": "t:common.options.body.label"
+          },
+          {
+            "value": "font-heading",
+            "label": "t:common.options.heading.label"
+          }
+        ],
+        "default": "font-main"
+      },
+      {
+        "type": "checkbox",
+        "id": "stickers_uppercase",
+        "label": "t:settings_schema.typography.settings.stickers_uppercase.label"
+      },
+      {
+        "type": "checkbox",
+        "id": "product_tile_uppercase",
+        "label": "t:settings_schema.typography.settings.product_tile_uppercase.label"
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.layout.name",
+    "settings": [
+      {
+        "type": "select",
+        "id": "vertical_spacing_between_sections",
+        "label": "t:settings_schema.layout.settings.vertical_spacing_between_sections.label",
+        "default": "2rem:4rem",
+        "options": [
+          {
+            "value": "1rem:2rem",
+            "label": "t:settings_schema.layout.settings.vertical_spacing_between_sections.options.small.label"
+          },
+          {
+            "value": "2rem:4rem",
+            "label": "t:settings_schema.layout.settings.vertical_spacing_between_sections.options.medium.label"
+          },
+          {
+            "value": "4rem:8rem",
+            "label": "t:settings_schema.layout.settings.vertical_spacing_between_sections.options.large.label"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "show_border_between_sections",
+        "label": "t:settings_schema.layout.settings.show_border_between_sections.label"
+      },
+      {
+        "type": "color",
+        "id": "section_border_color",
+        "label": "t:settings_schema.colors.settings.color_border.label",
+        "default": "#000000"
+      },
+      {
+        "type": "range",
+        "id": "section_border_thickness",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "unit": "px",
+        "label": "t:common.settings.thickness.label",
+        "default": 1
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.buttons.name",
+    "settings": [
+      {
+        "type": "select",
+        "id": "button_border_radius",
+        "label": "t:settings_schema.buttons.settings.button_border_radius.label",
+        "options": [
+          {
+            "value": "0",
+            "label": "t:common.options.none.label"
+          },
+          {
+            "value": "0.375rem",
+            "label": "t:common.options.rounded_small.label"
+          },
+          {
+            "value": "0.5rem",
+            "label": "t:common.options.rounded_medium.label"
+          },
+          {
+            "value": "9999px",
+            "label": "t:common.options.rounded_full.label"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.colors.settings.header_primary_buttons"
+      },
+      {
+        "type": "select",
+        "id": "button_color",
+        "label": "t:settings_schema.colors.settings.button_color.label",
+        "default": "text",
+        "options": [
+          {
+            "value": "text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "accent-2",
+            "label": "t:common.options.accent_2.label"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.colors.settings.header_form_inputs_and_secondary_buttons"
+      },
+      {
+        "type": "select",
+        "id": "secondary_button_color",
+        "label": "t:settings_schema.colors.settings.secondary_button_color.label",
+        "default": "match_background",
+        "options": [
+          {
+            "value": "match_background",
+            "label": "t:settings_schema.colors.settings.secondary_button_color.options.match_background.label"
+          },
+          {
+            "value": "card",
+            "label": "t:common.options.card.label"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:common.settings.header_border"
+      },
+      {
+        "type": "range",
+        "id": "button_border_width",
+        "min": 0,
+        "max": 5,
+        "step": 1,
+        "unit": "px",
+        "label": "t:settings_schema.buttons.settings.button_border_width.label",
+        "default": 1,
+        "info": "t:settings_schema.buttons.settings.button_border_width.info"
+      },
+      {
+        "type": "header",
+        "content": "t:common.settings.header_shadow"
+      },
+      {
+        "type": "range",
+        "id": "button_drop_shadow_size",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "unit": "px",
+        "label": "t:settings_schema.buttons.settings.button_drop_shadow_size.label",
+        "default": 5
+      },
+      {
+        "type": "select",
+        "id": "button_shadow_color",
+        "label": "t:settings_schema.buttons.settings.button_shadow_color.label",
+        "default": "color-scheme-accent-1",
+        "options": [
+          {
+            "value": "transparent",
+            "label": "t:common.options.transparent.label"
+          },
+          {
+            "value": "color-scheme-text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "color-scheme-accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "color-scheme-accent-2",
+            "label": "t:common.options.accent_2.label"
+          },
+          {
+            "value": "color-scheme-card",
+            "label": "t:common.options.card.label"
+          },
+          {
+            "value": "color-scheme-gradient",
+            "label": "t:common.options.gradient.label"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "button_shadow_direction",
+        "label": "t:settings_schema.buttons.settings.button_shadow_direction.label",
+        "default": "bottom_right",
+        "options": [
+          {
+            "value": "bottom_right",
+            "label": "t:common.options.bottom_right.label"
+          },
+          {
+            "value": "bottom",
+            "label": "t:common.options.bottom.label"
+          },
+          {
+            "value": "bottom_left",
+            "label": "t:common.options.bottom_left.label"
+          },
+          {
+            "value": "top_right",
+            "label": "t:common.options.top_right.label"
+          },
+          {
+            "value": "top",
+            "label": "t:common.options.top.label"
+          },
+          {
+            "value": "top_left",
+            "label": "t:common.options.top_left.label"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "button_show_border_on_shadow",
+        "label": "t:settings_schema.buttons.settings.button_show_border_on_shadow.label",
+        "info": "t:settings_schema.buttons.settings.button_show_border_on_shadow.info"
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.buttons.settings.header_hover"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.buttons.settings.hover_disclaimer"
+      },
+      {
+        "type": "select",
+        "id": "button_hover_background_color",
+        "label": "t:settings_schema.buttons.settings.button_hover_background_color.label",
+        "default": "text",
+        "options": [
+          {
+            "value": "text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "accent-2",
+            "label": "t:common.options.accent_2.label"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "button_hover_border_color",
+        "label": "t:settings_schema.buttons.settings.button_hover_border_color.label",
+        "default": "text",
+        "options": [
+          {
+            "value": "text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "accent-2",
+            "label": "t:common.options.accent_2.label"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "secondary_button_hover_background_color",
+        "label": "t:settings_schema.buttons.settings.secondary_button_hover_background_color.label",
+        "default": "text",
+        "options": [
+          {
+            "value": "text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "accent-2",
+            "label": "t:common.options.accent_2.label"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.stickers.name",
+    "settings": [
+      {
+        "type": "select",
+        "id": "sticker_border_radius",
+        "label": "t:settings_schema.stickers.settings.sticker_border_radius.label",
+        "info": "t:settings_schema.stickers.settings.sticker_border_radius.info",
+        "options": [
+          {
+            "value": "0",
+            "label": "t:common.options.none.label"
+          },
+          {
+            "value": "0.375rem",
+            "label": "t:common.options.rounded_small.label"
+          },
+          {
+            "value": "0.5rem",
+            "label": "t:common.options.rounded_medium.label"
+          },
+          {
+            "value": "9999px",
+            "label": "t:common.options.rounded_full.label"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:common.settings.header_border"
+      },
+      {
+        "type": "range",
+        "id": "sticker_border_width",
+        "min": 0,
+        "max": 5,
+        "step": 1,
+        "unit": "px",
+        "label": "t:settings_schema.stickers.settings.sticker_border_width.label",
+        "default": 1,
+        "info": "t:settings_schema.stickers.settings.sticker_border_width.info"
+      },
+      {
+        "type": "select",
+        "id": "sticker_border_color",
+        "label": "t:settings_schema.stickers.settings.sticker_border_color.label",
+        "default": "color-scheme-text",
+        "options": [
+          {
+            "value": "color-scheme-text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "color-scheme-accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "color-scheme-accent-2",
+            "label": "t:common.options.accent_2.label"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:common.settings.header_shadow"
+      },
+      {
+        "type": "range",
+        "id": "sticker_drop_shadow_size",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "unit": "px",
+        "label": "t:settings_schema.stickers.settings.sticker_drop_shadow_size.label",
+        "default": 5
+      },
+      {
+        "type": "select",
+        "id": "sticker_shadow_color",
+        "label": "t:settings_schema.stickers.settings.sticker_shadow_color.label",
+        "default": "color-scheme-accent-1",
+        "options": [
+          {
+            "value": "transparent",
+            "label": "t:common.options.transparent.label"
+          },
+          {
+            "value": "color-scheme-text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "color-scheme-accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "color-scheme-accent-2",
+            "label": "t:common.options.accent_2.label"
+          },
+          {
+            "value": "color-scheme-card",
+            "label": "t:common.options.card.label"
+          },
+          {
+            "value": "color-scheme-gradient",
+            "label": "t:common.options.gradient.label"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "sticker_shadow_direction",
+        "label": "t:settings_schema.stickers.settings.sticker_shadow_direction.label",
+        "default": "bottom_right",
+        "options": [
+          {
+            "value": "bottom_right",
+            "label": "t:common.options.bottom_right.label"
+          },
+          {
+            "value": "bottom",
+            "label": "t:common.options.bottom.label"
+          },
+          {
+            "value": "bottom_left",
+            "label": "t:common.options.bottom_left.label"
+          },
+          {
+            "value": "top_right",
+            "label": "t:common.options.top_right.label"
+          },
+          {
+            "value": "top",
+            "label": "t:common.options.top.label"
+          },
+          {
+            "value": "top_left",
+            "label": "t:common.options.top_left.label"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "sticker_show_border_on_shadow",
+        "label": "t:settings_schema.stickers.settings.sticker_show_border_on_shadow.label",
+        "info": "t:settings_schema.stickers.settings.sticker_show_border_on_shadow.info"
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.cards.name",
+    "settings": [
+      {
+        "type": "select",
+        "id": "card_border_radius",
+        "label": "t:settings_schema.cards.settings.card_border_radius.label",
+        "options": [
+          {
+            "value": "0",
+            "label": "t:common.options.none.label"
+          },
+          {
+            "value": "0.375rem",
+            "label": "t:common.options.rounded_small.label"
+          },
+          {
+            "value": "1rem",
+            "label": "t:common.options.rounded_medium.label"
+          },
+          {
+            "value": "2rem",
+            "label": "t:common.options.rounded_large.label"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:common.settings.header_border"
+      },
+      {
+        "type": "range",
+        "id": "card_border_width",
+        "min": 0,
+        "max": 5,
+        "step": 1,
+        "unit": "px",
+        "label": "t:settings_schema.cards.settings.card_border_width.label",
+        "default": 1,
+        "info": "t:settings_schema.cards.settings.card_border_width.info"
+      },
+      {
+        "type": "select",
+        "id": "card_border_color",
+        "label": "t:settings_schema.cards.settings.card_border_color.label",
+        "default": "color-scheme-text",
+        "options": [
+          {
+            "value": "color-scheme-text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "color-scheme-accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "color-scheme-accent-2",
+            "label": "t:common.options.accent_2.label"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:common.settings.header_shadow"
+      },
+      {
+        "type": "range",
+        "id": "card_drop_shadow_size",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "t:settings_schema.cards.settings.card_drop_shadow_size.label",
+        "default": 10
+      },
+      {
+        "type": "select",
+        "id": "card_shadow_style",
+        "label": "t:settings_schema.cards.settings.card_shadow_style.label",
+        "default": "full",
+        "options": [
+          {
+            "value": "full",
+            "label": "t:common.options.full_color.label"
+          },
+          {
+            "value": "diagonal_lines",
+            "label": "t:common.options.diagonal_lines.label"
+          },
+          {
+            "value": "zig_zag",
+            "label": "t:common.options.zig_zag.label"
+          },
+          {
+            "value": "waves",
+            "label": "t:common.options.waves.label"
+          },
+          {
+            "value": "square_dots",
+            "label": "t:common.options.square_dots.label"
+          },
+          {
+            "value": "circle_dots",
+            "label": "t:common.options.circle_dots.label"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "card_shadow_color",
+        "label": "t:settings_schema.cards.settings.card_shadow_color.label",
+        "default": "color-scheme-accent-1",
+        "options": [
+          {
+            "value": "transparent",
+            "label": "t:common.options.transparent.label"
+          },
+          {
+            "value": "color-scheme-text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "color-scheme-accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "color-scheme-accent-2",
+            "label": "t:common.options.accent_2.label"
+          },
+          {
+            "value": "color-scheme-card",
+            "label": "t:common.options.card.label"
+          },
+          {
+            "value": "color-scheme-gradient",
+            "label": "t:common.options.gradient.label"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "card_shadow_direction",
+        "label": "t:settings_schema.cards.settings.card_shadow_direction.label",
+        "default": "bottom_right",
+        "options": [
+          {
+            "value": "bottom_right",
+            "label": "t:common.options.bottom_right.label"
+          },
+          {
+            "value": "bottom",
+            "label": "t:common.options.bottom.label"
+          },
+          {
+            "value": "bottom_left",
+            "label": "t:common.options.bottom_left.label"
+          },
+          {
+            "value": "top_right",
+            "label": "t:common.options.top_right.label"
+          },
+          {
+            "value": "top",
+            "label": "t:common.options.top.label"
+          },
+          {
+            "value": "top_left",
+            "label": "t:common.options.top_left.label"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_border_on_shadow",
+        "label": "t:settings_schema.cards.settings.card_show_border_on_shadow.label",
+        "info": "t:settings_schema.cards.settings.card_show_border_on_shadow.info"
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.media.name",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.media.settings.paragraph_set_up_default"
+      },
+      {
+        "type": "select",
+        "id": "media_border_radius",
+        "label": "t:settings_schema.media.settings.media_border_radius.label",
+        "options": [
+          {
+            "value": "0",
+            "label": "t:common.options.none.label"
+          },
+          {
+            "value": "0.375rem",
+            "label": "t:common.options.rounded_small.label"
+          },
+          {
+            "value": "1rem",
+            "label": "t:common.options.rounded_medium.label"
+          },
+          {
+            "value": "2rem",
+            "label": "t:common.options.rounded_large.label"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:common.settings.header_border"
+      },
+      {
+        "type": "range",
+        "id": "media_border_width",
+        "min": 0,
+        "max": 5,
+        "step": 1,
+        "unit": "px",
+        "label": "t:settings_schema.media.settings.media_border_width.label",
+        "default": 1,
+        "info": "t:settings_schema.media.settings.media_border_width.info"
+      },
+      {
+        "type": "select",
+        "id": "media_border_color",
+        "label": "t:settings_schema.media.settings.media_border_color.label",
+        "default": "color-scheme-text",
+        "options": [
+          {
+            "value": "color-scheme-text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "color-scheme-accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "color-scheme-accent-2",
+            "label": "t:common.options.accent_2.label"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:common.settings.header_shadow"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.media.settings.paragraph_shadow_will_not"
+      },
+      {
+        "type": "range",
+        "id": "media_drop_shadow_size",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "t:settings_schema.media.settings.media_drop_shadow_size.label",
+        "default": 10
+      },
+      {
+        "type": "select",
+        "id": "media_shadow_style",
+        "label": "t:settings_schema.media.settings.media_shadow_style.label",
+        "default": "full",
+        "options": [
+          {
+            "value": "full",
+            "label": "t:common.options.full_color.label"
+          },
+          {
+            "value": "diagonal_lines",
+            "label": "t:common.options.diagonal_lines.label"
+          },
+          {
+            "value": "zig_zag",
+            "label": "t:common.options.zig_zag.label"
+          },
+          {
+            "value": "waves",
+            "label": "t:common.options.waves.label"
+          },
+          {
+            "value": "square_dots",
+            "label": "t:common.options.square_dots.label"
+          },
+          {
+            "value": "circle_dots",
+            "label": "t:common.options.circle_dots.label"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "media_shadow_color",
+        "label": "t:settings_schema.media.settings.media_shadow_color.label",
+        "default": "color-scheme-accent-1",
+        "options": [
+          {
+            "value": "transparent",
+            "label": "t:common.options.transparent.label"
+          },
+          {
+            "value": "color-scheme-text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "color-scheme-accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "color-scheme-accent-2",
+            "label": "t:common.options.accent_2.label"
+          },
+          {
+            "value": "color-scheme-card",
+            "label": "t:common.options.card.label"
+          },
+          {
+            "value": "color-scheme-gradient",
+            "label": "t:common.options.gradient.label"
+          }
+        ],
+        "info": "t:settings_schema.media.settings.media_shadow_color.info"
+      },
+      {
+        "type": "select",
+        "id": "media_shadow_direction",
+        "label": "t:settings_schema.media.settings.media_shadow_direction.label",
+        "default": "bottom_right",
+        "options": [
+          {
+            "value": "bottom_right",
+            "label": "t:common.options.bottom_right.label"
+          },
+          {
+            "value": "bottom",
+            "label": "t:common.options.bottom.label"
+          },
+          {
+            "value": "bottom_left",
+            "label": "t:common.options.bottom_left.label"
+          },
+          {
+            "value": "top_right",
+            "label": "t:common.options.top_right.label"
+          },
+          {
+            "value": "top",
+            "label": "t:common.options.top.label"
+          },
+          {
+            "value": "top_left",
+            "label": "t:common.options.top_left.label"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "media_show_border_on_shadow",
+        "label": "t:settings_schema.media.settings.media_show_border_on_shadow.label",
+        "info": "t:settings_schema.media.settings.media_show_border_on_shadow.info"
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.icons.name",
+    "settings": [
+      {
+        "type": "range",
+        "id": "icon_thickness",
+        "min": 1,
+        "max": 2,
+        "step": 0.1,
+        "label": "t:settings_schema.icons.settings.icon_thickness.label",
+        "default": 1.5
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.borders.name",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.borders.settings.paragraph"
+      },
+      {
+        "type": "range",
+        "id": "general_border_width",
+        "min": 1,
+        "max": 5,
+        "step": 0.5,
+        "unit": "px",
+        "label": "t:common.settings.width.label",
+        "default": 1
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.product_tiles.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:common.settings.header_content"
+      },
+      {
+        "type": "checkbox",
+        "id": "product_tiles_show_vendor",
+        "label": "t:settings_schema.product_tiles.settings.product_tiles_show_vendor.label"
+      },
+      {
+        "type": "text",
+        "id": "product_tiles_metafield_content",
+        "label": "t:settings_schema.product_tiles.settings.product_tiles_metafield_content.label",
+        "placeholder": "custom.excerpt",
+        "info": "t:settings_schema.product_tiles.settings.product_tiles_metafield_content.info"
+      },
+      {
+        "type": "header",
+        "content": "t:common.settings.header_layout"
+      },
+      {
+        "type": "select",
+        "id": "product_tile_text_align",
+        "label": "t:common.settings.text_align.label",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "t:common.options.left.label"
+          },
+          {
+            "value": "text-center",
+            "label": "t:common.options.center.label"
+          },
+          {
+            "value": "text-right",
+            "label": "t:common.options.right.label"
+          }
+        ],
+        "default": "text-center"
+      },
+      {
+        "type": "checkbox",
+        "id": "product_tiles_scatter",
+        "label": "t:settings_schema.product_tiles.settings.product_tiles_scatter.label"
+      },
+      {
+        "type": "select",
+        "id": "product_tiles_aspect_ratio",
+        "label": "t:settings_schema.product_tiles.settings.product_tiles_aspect_ratio.label",
+        "options": [
+          {
+            "value": "natural",
+            "label": "t:common.options.natural.label"
+          },
+          {
+            "value": "aspect-w-4 aspect-h-3",
+            "label": "t:common.options.landscape.label"
+          },
+          {
+            "value": "aspect-w-1 aspect-h-1",
+            "label": "t:common.options.square.label"
+          },
+          {
+            "value": "aspect-w-3 aspect-h-4",
+            "label": "t:common.options.portrait.label"
+          }
+        ],
+        "default": "natural"
+      },
+      {
+        "type": "select",
+        "id": "product_tile_media_shape",
+        "label": "t:settings_schema.product_tiles.settings.product_tile_media_shape.label",
+        "options": [
+          {
+            "value": "default",
+            "label": "t:common.options.default.label",
+            "group": "t:common.groups.fit_to_image"
+          },
+          {
+            "value": "default_ellipse",
+            "label": "t:common.options.ellipse.label",
+            "group": "t:common.groups.fit_to_image"
+          },
+          {
+            "value": "default_pill",
+            "label": "t:common.options.pill.label",
+            "group": "t:common.groups.fit_to_image"
+          },
+          {
+            "value": "default_archway",
+            "label": "t:common.options.archway.label",
+            "group": "t:common.groups.fit_to_image"
+          },
+          {
+            "value": "diamond",
+            "label": "t:common.options.diamond.label",
+            "group": "t:common.groups.basic"
+          },
+          {
+            "value": "triangle_1",
+            "label": "t:common.options.triangle_1.label",
+            "group": "t:common.groups.basic"
+          },
+          {
+            "value": "triangle_2",
+            "label": "t:common.options.triangle_2.label",
+            "group": "t:common.groups.basic"
+          },
+          {
+            "value": "pentagon",
+            "label": "t:common.options.pentagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "hexagon",
+            "label": "t:common.options.hexagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "heptagon",
+            "label": "t:common.options.heptagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "octagon",
+            "label": "t:common.options.octagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "nonagon",
+            "label": "t:common.options.nonagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "decagon",
+            "label": "t:common.options.decagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "rounded_pentagon",
+            "label": "t:common.options.rounded_pentagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "rounded_hexagon",
+            "label": "t:common.options.rounded_hexagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "rounded_heptagon",
+            "label": "t:common.options.rounded_heptagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "rounded_octagon",
+            "label": "t:common.options.rounded_octagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "rounded_nonagon",
+            "label": "t:common.options.rounded_nonagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "rounded_decagon",
+            "label": "t:common.options.rounded_decagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "star_1",
+            "label": "t:common.options.star_1.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "star_2",
+            "label": "t:common.options.star_2.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "star_3",
+            "label": "t:common.options.star_3.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "star_4",
+            "label": "t:common.options.star_4.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "star_5",
+            "label": "t:common.options.star_5.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "star_6",
+            "label": "t:common.options.star_6.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "abstract_star_1",
+            "label": "t:common.options.abstract_star_1.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "abstract_star_2",
+            "label": "t:common.options.abstract_star_2.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "abstract_star_3",
+            "label": "t:common.options.abstract_star_3.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "scalloped_circle_1",
+            "label": "t:common.options.scalloped_circle_1.label",
+            "group": "t:common.groups.scalloped_circles"
+          },
+          {
+            "value": "scalloped_circle_2",
+            "label": "t:common.options.scalloped_circle_2.label",
+            "group": "t:common.groups.scalloped_circles"
+          },
+          {
+            "value": "scalloped_circle_3",
+            "label": "t:common.options.scalloped_circle_3.label",
+            "group": "t:common.groups.scalloped_circles"
+          },
+          {
+            "value": "scalloped_circle_4",
+            "label": "t:common.options.scalloped_circle_4.label",
+            "group": "t:common.groups.scalloped_circles"
+          },
+          {
+            "value": "scalloped_circle_5",
+            "label": "t:common.options.scalloped_circle_5.label",
+            "group": "t:common.groups.scalloped_circles"
+          },
+          {
+            "value": "scalloped_circle_6",
+            "label": "t:common.options.scalloped_circle_6.label",
+            "group": "t:common.groups.scalloped_circles"
+          },
+          {
+            "value": "parallelogram",
+            "label": "t:common.options.parallelogram.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "squircle",
+            "label": "t:common.options.squircle.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "scalloped_square_1",
+            "label": "t:common.options.scalloped_square_1.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "scalloped_square_2",
+            "label": "t:common.options.scalloped_square_2.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "leaf",
+            "label": "t:common.options.leaf.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "clipped_square",
+            "label": "t:common.options.clipped.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "convex_square",
+            "label": "t:common.options.convex.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "twisted_square",
+            "label": "t:common.options.twisted.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "trapeze",
+            "label": "t:common.options.trapeze.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "pinched",
+            "label": "t:common.options.pinched.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "pixelated",
+            "label": "t:common.options.pixelated.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "overlapped",
+            "label": "t:common.options.overlapped.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "zig_zag",
+            "label": "t:common.options.zig_zag.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "zig_zag_tear",
+            "label": "t:common.options.zig_zag_tear.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "wave_tear",
+            "label": "t:common.options.wave_tear.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "flower",
+            "label": "t:common.options.flower.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "flower_bloom",
+            "label": "t:common.options.flower_bloom.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "concave",
+            "label": "t:common.options.concave.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "flag",
+            "label": "t:common.options.flag.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "abstract_oval",
+            "label": "t:common.options.abstract_oval.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "cross",
+            "label": "t:common.options.cross.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "quatrefoil",
+            "label": "t:common.options.quatrefoil.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "quadrant",
+            "label": "t:common.options.quadrant.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "wind",
+            "label": "t:common.options.wind.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "windmill",
+            "label": "t:common.options.windmill.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "heart",
+            "label": "t:common.options.heart.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "mirrored_pyramids",
+            "label": "t:common.options.mirrored_pyramids.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "plus",
+            "label": "t:common.options.plus.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "double_pill_1",
+            "label": "t:common.options.double_pill_1.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "double_pill_2",
+            "label": "t:common.options.double_pill_2.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "triple_pill_1",
+            "label": "t:common.options.triple_pill_1.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "triple_pill_2",
+            "label": "t:common.options.triple_pill_2.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "crown",
+            "label": "t:common.options.crown.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "stair",
+            "label": "t:common.options.stair.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "pancake_stack",
+            "label": "t:common.options.pancake_stack.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "asterisk",
+            "label": "t:common.options.asterisk.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "overlapping_squares",
+            "label": "t:common.options.overlapping_squares.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "brush_stroke",
+            "label": "t:common.options.brush_stroke.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "blob",
+            "label": "t:common.options.blob.label",
+            "group": "t:common.groups.variable"
+          }
+        ],
+        "info": "t:settings_schema.product_tiles.settings.product_tile_media_shape.info"
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.product_tiles.settings.header_hover_effects"
+      },
+      {
+        "type": "checkbox",
+        "id": "product_tiles_second_image_on_hover",
+        "label": "t:settings_schema.product_tiles.settings.product_tiles_second_image_on_hover.label",
+        "default": false,
+        "info": "t:settings_schema.product_tiles.settings.product_tiles_second_image_on_hover.info"
+      },
+      {
+        "type": "checkbox",
+        "id": "hover_effect_zoom_media",
+        "label": "t:settings_schema.product_tiles.settings.hover_effect_zoom_media.label"
+      },
+      {
+        "type": "checkbox",
+        "id": "hover_effect_enlarge_shape",
+        "label": "t:settings_schema.product_tiles.settings.hover_effect_enlarge_shape.label"
+      },
+      {
+        "type": "checkbox",
+        "id": "hover_effect_rotate_shape",
+        "label": "t:settings_schema.product_tiles.settings.hover_effect_rotate_shape.label"
+      },
+      {
+        "type": "checkbox",
+        "id": "hover_effect_lift_shape",
+        "label": "t:settings_schema.product_tiles.settings.hover_effect_lift_shape.label"
+      },
+      {
+        "type": "range",
+        "id": "hover_effect_rotate_level",
+        "min": -90,
+        "max": 90,
+        "step": 5,
+        "label": "t:settings_schema.product_tiles.settings.hover_effect_rotate_level.label",
+        "default": 15
+      },
+      {
+        "type": "range",
+        "id": "hover_effect_lift_level",
+        "min": 0.2,
+        "max": 3,
+        "step": 0.2,
+        "label": "t:settings_schema.product_tiles.settings.hover_effect_lift_level.label",
+        "default": 1
+      }
+    ]
+  },
+  {
+    "name": "Badging",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Defaults"
+      },
+      {
+        "type": "select",
+        "id": "badgeFontSize",
+        "label": "Badging Font Size",
+        "options": [
+          {
+            "value": "10px",
+            "label": "Small"
+          },
+          {
+            "value": "14px",
+            "label": "Medium"
+          },
+          {
+            "value": "18px",
+            "label": "Large"
+          },
+          {
+            "value": "22px",
+            "label": "Extra Large"
+          }
+        ],
+        "default": "14px"
+      },
+      {
+        "type": "select",
+        "id": "badgeFonts",
+        "label": "\"On Sale\" Badge Font",
+        "options": [
+          {
+            "value": "inherit",
+            "label": "Inherit"
+          },
+          {
+            "value": "abc-favorit-medium",
+            "label": "ABC Favorit (Medium)"
+          },
+          {
+            "value": "abc-favorit-book",
+            "label": "ABC Favorit (Book)"
+          },
+          {
+            "value": "abc-favorit-lining",
+            "label": "ABC Favorit (Lining)"
+          },
+          {
+            "value": "nib-pro",
+            "label": "t:common.options.circle.label"
+          },
+          {
+            "value": "neue-bit",
+            "label": "t:common.options.circle.label"
+          }
+        ],
+        "default": "inherit"
+      },
+      {
+        "type": "select",
+        "id": "badgeFontTransform",
+        "label": "Default Font Style",
+        "options": [
+          {
+            "value": "none",
+            "label": "Normal"
+          },
+          {
+            "value": "lowercase",
+            "label": "Lowercase"
+          },
+          {
+            "value": "Uppercase",
+            "label": "All Caps"
+          }
+        ],
+        "default": "none"
+      },
+      {
+        "type": "color",
+        "id": "badgeBG",
+        "label": "Background Color",
+        "default": "#000"
+      },
+      {
+        "type": "color",
+        "id": "badgeFontColor",
+        "label": "Font Color",
+        "default": "#fff"
+      },
+      {
+        "type": "header",
+        "content": "On Sale"
+      },
+      {
+        "type": "checkbox",
+        "id": "badgeOnSale",
+        "label": "t:settings_schema.product_tiles.settings.badgeOnSale.label",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "badgeText_OnSale",
+        "label": "\"On Sale\" Text",
+        "default": "On Sale"
+      },
+      {
+        "type": "select",
+        "id": "badgeFontsSale",
+        "label": "\"On Sale\" Badge Font",
+        "options": [
+          {
+            "value": "inherit",
+            "label": "Inherit"
+          },
+          {
+            "value": "abc-favorit-medium",
+            "label": "ABC Favorit (Medium)"
+          },
+          {
+            "value": "abc-favorit-book",
+            "label": "ABC Favorit (Book)"
+          },
+          {
+            "value": "abc-favorit-lining",
+            "label": "ABC Favorit (Lining)"
+          },
+          {
+            "value": "nib-pro",
+            "label": "t:common.options.circle.label"
+          },
+          {
+            "value": "neue-bit",
+            "label": "t:common.options.circle.label"
+          }
+        ],
+        "default": "inherit"
+      },
+      {
+        "type": "select",
+        "id": "badgeOnSaleFontTransform",
+        "label": "\"On Sale\" Text Style",
+        "options": [
+          {
+            "value": "none",
+            "label": "Normal"
+          },
+          {
+            "value": "lowercase",
+            "label": "Lowercase"
+          },
+          {
+            "value": "Uppercase",
+            "label": "All Caps"
+          }
+        ],
+        "default": "none"
+      },
+      {
+        "type": "checkbox",
+        "id": "badgeOnSaleFontsItalics",
+        "label": "Italicize"
+      },
+      {
+        "type": "color",
+        "id": "badgeOnSaleBG",
+        "label": "Background Color",
+        "default": "#000"
+      },
+      {
+        "type": "color",
+        "id": "badgeOnSaleColor",
+        "label": "Font Color",
+        "default": "#fff"
+      },
+      {
+        "type": "header",
+        "content": "Sold Out"
+      },
+      {
+        "type": "checkbox",
+        "id": "badgeSoldOut",
+        "label": "t:settings_schema.product_tiles.settings.badgeSoldOut.label",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "badgeText_SoldOut",
+        "label": "Sold Out Text",
+        "default": "Sold Out"
+      },
+      {
+        "type": "select",
+        "id": "badgeFontsSoldOut",
+        "label": "\"Sold Out\" Badge Font",
+        "options": [
+          {
+            "value": "inherit",
+            "label": "Inherit"
+          },
+          {
+            "value": "abc-favorit-medium",
+            "label": "ABC Favorit (Medium)"
+          },
+          {
+            "value": "abc-favorit-book",
+            "label": "ABC Favorit (Book)"
+          },
+          {
+            "value": "abc-favorit-lining",
+            "label": "ABC Favorit (Lining)"
+          },
+          {
+            "value": "nib-pro",
+            "label": "t:common.options.circle.label"
+          },
+          {
+            "value": "neue-bit",
+            "label": "t:common.options.circle.label"
+          }
+        ],
+        "default": "inherit"
+      },
+      {
+        "type": "select",
+        "id": "badgeSoldOutFontTransform",
+        "label": "\"Sold Out\" Text Style",
+        "options": [
+          {
+            "value": "none",
+            "label": "Normal"
+          },
+          {
+            "value": "lowercase",
+            "label": "Lowercase"
+          },
+          {
+            "value": "Uppercase",
+            "label": "All Caps"
+          }
+        ],
+        "default": "none"
+      },
+      {
+        "type": "checkbox",
+        "id": "badgeSoldOutFontsItalics",
+        "label": "Italicize"
+      },
+      {
+        "type": "color",
+        "id": "badgeSoldOutBG",
+        "label": "Background Color",
+        "default": "#000"
+      },
+      {
+        "type": "color",
+        "id": "badgeSoldOutColor",
+        "label": "Font Color",
+        "default": "#fff"
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.product_tiles.settings.header_mini_product_tiles"
+      },
+      {
+        "type": "select",
+        "id": "product_tile_mini_media_shape",
+        "label": "t:settings_schema.product_tiles.settings.product_tile_media_shape.label",
+        "options": [
+          {
+            "value": "default",
+            "label": "t:common.options.default.label",
+            "group": "t:common.groups.fit_to_image"
+          },
+          {
+            "value": "default_ellipse",
+            "label": "t:common.options.ellipse.label",
+            "group": "t:common.groups.fit_to_image"
+          },
+          {
+            "value": "default_pill",
+            "label": "t:common.options.pill.label",
+            "group": "t:common.groups.fit_to_image"
+          },
+          {
+            "value": "default_archway",
+            "label": "t:common.options.archway.label",
+            "group": "t:common.groups.fit_to_image"
+          },
+          {
+            "value": "diamond",
+            "label": "t:common.options.diamond.label",
+            "group": "t:common.groups.basic"
+          },
+          {
+            "value": "triangle_1",
+            "label": "t:common.options.triangle_1.label",
+            "group": "t:common.groups.basic"
+          },
+          {
+            "value": "triangle_2",
+            "label": "t:common.options.triangle_2.label",
+            "group": "t:common.groups.basic"
+          },
+          {
+            "value": "pentagon",
+            "label": "t:common.options.pentagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "hexagon",
+            "label": "t:common.options.hexagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "heptagon",
+            "label": "t:common.options.heptagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "octagon",
+            "label": "t:common.options.octagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "nonagon",
+            "label": "t:common.options.nonagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "decagon",
+            "label": "t:common.options.decagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "rounded_pentagon",
+            "label": "t:common.options.rounded_pentagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "rounded_hexagon",
+            "label": "t:common.options.rounded_hexagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "rounded_heptagon",
+            "label": "t:common.options.rounded_heptagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "rounded_octagon",
+            "label": "t:common.options.rounded_octagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "rounded_nonagon",
+            "label": "t:common.options.rounded_nonagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "rounded_decagon",
+            "label": "t:common.options.rounded_decagon.label",
+            "group": "t:common.groups.polygons"
+          },
+          {
+            "value": "star_1",
+            "label": "t:common.options.star_1.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "star_2",
+            "label": "t:common.options.star_2.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "star_3",
+            "label": "t:common.options.star_3.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "star_4",
+            "label": "t:common.options.star_4.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "star_5",
+            "label": "t:common.options.star_5.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "star_6",
+            "label": "t:common.options.star_6.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "abstract_star_1",
+            "label": "t:common.options.abstract_star_1.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "abstract_star_2",
+            "label": "t:common.options.abstract_star_2.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "abstract_star_3",
+            "label": "t:common.options.abstract_star_3.label",
+            "group": "t:common.groups.stars"
+          },
+          {
+            "value": "scalloped_circle_1",
+            "label": "t:common.options.scalloped_circle_1.label",
+            "group": "t:common.groups.scalloped_circles"
+          },
+          {
+            "value": "scalloped_circle_2",
+            "label": "t:common.options.scalloped_circle_2.label",
+            "group": "t:common.groups.scalloped_circles"
+          },
+          {
+            "value": "scalloped_circle_3",
+            "label": "t:common.options.scalloped_circle_3.label",
+            "group": "t:common.groups.scalloped_circles"
+          },
+          {
+            "value": "scalloped_circle_4",
+            "label": "t:common.options.scalloped_circle_4.label",
+            "group": "t:common.groups.scalloped_circles"
+          },
+          {
+            "value": "scalloped_circle_5",
+            "label": "t:common.options.scalloped_circle_5.label",
+            "group": "t:common.groups.scalloped_circles"
+          },
+          {
+            "value": "scalloped_circle_6",
+            "label": "t:common.options.scalloped_circle_6.label",
+            "group": "t:common.groups.scalloped_circles"
+          },
+          {
+            "value": "parallelogram",
+            "label": "t:common.options.parallelogram.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "squircle",
+            "label": "t:common.options.squircle.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "scalloped_square_1",
+            "label": "t:common.options.scalloped_square_1.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "scalloped_square_2",
+            "label": "t:common.options.scalloped_square_2.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "leaf",
+            "label": "t:common.options.leaf.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "clipped_square",
+            "label": "t:common.options.clipped.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "convex_square",
+            "label": "t:common.options.convex.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "twisted_square",
+            "label": "t:common.options.twisted.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "trapeze",
+            "label": "t:common.options.trapeze.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "pinched",
+            "label": "t:common.options.pinched.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "pixelated",
+            "label": "t:common.options.pixelated.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "overlapped",
+            "label": "t:common.options.overlapped.label",
+            "group": "t:common.groups.square"
+          },
+          {
+            "value": "zig_zag",
+            "label": "t:common.options.zig_zag.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "zig_zag_tear",
+            "label": "t:common.options.zig_zag_tear.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "wave_tear",
+            "label": "t:common.options.wave_tear.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "flower",
+            "label": "t:common.options.flower.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "flower_bloom",
+            "label": "t:common.options.flower_bloom.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "concave",
+            "label": "t:common.options.concave.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "flag",
+            "label": "t:common.options.flag.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "abstract_oval",
+            "label": "t:common.options.abstract_oval.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "cross",
+            "label": "t:common.options.cross.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "quatrefoil",
+            "label": "t:common.options.quatrefoil.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "quadrant",
+            "label": "t:common.options.quadrant.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "wind",
+            "label": "t:common.options.wind.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "windmill",
+            "label": "t:common.options.windmill.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "heart",
+            "label": "t:common.options.heart.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "mirrored_pyramids",
+            "label": "t:common.options.mirrored_pyramids.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "plus",
+            "label": "t:common.options.plus.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "double_pill_1",
+            "label": "t:common.options.double_pill_1.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "double_pill_2",
+            "label": "t:common.options.double_pill_2.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "triple_pill_1",
+            "label": "t:common.options.triple_pill_1.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "triple_pill_2",
+            "label": "t:common.options.triple_pill_2.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "crown",
+            "label": "t:common.options.crown.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "stair",
+            "label": "t:common.options.stair.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "pancake_stack",
+            "label": "t:common.options.pancake_stack.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "asterisk",
+            "label": "t:common.options.asterisk.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "overlapping_squares",
+            "label": "t:common.options.overlapping_squares.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "brush_stroke",
+            "label": "t:common.options.brush_stroke.label",
+            "group": "t:common.groups.miscellaneous"
+          },
+          {
+            "value": "blob",
+            "label": "t:common.options.blob.label",
+            "group": "t:common.groups.variable"
+          }
+        ],
+        "info": "t:settings_schema.product_tiles.settings.product_tile_media_shape.info"
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.product_tiles.settings.header_quick_buy"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_buttons_if_product_has_two_variants",
+        "label": "t:settings_schema.product_tiles.settings.use_buttons_if_product_has_two_variants.label",
+        "default": true,
+        "info": "t:settings_schema.product_tiles.settings.use_buttons_if_product_has_two_variants.info"
+      }
+    ]
+  },
+  {
+    "name": "Products",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Default images"
+      },
+      {
+        "type": "image_picker",
+        "id": "product_default_front_image",
+        "label": "Default front image"
+      },
+      {
+        "type": "image_picker",
+        "id": "product_default_back_image",
+        "label": "Default back image"
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.heading_effects.name",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "apply_to_standard_headings",
+        "label": "t:settings_schema.heading_effects.settings.apply_to_standard_headings.label",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "apply_to_feature_headings",
+        "label": "t:settings_schema.heading_effects.settings.apply_to_feature_headings.label",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "heading_effects_style",
+        "label": "t:common.settings.style.label",
+        "options": [
+          {
+            "value": "border_shadow",
+            "label": "t:settings_schema.heading_effects.settings.text_effects.label"
+          },
+          {
+            "value": "italic",
+            "label": "t:settings_schema.heading_effects.settings.italic_styling.label"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.heading_effects.settings.text_effects.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.heading_effects.settings.text_effects.paragraph"
+      },
+      {
+        "type": "select",
+        "id": "heading_color",
+        "label": "t:settings_schema.heading_effects.settings.heading_color.label",
+        "default": "color-scheme-text",
+        "options": [
+          {
+            "value": "color-scheme-text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "color-scheme-accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "color-scheme-accent-2",
+            "label": "t:common.options.accent_2.label"
+          },
+          {
+            "value": "color-scheme-background",
+            "label": "t:settings_schema.heading_effects.settings.heading_color.options.background.label"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "heading_stroke_thickness",
+        "min": 0,
+        "max": 4,
+        "step": 1,
+        "unit": "px",
+        "label": "t:settings_schema.heading_effects.settings.stroke_thickness.label",
+        "default": 1
+      },
+      {
+        "type": "select",
+        "id": "heading_stroke_color",
+        "label": "t:settings_schema.heading_effects.settings.heading_stroke_color.label",
+        "default": "color-scheme-text",
+        "options": [
+          {
+            "value": "color-scheme-text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "color-scheme-accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "color-scheme-accent-2",
+            "label": "t:common.options.accent_2.label"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "heading_drop_shadow_style",
+        "label": "t:settings_schema.heading_effects.settings.heading_drop_shadow_style.label",
+        "default": "none",
+        "options": [
+          {
+            "value": "none",
+            "label": "t:common.options.none.label"
+          },
+          {
+            "value": "drop_shadow",
+            "label": "t:settings_schema.heading_effects.settings.heading_drop_shadow_style.options.drop_shadow.label"
+          },
+          {
+            "value": "full_shadow",
+            "label": "t:settings_schema.heading_effects.settings.heading_drop_shadow_style.options.full_shadow.label"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "heading_drop_shadow_size",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "unit": "em",
+        "label": "t:settings_schema.heading_effects.settings.heading_drop_shadow_size.label",
+        "default": 10
+      },
+      {
+        "type": "select",
+        "id": "heading_drop_shadow_color",
+        "label": "t:settings_schema.heading_effects.settings.heading_drop_shadow_color.label",
+        "default": "color-scheme-accent-1",
+        "options": [
+          {
+            "value": "color-scheme-text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "color-scheme-accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "color-scheme-accent-2",
+            "label": "t:common.options.accent_2.label"
+          },
+          {
+            "value": "color-scheme-card",
+            "label": "t:common.options.card.label"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:common.settings.header_italics"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.heading_effects.settings.italic_styling.paragraph"
+      },
+      {
+        "type": "select",
+        "id": "heading_italics_style",
+        "label": "t:common.settings.style.label",
+        "default": "italic",
+        "options": [
+          {
+            "value": "italic",
+            "label": "t:common.options.italic.label"
+          },
+          {
+            "value": "normal",
+            "label": "t:common.options.normal.label"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "heading_italics_color",
+        "label": "t:common.settings.color.label",
+        "default": "color-scheme-text",
+        "options": [
+          {
+            "value": "color-scheme-text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "color-scheme-accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "color-scheme-accent-2",
+            "label": "t:common.options.accent_2.label"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "heading_italics_decoration",
+        "label": "t:common.settings.decoration.label",
+        "options": [
+          {
+            "value": "highlight",
+            "label": "t:common.options.highlight.label"
+          },
+          {
+            "value": "none",
+            "label": "t:common.settings.header_color"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "heading_highlight_start",
+        "min": 10,
+        "max": 50,
+        "step": 1,
+        "unit": "%",
+        "label": "t:settings_schema.heading_effects.settings.heading_highlight_start.label",
+        "default": 20
+      },
+      {
+        "type": "range",
+        "id": "heading_highlight_end",
+        "min": 50,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "label": "t:settings_schema.heading_effects.settings.heading_highlight_end.label",
+        "default": 90
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.rich_text.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:settings_schema.rich_text.settings.links.label"
+      },
+      {
+        "type": "select",
+        "id": "rich_text_links_color",
+        "label": "t:common.settings.header_color",
+        "info": "t:settings_schema.rich_text.settings.links.settings.color.info",
+        "options": [
+          {
+            "value": "text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "accent_1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "accent_2",
+            "label": "t:common.options.accent_2.label"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.rich_text.settings.header_blockquotes"
+      },
+      {
+        "type": "select",
+        "id": "rich_text_blockquotes_background_color",
+        "label": "t:common.settings.header_color",
+        "options": [
+          {
+            "value": "accent_1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "accent_2",
+            "label": "t:common.options.accent_2.label"
+          },
+          {
+            "value": "transparent",
+            "label": "t:common.options.transparent.label"
+          },
+          {
+            "value": "text",
+            "label": "t:common.options.text.label"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.rich_text.settings.header_lists"
+      },
+      {
+        "type": "select",
+        "id": "rich_text_list_style",
+        "label": "List style type",
+        "options": [
+          {
+            "value": "disc",
+            "label": "t:settings_schema.rich_text.settings.rich_text_list_style.options.disc.label"
+          },
+          {
+            "value": "circle",
+            "label": "t:common.options.circle.label"
+          },
+          {
+            "value": "square",
+            "label": "t:common.options.square.label"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.rich_text.settings.header_underline"
+      },
+      {
+        "type": "select",
+        "id": "underline_style",
+        "label": "t:common.settings.style.label",
+        "options": [
+          {
+            "value": "solid",
+            "label": "t:settings_schema.rich_text.settings.underline_text_style.options.solid"
+          },
+          {
+            "value": "wavy",
+            "label": "t:settings_schema.rich_text.settings.underline_text_style.options.wavy"
+          },
+          {
+            "value": "dotted",
+            "label": "t:settings_schema.rich_text.settings.underline_text_style.options.dotted"
+          },
+          {
+            "value": "dashed",
+            "label": "t:settings_schema.rich_text.settings.underline_text_style.options.dashed"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "underline_thickness",
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "unit": "px",
+        "label": "t:common.settings.thickness.label",
+        "default": 2
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.animations.name",
+    "settings": [
+      {
+        "type": "range",
+        "id": "parallax_intensity",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "label": "t:settings_schema.animations.settings.parallax_intensity.label",
+        "info": "t:settings_schema.animations.settings.parallax_intensity.info",
+        "default": 50
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.currency_format.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:settings_schema.currency_format.settings.header_currency_codes"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.currency_format.settings.paragraph_cart_and_checkout"
+      },
+      {
+        "type": "checkbox",
+        "id": "currency_code_enabled",
+        "label": "t:settings_schema.currency_format.settings.currency_code_enabled.label",
+        "default": false
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.search.name",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "predictive_search_enabled",
+        "label": "t:settings_schema.search.settings.predictive_search_enabled.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "search_products",
+        "label": "t:settings_schema.search.settings.search_products.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "search_collections",
+        "label": "t:settings_schema.search.settings.search_collections.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "search_articles",
+        "label": "t:settings_schema.search.settings.search_articles.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "search_pages",
+        "label": "t:settings_schema.search.settings.search_pages.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "search_suggestions",
+        "label": "t:settings_schema.search.settings.search_suggestions.label",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "predictive_search_crop",
+        "label": "t:settings_schema.search.settings.predictive_search_crop.label",
+        "options": [
+          {
+            "value": "",
+            "label": "t:common.options.no_crop.label"
+          },
+          {
+            "value": "aspect-w-4 aspect-h-3",
+            "label": "t:common.options.landscape.label"
+          },
+          {
+            "value": "aspect-w-1 aspect-h-1",
+            "label": "t:common.options.square.label"
+          },
+          {
+            "value": "aspect-w-3 aspect-h-4",
+            "label": "t:common.options.portrait.label"
+          }
+        ],
+        "default": "aspect-w-1 aspect-h-1"
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.social_media.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:settings_schema.social_media.settings.header_sharing_options"
+      },
+      {
+        "type": "select",
+        "id": "sharing_display",
+        "label": "t:settings_schema.social_media.settings.sharing_display.label",
+        "options": [
+          {
+            "value": "text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "icons",
+            "label": "t:common.options.icons.label"
+          }
+        ],
+        "default": "text"
+      },
+      {
+        "type": "checkbox",
+        "id": "share_facebook",
+        "label": "t:settings_schema.social_media.settings.share_facebook.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "share_twitter",
+        "label": "t:settings_schema.social_media.settings.share_twitter.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "share_pinterest",
+        "label": "t:settings_schema.social_media.settings.share_pinterest.label",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.social_media.settings.header_accounts"
+      },
+      {
+        "type": "select",
+        "id": "social_style",
+        "label": "t:settings_schema.social_media.settings.social_style.label",
+        "options": [
+          {
+            "value": "text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "icons",
+            "label": "t:common.options.icons.label"
+          }
+        ],
+        "default": "text"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "t:settings_schema.social_media.settings.social_instagram_link.label",
+        "info": "t:settings_schema.social_media.settings.social_instagram_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook_link",
+        "label": "t:settings_schema.social_media.settings.social_facebook_link.label",
+        "info": "t:settings_schema.social_media.settings.social_facebook_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_twitter_link",
+        "label": "t:settings_schema.social_media.settings.social_twitter_link.label",
+        "info": "t:settings_schema.social_media.settings.social_twitter_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest_link",
+        "label": "t:settings_schema.social_media.settings.social_pinterest_link.label",
+        "info": "t:settings_schema.social_media.settings.social_pinterest_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_snapchat_link",
+        "label": "t:settings_schema.social_media.settings.social_snapchat_link.label",
+        "info": "t:settings_schema.social_media.settings.social_snapchat_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok_link",
+        "label": "t:settings_schema.social_media.settings.social_tiktok_link.label",
+        "info": "t:settings_schema.social_media.settings.social_tiktok_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_tumblr_link",
+        "label": "t:settings_schema.social_media.settings.social_tumblr_link.label",
+        "info": "t:settings_schema.social_media.settings.social_tumblr_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube_link",
+        "label": "t:settings_schema.social_media.settings.social_youtube_link.label",
+        "info": "t:settings_schema.social_media.settings.social_youtube_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_vimeo_link",
+        "label": "t:settings_schema.social_media.settings.social_vimeo_link.label",
+        "info": "t:settings_schema.social_media.settings.social_vimeo_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_linkedin_link",
+        "label": "t:settings_schema.social_media.settings.social_linkedin_link.label",
+        "info": "t:settings_schema.social_media.settings.social_linkedin_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_threads_link",
+        "label": "t:settings_schema.social_media.settings.social_threads_link.label",
+        "info": "t:settings_schema.social_media.settings.social_threads_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_whatsapp_link",
+        "label": "t:settings_schema.social_media.settings.social_whatsapp_link.label",
+        "info": "t:settings_schema.social_media.settings.social_whatsapp_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_discord_link",
+        "label": "t:settings_schema.social_media.settings.social_discord_link.label",
+        "info": "t:settings_schema.social_media.settings.social_discord_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_twitch_link",
+        "label": "t:settings_schema.social_media.settings.social_twitch_link.label",
+        "info": "t:settings_schema.social_media.settings.social_twitch_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_messenger_link",
+        "label": "t:settings_schema.social_media.settings.social_messenger_link.label",
+        "info": "t:settings_schema.social_media.settings.social_messenger_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_email_link",
+        "label": "t:settings_schema.social_media.settings.social_email_link.label",
+        "info": "t:settings_schema.social_media.settings.social_email_link.info"
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.cart.name",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_icon",
+        "label": "t:settings_schema.cart.settings.cart_icon.label",
+        "default": "bag",
+        "options": [
+          {
+            "value": "bag",
+            "label": "t:settings_schema.cart.settings.cart_icon.options.bag.label"
+          },
+          {
+            "value": "cart",
+            "label": "t:settings_schema.cart.settings.cart_icon.options.cart.label"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_notes_enable",
+        "label": "t:settings_schema.cart.settings.cart_notes_enable.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_accelerated_checkout",
+        "label": "t:settings_schema.cart.settings.enable_accelerated_checkout.label",
+        "info": "t:settings_schema.cart.settings.enable_accelerated_checkout.info",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_vendor_enable",
+        "label": "t:settings_schema.cart.settings.cart_vendor_enable.label"
+      },
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "t:settings_schema.cart.settings.cart_type.label",
+        "options": [
+          {
+            "value": "modal",
+            "label": "t:settings_schema.cart.settings.cart_type.options.modal.label"
+          },
+          {
+            "value": "page",
+            "label": "t:settings_schema.cart.settings.cart_type.options.page.label"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "open_modal_on_add_to_cart",
+        "label": "t:settings_schema.cart.settings.open_modal_on_add_to_cart.label",
+        "info": "t:settings_schema.cart.settings.open_modal_on_add_to_cart.info",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.cart.settings.header_free_shipping_progress"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.cart.settings.paragraph_free_shipping_progress"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_free_shipping_progress_in_cart",
+        "label": "t:settings_schema.cart.settings.enable_free_shipping_progress_in_cart.label"
+      },
+      {
+        "type": "text",
+        "id": "free_shipping_threshold",
+        "label": "t:settings_schema.cart.settings.free_shipping_threshold.label",
+        "info": "t:settings_schema.cart.settings.free_shipping_threshold.info",
+        "default": "50"
+      },
+      {
+        "type": "color_scheme",
+        "id": "shipping_bar_color_scheme",
+        "default": "scheme1",
+        "label": "t:common.settings.color_scheme.label"
+      },
+      {
+        "type": "select",
+        "id": "shipping_progress_bar_color",
+        "label": "t:sections.free_shipping_bar.settings.progress_bar_color.label",
+        "default": "bg-scheme-accent-1",
+        "options": [
+          {
+            "value": "bg-scheme-text",
+            "label": "t:common.options.text.label"
+          },
+          {
+            "value": "bg-scheme-accent-1",
+            "label": "t:common.options.accent_1.label"
+          },
+          {
+            "value": "bg-scheme-accent-2",
+            "label": "t:common.options.accent_2.label"
+          },
+          {
+            "value": "bg-scheme-card",
+            "label": "t:common.options.card.label"
+          },
+          {
+            "value": "bg-scheme-gradient",
+            "label": "t:common.options.gradient.label"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.cursor.name",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "custom_cursor",
+        "label": "t:settings_schema.cursor.settings.custom_cursor.label",
+        "info": "t:settings_schema.cursor.settings.custom_cursor.info"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_custom_cursor_default",
+        "label": "t:settings_schema.cursor.settings.enable_custom_cursor_default.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_custom_cursor_links",
+        "label": "t:settings_schema.cursor.settings.enable_custom_cursor_links.label",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.cursor.settings.header_cursor_hotspot"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.cursor.settings.paragraph_x_and_y"
+      },
+      {
+        "type": "range",
+        "id": "cursor_x_position",
+        "min": 0,
+        "max": 32,
+        "step": 1,
+        "unit": "px",
+        "label": "t:settings_schema.cursor.settings.cursor_x_position.label",
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "cursor_y_position",
+        "min": 0,
+        "max": 32,
+        "step": 1,
+        "unit": "px",
+        "label": "t:settings_schema.cursor.settings.cursor_y_position.label",
+        "default": 0
+      }
+    ]
+  },
+  {
+    "name": "Custom Javascript",
+    "settings": [
+      {
+        "type": "textarea",
+        "label": "Custom Javascript",
+        "id": "custom_javascript"
+      }
+    ]
+  },
+  {
+    "name": "Marker.io",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "marker_enable",
+        "label": "Enable Marker",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "marker_project",
+        "label": "Project",
+        "visible_if": "{{ settings.marker_enable }}"
+      },
+      {
+        "type": "select",
+        "id": "marker_display_rule",
+        "label": "Display rule",
+        "options": [
+          {
+            "value": "always",
+            "label": "Always"
+          },
+          {
+            "value": "preview",
+            "label": "When previewing"
+          },
+          {
+            "value": "admin_preview",
+            "label": "When clicking preview in admin"
+          }
+        ],
+        "visible_if": "{{ settings.marker_enable }}"
+      }
+    ]
+  },
+  {
+    "name": "Swym Wishlist Product Button",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Button Placement",
+        "info": "We recommend using the Admin App to configure these settings. [Open App](/admin/apps/swym-relay)"
+      },
+      {
+        "type": "select",
+        "id": "swym_button_position",
+        "label": "Select Position",
+        "info": "Choose where the wishlist button appears on your product page. Select 'Custom Placement' to manually specify a location using a CSS selector. [Help](https://help.getswym.com/en/articles/13249541-how-to-find-css-selectors-for-custom-button-placement)",
+        "default": "default",
+        "options": [
+          {
+            "value": "default",
+            "label": "Inline with Product Details"
+          },
+          {
+            "value": "product_image",
+            "label": "Overlay on Product Image"
+          },
+          {
+            "value": "product_title",
+            "label": "Near Product Title"
+          },
+          {
+            "value": "custom",
+            "label": "Custom Placement"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "swym_custom_selector",
+        "label": "Custom Placement Selector",
+        "info": "Enter a CSS selector of the parent element to anchor the button. Only used if Button Position is set to 'Custom' Placement. [Help](https://help.getswym.com/en/articles/13249541-how-to-find-css-selectors-for-custom-button-placement)",
+        "default": "#swym-custom-wishlist-button"
+      },
+      {
+        "type": "header",
+        "content": "Button Appearance",
+        "info": "We recommend using the Admin App to configure these settings. [Open App](/admin/apps/swym-relay)"
+      },
+      {
+        "type": "html",
+        "id": "swym_wishlist_custom_button_before_html",
+        "label": "Add to Wishlist HTML",
+        "info": "Customize the button's appearance for products not yet saved to the wishlist.",
+        "default": "<button class=\"swym-icon-text\" type=\"button\">\n\t<svg class=\"swym-icon\" width=\"20\" height=\"20\" viewbox=\"0 0 24 24\">\n\t\t<path d=\"M19.6706 5.4736C17.6806 3.8336 14.7206 4.1236 12.8906 5.9536L12.0006 6.8436L11.1106 5.9536C9.29063 4.1336 6.32064 3.8336 4.33064 5.4736C2.05064 7.3536 1.93063 10.7436 3.97063 12.7836L11.6406 20.4536C11.8406 20.6536 12.1506 20.6536 12.3506 20.4536L20.0206 12.7836C22.0706 10.7436 21.9506 7.3636 19.6706 5.4736Z\" stroke=\"currentColor\" stroke-width=\"1.75px\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n\t</svg>\n\t<span class=\"swym-custom-btn-txt\">{{WishlistAddCTA}}</span>\n</button>"
+      },
+      {
+        "type": "html",
+        "id": "swym_wishlist_custom_button_after_html",
+        "label": "Added to Wishlist HTML",
+        "info": "Customize the button's appearance for products already in the wishlist.",
+        "default": "<button class=\"swym-icon-text\" type=\"button\">\n\t<svg class=\"swym-icon\" width=\"20\" height=\"20\" viewbox=\"0 0 24 24\">\n\t\t<path d=\"M19.6706 5.4736C17.6806 3.8336 14.7206 4.1236 12.8906 5.9536L12.0006 6.8436L11.1106 5.9536C9.29063 4.1336 6.32064 3.8336 4.33064 5.4736C2.05064 7.3536 1.93063 10.7436 3.97063 12.7836L11.6406 20.4536C11.8406 20.6536 12.1506 20.6536 12.3506 20.4536L20.0206 12.7836C22.0706 10.7436 21.9506 7.3636 19.6706 5.4736Z\" stroke=\"currentColor\" stroke-width=\"1.75px\" fill=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n\t</svg>\n\t<span class=\"swym-custom-btn-txt\">{{WishlistAddedCTA}}</span>\n</button>"
+      },
+      {
+        "type": "textarea",
+        "id": "swym_wishlist_custom_button_css",
+        "label": "Custom Styling (CSS)",
+        "info": "Modify CSS here to fine-tune the button's design and ensure it matches your theme perfectly.",
+        "default": "/* Base button styles using CSS variables (set by JavaScript) */\n/* Loading state for user interactions */\n.swym-loading .swym-button-content button,\n.swym-loading .swym-button-content [role=\"button\"],\n.swym-loading .swym-button-content .btn,\n.swym-loading .swym-button-content a {\n  opacity: 0.6;\n  cursor: not-allowed;\n  pointer-events: none;\n}\n.swym-button-content > button,\n.swym-button-content > [role=\"button\"],\n.swym-button-content > span,\n.swym-button-content > a {\n  color: #fff;  \n  background: #000;\n  border: 1px solid #000;\n  font-family: inherit;\n  padding: 12px 16px;\n  font-size: 14px;\n  font-weight: normal;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  text-align: center;\n  pointer-events: auto;\n  min-height: 45px;\n  width: 100%;\n  letter-spacing: normal;\n}\n\n/* Focus styles for accessibility */\n.swym-button-content button:focus-visible,\n.swym-button-content [role=\"button\"]:focus-visible,\n.swym-button-content .btn:focus-visible,\n.swym-button-content a:focus-visible {\n  outline: 2px solid currentColor;\n  outline-offset: 2px;\n}\n/* Disabled state styles */\n.swym-button-content button:disabled,\n.swym-button-content [role=\"button\"][aria-disabled=\"true\"],\n.swym-button-content .btn:disabled,\n.swym-button-content a[aria-disabled=\"true\"] {\n  opacity: 0.5;\n  cursor: not-allowed;\n  pointer-events: none;\n}\n/* Product image position styling (top-left default) */\n.swym-atw-btn-wrapper-for-img.swym-btn-position-product-img {\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  z-index: 10;\n  width: fit-content!important;\n}\n.swym-custom-pdp-button.swym-btn-position-product-title {\n  width: fit-content;\n}\n.swym-button-content.swym-btn-custom-position {\n  margin-top: 8px;\n} \n.swym-button-content button.swym-icon-text svg {\n  margin-right: 5px;\n}\n/* ACCESSIBILITY IMPROVEMENTS */\n@media (prefers-reduced-motion: reduce) {\n  .swym-button-content,\n  .swym-button-content button,\n  .swym-button-content [role=\"button\"],\n  .swym-button-content .btn,\n  .swym-button-content a {\n    transition: none;\n    animation: none;\n  }  \n  .swym-button-content.swym-initialized button:hover,\n  .swym-button-content.swym-initialized [role=\"button\"]:hover,\n  .swym-button-content.swym-initialized .btn:hover,\n  .swym-button-content.swym-initialized a:hover {\n    transform: none;\n  }\n}\n/* HIGH CONTRAST MODE SUPPORT */\n@media (prefers-contrast: high) {\n  .swym-atw-btn-wrapper-for-img .swym-button-content button,\n  .swym-atw-btn-wrapper-for-img .swym-button-content [role=\"button\"],\n  .swym-atw-btn-wrapper-for-img .swym-button-content .btn,\n  .swym-atw-btn-wrapper-for-img .swym-button-content a {\n    border: 2px solid;\n    background: #fff;\n  }\n}"
+      }
+    ]
+  },
+  {
+    "name": "Swym Wishlist Collections Button",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Configure the wishlist button that appears on collection pages. This button allows customers to add products to their wishlist directly from collection listings. [Help](https://help.getswym.com/en/articles/13712073-customizing-the-advanced-wishlist-button-on-collections-pages)",
+        "info": "We recommend using the Admin App to configure these settings. [Open App](/admin/apps/swym-relay)"
+      },
+      {
+        "type": "checkbox",
+        "id": "swym_advanced_collections_wishlist_enabled",
+        "label": "Enable Quick Save Button",
+        "default": false,
+        "info": "Enable Quick Save Button on Collections Pages"
+      },
+      {
+        "type": "checkbox",
+        "id": "swym_advanced_collections_wishlist_social_count",
+        "label": "Show Social Count",
+        "default": false,
+        "info": "Display the number of times a product has been wishlisted"
+      },
+      {
+        "type": "header",
+        "content": "Button HTML Templates"
+      },
+      {
+        "type": "html",
+        "id": "swym_advanced_collections_wishlist_button_before_html",
+        "label": "Button HTML (Before Adding)",
+        "default": "<button\n  type=\"button\"\n  class=\"swym-advanced-wishlist-collections\"\n  aria-label=\"{{ADD_TO_WISHLIST}}\"\n  aria-pressed=\"false\"\n  style=\"color:{{ICON_COLOR}}; transform:{{ICON_POSITION}};\"\n>\n  <div class=\"swym-advanced-wishlist-collections-social-count\">\n    {{SOCIAL_COUNT}}\n  </div>\n  <svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n    <path d=\"M19.6706 5.4736C17.6806 3.8336 14.7206 4.1236 12.8906 5.9536L12.0006 6.8436L11.1106 5.9536C9.29063 4.1336 6.32064 3.8336 4.33064 5.4736C2.05064 7.3536 1.93063 10.7436 3.97063 12.7836L11.6406 20.4536C11.8406 20.6536 12.1506 20.6536 12.3506 20.4536L20.0206 12.7836C22.0706 10.7436 21.9506 7.3636 19.6706 5.4736Z\" stroke=\"{{ICON_COLOR}}\" stroke-width=\"{{ICON_WIDTH}}\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n  </svg>\n</button>",
+        "info": "Custom HTML for the wishlist button before a product is added. Leave empty to use default"
+      },
+      {
+        "type": "html",
+        "id": "swym_advanced_collections_wishlist_button_after_html",
+        "label": "Button HTML (After Adding)",
+        "default": "<button\n  type=\"button\"\n  class=\"swym-advanced-wishlist-collections\"\n  aria-label=\"{{ADDED_TO_WISHLIST}}\"\n  aria-pressed=\"true\"\n  style=\"color:{{ICON_COLOR}}; transform:{{ICON_POSITION}};\"\n>\n  <div class=\"swym-advanced-wishlist-collections-social-count\">\n    {{SOCIAL_COUNT}}\n  </div>\n  <svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n    <path d=\"M19.6706 5.4736C17.6806 3.8336 14.7206 4.1236 12.8906 5.9536L12.0006 6.8436L11.1106 5.9536C9.29063 4.1336 6.32064 3.8336 4.33064 5.4736C2.05064 7.3536 1.93063 10.7436 3.97063 12.7836L11.6406 20.4536C11.8406 20.6536 12.1506 20.6536 12.3506 20.4536L20.0206 12.7836C22.0706 10.7436 21.9506 7.3636 19.6706 5.4736Z\" stroke=\"{{ICON_COLOR}}\" stroke-width=\"{{ICON_WIDTH}}\" fill=\"{{ICON_COLOR}}\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n  </svg>\n</button>",
+        "info": "Custom HTML for the wishlist button after a product is added. Leave empty to use default"
+      },
+      {
+        "type": "header",
+        "content": "Button Styling"
+      },
+      {
+        "type": "textarea",
+        "id": "swym_advanced_collections_wishlist_button_css",
+        "label": "Button CSS",
+        "default": ".swym-advanced-wishlist-collections-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  padding: 10px;\n  z-index: 5;\n  cursor: pointer;\n  width: 60px;\n  height: 40px;\n}\n\n.swym-advanced-wishlist-collections,\n.swym-advanced-wishlist-collections svg {\n  cursor: pointer;\n  background: unset;\n  border: unset;\n  display: flex;\n  align-items: center;\n  flex-direction: row-reverse;\n  gap: 5px;\n  color: currentColor;\n  min-width: 24px;\n  min-height: 24px;\n}\n\n.swym-advanced-wishlist-collections svg path {\n  stroke: currentColor;\n}\n\n.swym-advanced-wishlist-collections\n  .swym-advanced-wishlist-collections-social-count {\n  font-size: 14px;\n  font-weight: 500;\n  color: currentColor;\n}\n\n.swym-sr-only {\n  clip: rect(0 0 0 0);\n  clip-path: inset(50%);\n  height: 1px;\n  width: 1px;\n  overflow: hidden;\n  white-space: nowrap;\n  position: absolute;\n}\n",
+        "info": "CSS styles for the wishlist button. Leave empty to use default styles."
+      },
+      {
+        "type": "header",
+        "content": "Theme Integration (Advanced)"
+      },
+      {
+        "type": "text",
+        "id": "swym_advanced_collections_wishlist_product_url_selector",
+        "label": "Product URL Selector",
+        "default": "not_found",
+        "info": "CSS selector to find product links on collection pages. [Help](https://help.getswym.com/en/articles/13712096-finding-selectors-for-advanced-collections-quick-save)"
+      },
+      {
+        "type": "text",
+        "id": "swym_advanced_collections_wishlist_attach_button_selector",
+        "label": "Button Container Selector",
+        "default": "not_found",
+        "info": "CSS selector for where to attach the wishlist button. [Help](https://help.getswym.com/en/articles/13712096-finding-selectors-for-advanced-collections-quick-save)"
+      },
+      {
+        "label": "Button Position on tile",
+        "id": "swym_advanced_collections_wishlist_icon_position",
+        "type": "select",
+        "default": "top-left",
+        "options": [
+          {
+            "value": "top-right",
+            "label": "Top right of the tile"
+          },
+          {
+            "value": "top-left",
+            "label": "Top left of the tile"
+          },
+          {
+            "value": "bottom-left",
+            "label": "Bottom left of the tile"
+          },
+          {
+            "value": "bottom-right",
+            "label": "Bottom right of the tile"
+          }
+        ]
+      },
+      {
+        "label": "Icon Color",
+        "id": "swym_advanced_collections_wishlist_icon_color",
+        "type": "color",
+        "default": "#000000"
+      },
+      {
+        "type": "range",
+        "label": "Icon Thickness",
+        "id": "swym_advanced_collections_wishlist_icon_width",
+        "min": 1,
+        "max": 2.5,
+        "step": 0.1,
+        "unit": "px",
+        "default": 1.7
+      }
+    ]
+  },
+  {
+    "name": "Swym Wishlist Launcher Button",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Configure the wishlist launcher icon that appears in your store header. This icon provides quick access to the wishlist page and can display the count of saved products.",
+        "info": "We recommend using the Admin App to configure these settings. [Open App](/admin/apps/swym-relay)"
+      },
+      {
+        "type": "header",
+        "content": "General Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "swym_header_icon_enabled",
+        "label": "Enable Header Icon",
+        "default": false,
+        "info": "Enable or disable the wishlist launcher icon in your store header"
+      },
+      {
+        "type": "checkbox",
+        "id": "swym_header_icon_show_count",
+        "label": "Show Wishlist Count",
+        "default": false,
+        "info": "Display the total number of products wishlisted by the customer"
+      },
+      {
+        "type": "header",
+        "content": "Icon HTML Templates"
+      },
+      {
+        "type": "html",
+        "id": "swym_header_icon_custom_html",
+        "label": "Icon HTML",
+        "default": "not_found",
+        "info": "Custom HTML for the wishlist icon. Leave empty to use default"
+      },
+      {
+        "type": "html",
+        "id": "swym_header_icon_count_bubble_html",
+        "label": "Count Bubble HTML",
+        "default": "not_found",
+        "info": "Custom HTML for the count bubble that displays the number of wishlisted items"
+      },
+      {
+        "type": "header",
+        "content": "Icon Styling"
+      },
+      {
+        "type": "textarea",
+        "id": "swym_header_icon_custom_css",
+        "label": "Custom CSS",
+        "default": "not_found",
+        "info": "CSS styles for the header icon. Leave empty to use default styles."
+      },
+      {
+        "type": "header",
+        "content": "Theme Integration (Advanced)"
+      },
+      {
+        "type": "text",
+        "id": "swym_header_icon_selector_desktop",
+        "label": "Desktop Placement Selector",
+        "default": "not_found",
+        "info": "CSS selector for where to attach the icon on desktop view"
+      },
+      {
+        "type": "text",
+        "id": "swym_header_icon_selector_mobile",
+        "label": "Mobile Placement Selector",
+        "default": "not_found",
+        "info": "CSS selector for where to attach the icon on mobile view"
+      }
+    ]
+  }
+]

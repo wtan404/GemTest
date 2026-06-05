@@ -1,0 +1,120 @@
+{%- liquid
+  assign shape = shape | default: settings.product_tile_media_shape
+  assign hover_image = blank
+  if settings.product_tiles_second_image_on_hover and product.media.size > 1
+    assign hover_image = product.media[1]
+  endif
+  if enable_quick_buy
+    assign product_form_id = 'product-form-' | append: section.id | append: '-' | append: product.id
+    assign current_variant = product.selected_or_first_available_variant
+    assign featured_media = current_variant.featured_media | default: product.featured_media
+  endif
+  if use_variant
+    assign target = product.selected_or_first_available_variant
+  else
+    assign target = product
+  endif
+
+  assign metafields = product.metafields
+
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price | default: 1999
+  if compare_at_price > price
+    assign on_sale = true
+  else
+    assign on_sale = false
+  endif
+
+  assign available = target.available | default: false
+  
+  assign money_price = price | money_without_trailing_zeros
+  if settings.currency_code_enabled
+    assign money_price = price | money_with_currency
+  endif
+
+  if target == product and product.price_varies
+    assign money_price = money_price | append: '+'
+  endif
+
+  unless loading
+    assign loading = 'lazy'
+  endunless
+
+  unless preload
+    assign preload = false
+  endunless
+
+  unless sizes
+    assign sizes = '100vw'
+  endunless
+-%}
+{%- if product and product != empty -%}
+  <a href="{{ prod.url | within: collection }}" class="grid-item" tabindex="0">
+			{% render 'product-badging' %}
+			<div class="thumbnail">
+				<picture>
+					<source media="(max-width: 480px)" srcset="{{ prod.featured_image | product_img_url: '300x', format:'pjpg' }}">
+					<source srcset="{{ prod.featured_image | product_img_url: '500x', format:'pjpg' }}">
+					<img src="{{ prod.featured_image | product_img_url: '500x', format:'pjpg' }}" alt="{{ prod.title | escape }}" />
+				</picture>
+
+				{% if prod.images[1] %}
+				<picture class="collectionThumbHover">
+					<source media="(max-width: 480px)" srcset="{{ 'pixel.gif' | file_img_url }}">
+					<source srcset="{{ prod.images[1] | product_img_url: '500x', format:'pjpg' }}">
+					<img src="{{ prod.images[1] | product_img_url: '500x', format:'pjpg' }}" alt="{{ prod.title | escape }}"/>
+				</picture>
+				{% endif %}
+			</div>
+
+			<div class="center">
+				<span class="title">{{ prod.title }}</span>
+					{% if prod.available %}
+				<span class="price">
+						{% if onSale %}
+							{% assign discAmt = 100 | minus: settings.discountAmount | times: 0.01 %}
+							{% if compPrice > product.price %}
+
+					<span class="cmpStrike"><span class="cmpPrice">{{ compPrice | money }}</span></span>
+					{{ compPrice | times: discAmt | money}}
+
+							{% else %}
+
+					<span class="ogStrike"><span class="ogPrice">{{ product.price | money }}</span></span>
+					{{ product.price | times: discAmt | money}}
+
+							{% endif %}
+						{% else %}
+
+							{% if compPrice > product.price %}
+					<span class="cmpStrike"><span class="cmpPrice">{{ compPrice | money }}</span></span>
+							{% endif %}
+					{{ product.price | money }}
+						{% endif %}
+				</span>
+					{% else %}
+				<div style="height:32px;"></div>
+					{% endif %}
+			</div>
+
+			{% if product.available %}
+			
+			<form action="/cart/add" method="post" class="productForm" data-money-format="{{ shop.money_format }}" data-shop-currency="{{ shop.currency }}" id="product-form-{{ product.variants.first.id }}">
+				<input type="hidden" name="id" value="{{ product.variants.first.id }}" />
+				<input type="submit" value="Add To Cart" class="action_button add_to_cart" {% if bundleCore %}data-bundle-core{% endif %} />
+			</form>
+			<div class="collection-reviews">
+				
+			</div>	
+			{% else %}
+				{% if  pre-order %}
+			<button class="action_button bbNotificationBtn teal" href="{{ product.url }}" data-product-data='{{ product | json | escape }}'>BE THE FIRST</button>
+				{% else %}
+			<button class="action_button bbNotificationBtn gold" href="{{ product.url }}" data-product-data='{{ product | json | escape }}'>NOTIFY ME</button>
+			<div class="collection-reviews">
+				<div class="yotpo bottomLine" data-product-id="{{ product.id }}"></div>
+			</div>
+				{% endif %}
+			{% endif %}
+		</a>
+{%- endif -%}

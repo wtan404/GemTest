@@ -1,0 +1,307 @@
+{% schema %}
+{
+    "name": "Home Tiles",
+    "settings": [{
+        "type": "header",
+        "content": "General Section Settings"
+    },{
+		"type": "radio",
+		"id": "homeTiles-span",
+		"label": "Section Width",
+		"options": [{
+			"value": "",
+			"label": "Full Width"
+		},{
+			"value": "wrap",
+			"label": "Margin Contained"
+		}]
+	},{
+		"id": "homeTiles-margin",
+		"type": "text",
+		"label": "Section Margin",
+		"default": "0"
+	},{
+		"id": "homeTiles-padding",
+		"type": "text",
+		"label": "Section Padding",
+		"default": "0"
+	},{
+		"id": "homeTiles-sectFont",
+		"type": "color",
+		"label": "Section Font Color"
+	},{
+        "id": "homeTiles-bg",
+        "type": "color",
+        "label": "Background Color"
+    },{
+		"id": "homeTiles-bgImage",
+		"type": "image_picker",
+		"label": "Background Image"
+	},{
+		"id": "homeTiles-bgImageMob",
+		"type": "image_picker",
+		"label": "Background Image (Mobile Optimized)"
+	},{
+		"id": "homeTiles-frame",
+		"type": "checkbox",
+		"label": "Use Framing"
+	},{
+		"id": "homeTiles-frameBefore",
+		"type": "image_picker",
+		"label": "Frame 1"
+	},{
+		"id": "homeTiles-frameAfter",
+		"type": "image_picker",
+		"label": "Frame 2"
+	},{
+        "type": "header",
+        "content": "Section Content Settings"
+    },{
+        "id": "homeTiles-title",
+        "type": "text",
+        "label": "Title For Section"
+    },{
+        "id": "homeTiles-cta",
+        "type": "text",
+        "label": "CTA Element"
+    },{
+        "id": "homeTiles-link",
+        "type": "url",
+        "label": "Link Target"
+    },{
+        "type": "header",
+        "content": "Tile Presentation Settings"
+    },{
+		"type": "radio",
+		"id": "homeTiles-tile_content",
+		"label": "Tile styling",
+		"options": [{
+			"value": "integrated",
+			"label": "CTA Integrated"
+		},{
+			"value": "overlay",
+			"label": "Overlay"
+		},{
+			"value": "standard",
+			"label": "Standard"
+		}]
+	},{
+		"type": "radio",
+		"id": "homeTiles-presentation",
+		"label": "Section Presentation",
+		"options": [{
+			"value": "slider",
+			"label": "Slider"
+		},{
+			"value": "static",
+			"label": "Static"
+		}]
+	},{
+		"type": "text",
+		"id": "homeTiles-sizeCap",
+		"label": "Restrict Tile Sizing"
+	},{
+		"type": "radio",
+		"id": "homeTiles-wraparound",
+		"label": "Content Wrapping",
+        "info" : "For use with Static presentation only",
+		"options": [{
+			"value": "wrap",
+			"label": "Wrap Around"
+		},{
+			"value": "nowrap",
+			"label": "No Wrap"
+		}]
+	},{
+        "type": "header",
+        "content": "Slider Settings"
+    },{
+		"type": "select",
+		"id": "homeTiles-desk",
+		"label": "Items per View (Desktop)",
+		"options": [{
+			"value": "3",
+			"label": "3"
+		},{
+			"value": "4",
+			"label": "4"
+		},{
+			"value": "5",
+			"label": "5"
+		}]
+	},{
+		"type": "select",
+		"id": "homeTiles-mobile",
+		"label": "Items per View (Mobile)",
+		"options": [{
+			"value": "1",
+			"label": "1"
+		},{
+			"value": "2",
+			"label": "2"
+		},{
+			"value": "3",
+			"label": "3"
+		}]
+	},{
+        "id": "homeTiles-autoplay",
+        "type": "checkbox",
+        "label": "Auto Scroll"
+    },{
+        "id": "homeTiles-scrollSpeed",
+        "type": "text",
+        "label": "Scroll Duration (MS)",
+        "info" : "For use with Auto Scroll Feature"
+    },{
+		"type": "header",
+		"content": "Desktop Controls"
+	},{
+		"id": "deskDots",
+		"type": "checkbox",
+		"label": "Desktop Pagination Dots"
+	},{
+		"id": "deskArrows",
+		"type": "checkbox",
+		"label": "Desktop Arrow Controls"
+	},{
+		"type": "header",
+		"content": "Mobile Controls"
+	},{
+		"id": "mobDots",
+		"type": "checkbox",
+		"label": "Mobile Pagination Dots"
+	},{
+		"id": "mobArrows",
+		"type": "checkbox",
+		"label": "Mobile Arrow Controls"
+	}],
+    "blocks": [
+    {
+        "type":"homeTile",
+        "name":"Tile",
+        "limit" : 9,
+        "settings": [{
+			"id": "homeTile-image",
+			"type": "image_picker",
+			"label": "Select Tile Image"
+		},{
+			"id": "homeTile-link",
+			"type": "url",
+			"label": "Select link target"
+		},{
+            "type": "paragraph",
+            "content": "These are not used with Integrated Tiles"
+        },{
+			"id": "homeTile-title",
+			"type": "text",
+			"label": "Tile Title"
+		},{
+			"id": "homeTile-cta",
+			"type": "text",
+			"label": "Tile CTA Button"
+		}]
+    }],
+    "presets": [
+    {
+        "category": "Leads",
+        "name": "Tiles"
+    }]
+}
+{% endschema %}
+
+{% assign sectionSpan = section.settings.homeTiles-span %}
+<div style="flex-flow:column;max-width:100%"  class="flex {{sectionSpan}} relative" role="list" aria-labelledby="homeTiles-Heading">
+{% if section.settings.homeTiles-title != '' %}<h2 style="color:{{ section.settings.homeTiles-sectFont }} !important">{{section.settings.homeTiles-title}}</h2>{% endif %}  
+<div id="homeTiles-{{ section.id }}" class="flex">
+  
+{% assign homeTile = 0 %}
+{% for block in section.blocks %}
+<{% if block.settings.homeTile-link != ''%}a href="{{ block.settings.homeTile-link }}" {% unless block.settings.homeTile-link contains 'beautybakerie.com' %}target="_blank"{% endunless %}{% else %}div{% endif %} class="flexItem">
+    <img src="{{block.settings.homeTile-image | img_url: 'master', format: 'pjpg' }}" alt="{{block.settings.homeTile-title}}">
+    
+    {% unless section.settings.homeTiles-tile_content == 'integrated' %}
+    <span class="homeTileTitle">
+        <h5>{{ftProd.title}}</h5>
+        <span class="button invert">View {{ftProd.title}}</span>
+    </span>
+    {% endunless %}
+</{% if block.settings.homeTile-link != ''%}a{% else %}div{% endif %}>
+{% assign homeTile = homeTile | plus: 1 %}
+{% endfor %}
+</div>
+  {% if section.settings.homeTiles-cta != '' %}<a {% if section.settings.homeTiles-link != '' %}href="{{ section.settings.homeTiles-link }}"{% endif %} class="action_button gradCTA{% if section.settings.homeTiles-cta contains 'show480' %} show480{% elsif section.settings.homeTiles-cta contains 'hide480'%} hide480{% endif %}" >{{section.settings.homeTiles-cta | remove: ' show480' | remove: ' hide480'}}</a>{% endif %}
+</div>
+  
+{% assign homeSplitDesk = 100 | divided_by: section.settings.homeTiles-desk | append: '%' %}
+{% assign homeSplitMob = 100 | divided_by: section.settings.homeTiles-mobile | append: '%' %}
+<style>
+    #shopify-section-{{ section.id }} {background: {{section.settings.homeTiles-bg}};margin:{{ section.settings.homeTiles-margin }} auto 0;display: flex;flex-flow: column;justify-content:center;align-items:center;position:relative;}
+    #shopify-section-{{ section.id }} > div{padding: {{ section.settings.homeTiles-padding }};}
+    {% if section.settings.homeTiles-frame %}
+     {% if section.settings.homeTiles-frameBefore != '' %} #shopify-section-{{ section.id }} > div:before{content:"";display:block;height:55%;width:110px;background: url('{{ section.settings.homeTiles-frameBefore | img_url }}')no-repeat;background-size: 100% auto;position:absolute;top:0;left:0}{% endif %}
+    {% if section.settings.homeTiles-frameAfter != '' %} #shopify-section-{{ section.id }}> div:after{content:"";display:block;height:55%;width:110px;background: url('{{ section.settings.homeTiles-frameAfter | img_url }}')no-repeat;background-size: 100% auto;position:absolute;bottom:0;right:0;}{% endif %}
+    {% endif %}
+    #homeTiles-{{ section.id }}{margin-bottom:20px;width:100%; flex-flow:row {% if section.settings.homeTiles-presentation == "static" and section.settings.homeTiles-wraparound == 'wrap'%}wrap{% else %} nowrap{% endif %};}
+        #homeTiles-{{ section.id }} .flexItem{flex:1 0 {{ homeSplitDesk }};display:flex;justify-content: center;align-items: center;flex-direction: column;padding:10px;{% if section.settings.homeTiles-sizeCap != '' %}max-width:{{section.settings.homeTiles-sizeCap}}px{% endif %}}
+        #homeTiles-{{ section.id }} p{max-width:395px;font-weight:500;padding: 0;font-size: 18px;line-height: 1.625rem;}
+        #homeTiles-{{ section.id }} img{}
+        #homeTiles-{{ section.id }} .homeTileTitle{opacity:0;transition:0.3s;display:flex;flex-flow:column nowrap;justify-content:center;align-items:center;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(228, 228, 228, 0.5);padding:10px;}
+        	#homeTiles-{{ section.id }} .homeTileTitle h5{line-height:1.2;font-size:20px;margin-bottom: 14px;text-shadow:1px 1px 2px #b7b7b7;font-weight:bold;}
+            #homeTiles-{{ section.id }} .homeTileTitle:hover span { opacity: 1;}
+         #shopify-section-{{ section.id }} .gradCTA {position:relative;top:0;bottom:{{ section.settings.homeStatic-content-adjust |default: 0 }}px;}
+    @media screen and (max-width: 768px)
+    {
+        {% if section.settings.homeTiles-frame %}
+            {% if section.settings.homeTiles-frameBefore != '' %} #shopify-section-{{ section.id }} > div:before{display:none;}{% endif %}
+            {% if section.settings.homeTiles-frameAfter != '' %} #shopify-section-{{ section.id }} > div:after{display:none;}{% endif %}
+        {% endif %}
+         {% if section.settings.homeTiles-presentation == "static" and section.settings.homeTiles-wraparound == 'nowrap'%}
+             #homeTiles-{{ section.id }} .flexItem{padding:3px;flex: 0 0 30%}
+         {% else %}
+             #homeTiles-{{ section.id }} .flexItem{padding:3px;flex:0 0 {{ homeSplitMob }};}
+         {% endif %}
+         
+    }
+</style>
+  {%comment%}
+{% if section.settings.homeTiles-presentation == 'slider' %}
+<script>
+	$(function(){
+		if($(window).width() >= 767){
+			sliderInit = {{ section.settings.homeTiles-desk }};
+		}else{
+			sliderInit = {{ section.settings.homeTiles-mobile }};
+		}
+		if($('#homeTiles-{{ section.id }} .flexItem').length > sliderInit){
+			$('#homeTiles-{{ section.id }}').splide({
+				slidesToShow: sliderInit,
+				arrows: !{% if section.settings.deskArrows %}0{% else %}1{% endif %},
+            	dots: !{% if section.settings.deskDots %}0{% else %}1{% endif %},
+                {% if section.settings.homeTiles-autoplay %}
+                autoplay: true,
+                autoplaySpeed: {{ section.settings.homeTiles-scrollSpeed | default: 3000 }},
+                infinite: true,
+				slidesToScroll: 1,
+                {% else %}
+				slidesToScroll: {{ section.settings.homeTiles-desk }},
+                {% endif %}
+				mobileFirst: !1,
+				responsive: [{
+					breakpoint: 767,
+					settings: {
+                        {% if section.settings.homeTiles-autoplay %}
+        				slidesToScroll: 1,
+                        {% else %}
+        				slidesToScroll: {{ section.settings.homeTiles-mobile }},
+                        {% endif %}
+						arrows: !{% if section.settings.mobArrows %}0{% else %}1{% endif %},
+						dots: !{% if section.settings.mobDots %}0{% else %}1{% endif %}
+					}
+				}]
+			});
+		} 
+	});
+</script>
+{% endif %}
+  {% endcomment%}
+    
