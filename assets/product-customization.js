@@ -514,7 +514,7 @@ class ProductCustomizationComponent extends HTMLElement {
     });
   }
 
-  handleImageUpload(e) {
+ handleImageUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -531,7 +531,15 @@ class ProductCustomizationComponent extends HTMLElement {
     const reader = new FileReader();
     reader.onload = (event) => {
       const img = new Image();
-      img.onload = () => this.setupColorCanvas(img);
+      img.onload = () => {
+        this.setupColorCanvas(img);
+        
+        // EXPLICIT BYPASS: Wipe the physical file from the input after drawing it to the canvas.
+        // This guarantees the image physically cannot be scraped by other scripts or sent to Shopify.
+        if (this.colorImageUpload) {
+          this.colorImageUpload.value = '';
+        }
+      };
       img.src = event.target.result;
     };
     reader.readAsDataURL(file);
@@ -719,69 +727,89 @@ updateTextPreview() {
 }
   handleLogoUpload(e) {
     const file = e.target.files[0];
-    const wrapperEl = e.target.closest('.logo-section')
+    const wrapperEl = e.target.closest('.logo-section');
     if (!file) return;
 
-    // Define allowed types for the Logo (usually no JPG for transparency)
-    const allowedTypes = ['image/png', 'image/svg+xml'];
+    // Expand allowed types to catch users uploading JPGs by mistake, 
+    // the canvas processor will convert them to PNGs anyway.
+    const allowedTypes = ['image/png', 'image/svg+xml', 'image/jpeg', 'image/jpg'];
     
     if (!allowedTypes.includes(file.type)) {
       this.showError('Unsupported file type. Please upload a PNG or SVG matching the criteria below for your Logo');
-      this.removeLogo(); // Reset the field
+      this.removeLogo();
       return;
     }
 
-    this.hideError(); // Clear any previous errors if valid
+    this.hideError();
 
-    // Store the file for later upload
-    this.logoFile = file;
-
-    // Update filename display
     const filenameDisplay = this.querySelector(`#logo-filename-${this.sectionId}`);
-    if (filenameDisplay) {
-      filenameDisplay.textContent = file.name
-    }
+    if (filenameDisplay) filenameDisplay.textContent = file.name;
 
-    const imageDisplay = this.querySelector(`#logo-preview-image-${this.sectionId}`);
-    if (imageDisplay) {
-      imageDisplay.innerHTML = ''
-      const img = document.createElement('img');
-      img.src = URL.createObjectURL(file);
-      img.style.maxWidth = '200px'; // set preview size
-      img.width = 100;
-      img.height = 100;
-      img.style.display = 'block';
-      imageDisplay.appendChild(img);
-    }
-    if (wrapperEl) wrapperEl.classList.add('uploaded')
-      this.logoControls?.classList.remove('hidden');
+    if (wrapperEl) wrapperEl.classList.add('uploaded');
+    this.logoControls?.classList.remove('hidden');
+
     const reader = new FileReader();
     reader.onload = (event) => {
       const img = new Image();
       img.onload = () => {
-        // Check minimum dimensions
         if (img.width < 700 || img.height < 700) {
           this.logoWarning?.classList.remove('hidden');
         } else {
           this.logoWarning?.classList.add('hidden');
         }
-        // Set logo preview
-        this.logoImage.src = event.target.result;
-        this.currentLogoUrl = event.target.result;
-        this.logoPreview?.classList.add('visible');
-        this.logoControls?.classList.remove('hidden');
 
-        this.updateLogoPosition();
-        this.updatePercentageDisplays();
-        this.validateForm();
-        this.updateStepsState();
+        // ==================================================================
+        // 🚀 IMAGE PRE-PROCESSOR: FORCE WHITE & NORMALIZE SIZE
+        // ==================================================================
+        const canvas = document.createElement('canvas');
+        
+        // Cap the max resolution so massive files don't break Vercel scaling
+        const MAX_DIMENSION = 1200;
+        let targetWidth = img.width;
+        let targetHeight = img.height;
+        
+        if (targetWidth > MAX_DIMENSION || targetHeight > MAX_DIMENSION) {
+          const ratio = Math.min(MAX_DIMENSION / targetWidth, MAX_DIMENSION / targetHeight);
+          targetWidth *= ratio;
+          targetHeight *= ratio;
+        }
+        
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        const ctx = canvas.getContext('2d');
+
+        // Draw the cleanly resized original image
+        ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+        // Apply a pure white overlay to all non-transparent pixels
+        ctx.globalCompositeOperation = 'source-in';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Convert the modified canvas back into a physical file for the payload
+        canvas.toBlob((blob) => {
+          // Replace the original logoFile with this new, guaranteed-white PNG
+          this.logoFile = new File([blob], "processed-white-logo.png", { type: "image/png" });
+          
+          // Update the preview source to the new white version natively
+          const whiteDataUrl = canvas.toDataURL('image/png');
+          this.logoImage.src = whiteDataUrl;
+          this.currentLogoUrl = whiteDataUrl;
+          
+          this.logoPreview?.classList.add('visible');
+          this.logoControls?.classList.remove('hidden');
+
+          this.updateLogoPosition();
+          this.updatePercentageDisplays();
+          this.validateForm();
+          this.updateStepsState();
+        }, 'image/png');
+        // ==================================================================
       };
       img.src = event.target.result;
     };
     reader.readAsDataURL(file);
   }
-
-
 
   async updateBottleBackground() {
     const color = this.getColorHexValue();
@@ -1151,7 +1179,6 @@ updateTotalPrice() {
       ? await this.uploadLogoImage(this.logoFile) 
       : (this.currentLogoUrl || '');
 
-
       this.updateLoadingText('Generating preview...');
       let thumbnailUrl = '';
       try {
@@ -1164,10 +1191,55 @@ updateTotalPrice() {
       this.updateLoadingText('Preparing order...');
       const properties = await this.buildCustomizationProperties({ uploadedLogoUrl, thumbnailUrl });
 
+      // ======= CUSTOM PRODUCT CREATION ENDPOINT
+      
+      const url = "https://us-central1-beauty-by-me-4fc72.cloudfunctions.net/createBbShopifyProducts/addShopifyWholesaleProduct";
+      
+      const payloadData = new FormData();
+      
+      // Wrap the output in a parent 'properties' key to match backend expectations
+      const formattedJsonData = {
+        properties: properties
+      };
+      payloadData.append('json_data', JSON.stringify(formattedJsonData));
+
+      // Safely attach the physical logo file if the user uploaded one
+      if (this.customizationType === 'logo' && this.logoFile) {
+        payloadData.append('logo', this.logoFile);
+      } else {
+        // BACKEND BYPASS: Feed Firebase a 0-byte dummy file so it passes the strict requirement
+        const dummyBlob = new Blob([""], { type: "image/png" });
+        payloadData.append('logo', dummyBlob, "empty-dummy.png");
+      }
+
+      this.updateLoadingText('Registering custom SKU...');
+      const endpointResponse = await fetch(url, {
+        method: 'POST',
+        body: payloadData
+      });
+
+      if (!endpointResponse.ok) {
+        const errorText = await endpointResponse.text();
+        throw new Error(`Endpoint returned ${endpointResponse.status}: ${errorText}`);
+      }
+      
+      const productData = await endpointResponse.json();
+      console.log('🟩 Custom product successfully created:', productData);
+      
+      // Override the variant ID state so the cart uses the newly generated product variant
+      if (productData.variantId) {
+         this.variantId = productData.variantId;
+         if (this.variantSelect) {
+             this.variantSelect.value = productData.variantId;
+         }
+      }
+      // ==================================================================
+
       console.log("Final Properties being sent to Shopify:", properties);
 
       this.updateLoadingText('Adding to cart...');
       await this.addToCart(properties);
+      
     } catch (error) {
       console.error('Error adding to cart:', error);
       this.showError('Failed to add item to cart. Please try again.');
@@ -1244,22 +1316,25 @@ updateTotalPrice() {
         throw new Error('Base product image URL is required for thumbnail generation');
       }
 
-      // Prepare request data for thumbnail generation
+      // Target the active element to grab the live CSS layout percentages
+      const activeElement = this.customizationType === 'text' ? this.logoPreviewText : this.logoImage;
+
+      // Prepare request data using the newly pivoted Top/Left/Width reference architecture
       const requestData = {
         baseImageUrl: this.baseProductImageUrl,
         backgroundColor: this.getColorHexValue() || 'ffffff',
-        printableArea: {
-          top: this.printableTop,
-          bottom: this.printableBottom,
-          left: this.printableLeft,
-          right: this.printableRight
-        },
         logoImageUrl: logoImageUrl,
-        logoSize: parseInt(this.logoSize?.value || 50),
-        logoVerticalPosition: parseInt(this.logoPosition?.value || 0),
         customizationMode: this.customizationType,
         customText: this.customizationType === 'text' ? this.customTextValue : '',
-        customFont: this.customizationType === 'text' ? this.customFont : ''
+        customFont: this.customizationType === 'text' ? this.customFont : '',
+        
+        // Pass the exact CSS percentages to the image processor (covering both camelCase and snake_case for your backend)
+        logo_top: activeElement?.style?.top || '0%',
+        logo_left: activeElement?.style?.left || '50%',
+        logo_width: activeElement?.style?.width || '50%',
+        logoTop: activeElement?.style?.top || '0%',
+        logoLeft: activeElement?.style?.left || '50%',
+        logoWidth: activeElement?.style?.width || '50%'
       };
 
       const response = await fetch(`${this.apiBaseUrl}/generate-thumbnail-v2`, {
@@ -1359,33 +1434,25 @@ updateTotalPrice() {
     }
   }
 
-  /** Build the line item properties object used for cart and saving. */
+  /** Build the line item properties for cart and saving. */
   async buildCustomizationProperties({ uploadedLogoUrl = '', thumbnailUrl = '' } = {}) {
-    const logoPositionData = await this.calculateLogoPositionRelativeToBottle();
-    const printableAreaBottleRelative = this.calculatePrintableAreaRelativeToBottle();
+    const activeElement = this.customizationType === 'text' ? this.logoPreviewText : this.logoImage;
     
     return {
-      '_customization_color': this.getColorHexValue(),
-      '_customization_color_name': this.colorName?.value,
-      '_customization_acknowledged': 'true',
-      '_customization_mode': this.customizationType,
-      '_customization_text': this.customizationType === 'text' ? this.customTextValue : '',
-    '_customization_font': this.customizationType === 'text' ? this.customFont : '',
-      '_customization_thumbnail': thumbnailUrl,
-      '_customization_logo_url': uploadedLogoUrl,
-      '_customization_logo_position': this.logoPosition?.value,
-      '_customization_logo_size': this.logoSize?.value,
-      '_customization_base_product_image_url': this.baseProductImageUrl || '',
-      '_customization_printable_area_top': this.printableTop,
-      '_customization_printable_area_bottom': this.printableBottom,
-      '_customization_printable_area_left': this.printableLeft,
-      '_customization_printable_area_right': this.printableRight,
-      // Add printable area bottle-relative positioning data (as percentages relative to bottle)
-      '_customization_printable_area_bottle_relative_top': printableAreaBottleRelative.top,
-      '_customization_printable_area_bottle_relative_bottom': printableAreaBottleRelative.bottom,
-      '_customization_printable_area_bottle_relative_left': printableAreaBottleRelative.left,
-      '_customization_printable_area_bottle_relative_right': printableAreaBottleRelative.right,
-      '_customization_bottle_coordinates': JSON.stringify(logoPositionData?.bottleCoordinates || {})
+      '_blankCustom_color': this.getColorHexValue() || '',
+      '_blankCustom_color_name': this.colorName?.value || '',
+      '_blankCustom_acknowledged': 'true',
+      '_blankCustom_mode': this.customizationType || 'color',
+      '_blankCustom_text': this.customizationType === 'text' ? (this.customTextValue || '') : '',
+      '_blankCustom_font': this.customizationType === 'text' ? (this.customFont || '') : '',
+      '_blankCustom_thumbnail': thumbnailUrl || '',
+      '_blankCustom_logo_url': uploadedLogoUrl || '',
+      '_blankCustom_base_product_image_url': this.baseProductImageUrl || '',
+      
+      // Clean positioning variables derived from live CSS values
+      '_blankCustom_logo_top': activeElement?.style?.top || '0%',
+      '_blankCustom_logo_left': activeElement?.style?.left || '50%',
+      '_blankCustom_logo_width': activeElement?.style?.width || '50%',
     };
   }
 
@@ -1394,10 +1461,10 @@ updateTotalPrice() {
     const base = [
       this.productId,
       this.getCurrentVariantId(),
-      properties._customization_color,
-      properties._customization_logo_position,
-      properties._customization_logo_size,
-      (properties._customization_logo_url || '').split('/').pop() || ''
+      properties._blankCustom_color,
+      properties._blankCustom_logo_position,
+      properties._blankCustom_logo_size,
+      (properties._blankCustom_logo_url || '').split('/').pop() || ''
     ].join('|');
     // Simple hash
     let hash = 0;
@@ -1495,7 +1562,7 @@ updateTotalPrice() {
     }
 
     // Convert base64 logo URL to dummy URL for custom attributes
-    let logoUrlForAttributes = properties._customization_logo_url || '';
+    let logoUrlForAttributes = properties._blankCustom_logo_url || '';
     if (logoUrlForAttributes && logoUrlForAttributes.startsWith('data:')) {
       if (BB_USE_DUMMY_IMAGE_APIS) {
         // Use Blank Beauty bottle asset as dummy logo URL for attributes
@@ -1513,7 +1580,7 @@ updateTotalPrice() {
       empi,                             // External variant ID (required)
       du,                               // Detail URL (edit URL) (required)
       qty: 1,                           // Quantity (required)
-      note: properties._customization_color_name || `Custom Bottle Design - ${designId}`, // Use color name or fallback
+      note: properties._blankCustom_color_name || `Custom Bottle Design - ${designId}`, // Use color name or fallback
       cprops: {
         // Design identification
         'design-id': designId,
@@ -1522,46 +1589,46 @@ updateTotalPrice() {
         'version': '1.0',
 
         // Customization data (flattened for easy access)
-        'customization-color': properties._customization_color || '',
-        'customization-email': properties._customization_email || '',
-        'customization-color-name': properties._customization_color_name || '',
+        'customization-color': properties._blankCustom_color || '',
+        'customization-email': properties._blankCustom_email || '',
+        'customization-color-name': properties._blankCustom_color_name || '',
         'customization-logo-url': logoUrlForAttributes,
-        'customization-logo-position': properties._customization_logo_position || '0',
-        'customization-logo-size': properties._customization_logo_size || '50',
-        'customization-thumbnail': properties._customization_thumbnail || '',
-        'customization-bottle-image': properties._customization_base_product_image_url || '',
+        'customization-logo-position': properties._blankCustom_logo_position || '0',
+        'customization-logo-size': properties._blankCustom_logo_size || '50',
+        'customization-thumbnail': properties._blankCustom_thumbnail || '',
+        'customization-bottle-image': properties._blankCustom_base_product_image_url || '',
 
         // Product variant information
         'product-variant-id': epi,
 
         // Printable area configuration
-        'printable-area-top': String(properties._customization_printable_area_top || 20),
-        'printable-area-bottom': String(properties._customization_printable_area_bottom || 20),
-        'printable-area-left': String(properties._customization_printable_area_left || 20),
-        'printable-area-right': String(properties._customization_printable_area_right || 20),
+        'printable-area-top': String(properties._blankCustom_printable_area_top || 20),
+        'printable-area-bottom': String(properties._blankCustom_printable_area_bottom || 20),
+        'printable-area-left': String(properties._blankCustom_printable_area_left || 20),
+        'printable-area-right': String(properties._blankCustom_printable_area_right || 20),
         // Complete design JSON for complex operations
         'design-data': JSON.stringify({
           id: designId,
           version: '1.0',
           created: new Date().toISOString(),
           customization: {
-            color: properties._customization_color,
-            email: properties._customization_email,
-            colorName: properties._customization_color_name,
+            color: properties._blankCustom_color,
+            email: properties._blankCustom_email,
+            colorName: properties._blankCustom_color_name,
             logo: {
               url: logoUrlForAttributes,
-              position: parseFloat(properties._customization_logo_position || 0),
-              size: parseFloat(properties._customization_logo_size || 50)
+              position: parseFloat(properties._blankCustom_logo_position || 0),
+              size: parseFloat(properties._blankCustom_logo_size || 50)
             },
             images: {
-              thumbnail: properties._customization_thumbnail,
-              bottle: properties._customization_base_product_image_url
+              thumbnail: properties._blankCustom_thumbnail,
+              bottle: properties._blankCustom_base_product_image_url
             },
             printableArea: {
-              top: parseInt(properties._customization_printable_area_top || 20),
-              bottom: parseInt(properties._customization_printable_area_bottom || 20),
-              left: parseInt(properties._customization_printable_area_left || 20),
-              right: parseInt(properties._customization_printable_area_right || 20)
+              top: parseInt(properties._blankCustom_printable_area_top || 20),
+              bottom: parseInt(properties._blankCustom_printable_area_bottom || 20),
+              left: parseInt(properties._blankCustom_printable_area_left || 20),
+              right: parseInt(properties._blankCustom_printable_area_right || 20)
             }
           },
           product: {
@@ -1572,17 +1639,17 @@ updateTotalPrice() {
         // Legacy compatibility (keep existing format for backwards compatibility)
         'bb-design-id': designId,
         'bb-design': JSON.stringify({
-          color: properties._customization_color,
-          colorName: properties._customization_color_name,
+          color: properties._blankCustom_color,
+          colorName: properties._blankCustom_color_name,
           logoUrl: logoUrlForAttributes,
-          logoPos: properties._customization_logo_position,
-          logoSize: properties._customization_logo_size,
-          bottleImage: properties._customization_base_product_image_url,
+          logoPos: properties._blankCustom_logo_position,
+          logoSize: properties._blankCustom_logo_size,
+          bottleImage: properties._blankCustom_base_product_image_url,
           printable: {
-            top: properties._customization_printable_area_top,
-            bottom: properties._customization_printable_area_bottom,
-            left: properties._customization_printable_area_left,
-            right: properties._customization_printable_area_right
+            top: properties._blankCustom_printable_area_top,
+            bottom: properties._blankCustom_printable_area_bottom,
+            left: properties._blankCustom_printable_area_left,
+            right: properties._blankCustom_printable_area_right
           }
         })
       }
@@ -1711,9 +1778,9 @@ updateTotalPrice() {
       const params = url.searchParams;
 
       // 2. Identify data source
-      const color = properties?._customization_color || this.getColorHexValue();
-      const logoUrl = properties?._customization_logo_url || this.currentLogoUrl || '';
-      const mode = properties?._customization_mode || this.customizationType;
+      const color = properties?._blankCustom_color || this.getColorHexValue();
+      const logoUrl = properties?._blankCustom_logo_url || this.currentLogoUrl || '';
+      const mode = properties?._blankCustom_mode || this.customizationType;
 
       // 3. Update the parameters
       params.set('color', (color || '').replace('#', ''));
@@ -1721,8 +1788,8 @@ updateTotalPrice() {
       params.set('view', 'wholesale-lp'); // Explicitly ensure the tool loads
 
       if (mode === 'text') {
-        params.set('text', properties?._customization_text || this.customTextValue);
-        params.set('font', properties?._customization_font || this.fontSelect?.value);
+        params.set('text', properties?._blankCustom_text || this.customTextValue);
+        params.set('font', properties?._blankCustom_font || this.fontSelect?.value);
         params.delete('logoUrl'); // Clean up if user switched from logo to text
       } else {
         if (logoUrl && !logoUrl.startsWith('data:')) {
@@ -1732,8 +1799,8 @@ updateTotalPrice() {
         params.delete('font');
       }
 
-      params.set('logoPos', String(properties?._customization_logo_position || this.logoPosition?.value || '0'));
-      params.set('logoSize', String(properties?._customization_logo_size || this.logoSize?.value || '50'));
+      params.set('logoPos', String(properties?._blankCustom_logo_position || this.logoPosition?.value || '0'));
+      params.set('logoSize', String(properties?._blankCustom_logo_size || this.logoSize?.value || '50'));
 
       return url.toString();
     } catch (e) {

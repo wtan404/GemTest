@@ -112,7 +112,7 @@
               data-line-item-key="{{ item.key }}"
             >
               <div class="col-span-1 lg:col-span-2 {% if template == 'cart' %} lg:col-span-2 lg:max-w-[166px] {% endif %} row-span-2">
-               {% assign custom_thumbnail = item.properties["_customization_thumbnail"] %}
+               {% assign custom_thumbnail = item.properties["_blankCustom_thumbnail"] %}
                 {%- if item.image != blank -%}
                   <a
                     href="{{ item.url }}"
@@ -127,7 +127,7 @@
                       src="{{ item.image | image_url: width: 200 }}" 
                     {% endif %}
                     
-                    :src="item.properties._customization_thumbnail ? item.properties._customization_thumbnail : '{{ item.image | image_url: width: 200 }}'"
+                    :src="item.properties._blankCustom_thumbnail ? item.properties._blankCustom_thumbnail : '{{ item.image | image_url: width: 200 }}'"
                     
                     alt="{{ item.title | escape }}"
                     loading="eager"

@@ -2,11 +2,6 @@
 <html class="no-js" lang="{{ request.locale.iso_code }}">
   <head>
 
-
-<!-- LAYOUTHUB-V2-HEADER --> 
-{%- render 'layouthub-header' -%}
-<!-- END LAYOUTHUB-V2-HEADER -->
-{{ "layouthub-jquery.min.js" | asset_url | script_tag }}
 {% comment  %}
  {% endcomment  %}
 <!-- Start of Shoplift scripts -->
@@ -21,7 +16,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-54PJH46');</script>
 <!-- End Google Tag Manager -->
 
- {%- render 'layouthub_header' -%}
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -99,7 +93,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     {{ content_for_header }}
 
     {{ 'base.bundle.css' | asset_url | stylesheet_tag: preload: true }}
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="{{ 'global.bundle.js' | asset_url }}" type="module"></script>
     {% render 'js-bridge' %}
 
     <script>
@@ -117,10 +112,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       }
     </script>
 
-    <script src="{{ 'utils.js' | asset_url }}" defer></script>
 
     {% if request.design_mode %}
-      <script src="{{ 'shapes-animations.js' | asset_url }}" defer></script>
       <script
         src="{{ 'theme-editor-support.js' | asset_url }}"
         type="module"
@@ -137,7 +130,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script>
       window.themeEventsDebugMode = false;
     </script>
-    <script src="{{ 'theme-events.js' | asset_url }}" async defer></script>
 
     <style>
       :root {
@@ -302,7 +294,7 @@ rdt('track', 'PageVisit');
     {%- sections 'header-group' -%}
     {% render 'header-group-support' %}
     <main id="MainContent" class="overflow-hidden">
-      <!--LayoutHub-Workspace-Start-->{{ content_for_layout }}<!--LayoutHub-Workspace-End-->
+      {{ content_for_layout }}
     </main>
 
     {%- sections 'footer-group' -%}
@@ -337,170 +329,12 @@ rdt('track', 'PageVisit');
       {% render 'drawer-cart' %}
     {%- endif -%}
 
-    <script src="{{ 'global.bundle.js' | asset_url }}" type="module"></script>
-	{{ 'blankLibraries.js' | asset_url | script_tag }}
-  
-	<script>
-	(function() {
-    /*
-		var jtc = {			
-			{% if template contains 'product' %}
-			product_type: "{{product.type}}",
-			product_name: "{{product.title}}",
-			product_id: "{{product.id}}",
-			product_price: "{{product.price | money_without_currency}}",
-			{% endif %}
-			page_type: "{{template.name}}"
-		};
-    */
-		GlobalHeader.init();
-		{% comment %}
-		//Sliders.init();
-		coreUI.init();
-		bbModal.init();
-		{% if settings.purchaseOffers != 'none' %}
-		var coreItems = [],
-            giftItems = [],
-			giftVariants;
-{% if settings.globalOfferCore != '' %}
-        {% assign globalOfferCore = settings.globalOfferCore | split: ',' %}
-		{% if settings.globalOfferTrigger == 'collection' %}      
-        {% for group in globalOfferCore %}
-          	{% for product in collections[group].products %}
-        coreItems.push({{ product.variants.first.id }});
-            {% endfor %}
-        {% endfor %}
-		{% elsif settings.globalOfferTrigger == 'products' %}
-        {% for product in globalOfferCore %}
-        coreItems.push({{ product }});
-        {% endfor %}
-		{% endif %}
-{% endif %}
-        
-		{% if settings.globalOfferGiftSelection == 'collection' %}
-        
-        {% assign globalOfferGifts =  settings.globalOfferGifts | split: ','  %}	
-        {% assign variantTrigger = 'Concealer','Foundation','Matte','Gloss', 'Setting Powder'| split: ','%}
-        {% for giftGroup in globalOfferGifts %}
-        	{% for product in collections[giftGroup].products %}
-				{% if product.available %}
-        giftItems.push({
-          	"gift_id" : "{{product.variants.first.id}}",
-          	"gift_title":"{{product.title}}",
-          	"gift_collection":"{{giftGroup}}",
-          	"gift_prod_type":"{{product.type}}",
-          	"gift_img":"{{product.images[0].src}}",
-            {% if product.metafields.cfield['swatch_shade'] %}
-          	"gift_shade":"{{product.metafields.cfield['swatch_shade'] }}",
-            {% endif %}		
-            {% if giftGroup contains 'whip' %}
-
-				{% if product.title contains 'Metallic' %}
-          	"gift_lip":"metallic",
-				{% elsif product.title contains 'Creme'%}
-          	"gift_lip":"creme",
-				{% elsif product.title contains 'Gloss'%}
-          	"gift_lip":"gloss",
-				{% else %}
-          	"gift_lip":"matte",
-				{% endif %}
-            {% endif %}
-        });
-				{% endif %}
-      
-			{% endfor %}
-		{% endfor %}
-		
-		{% elsif settings.globalOfferGiftSelection == 'products'%}
-            {% assign globalOfferGifts = settings.globalOfferGifts | split: ',' %}
-            {% for gift in globalOfferGifts %}      
-			giftItems.push({
-				"gift_id" : "{{giftItem.variants.first.id}}",
-				"gift_title":"{{giftItem.title}}",
-				"gift_collection":"{{gift}}",
-				"gift_img":"{{giftItem.images[0].src}}",
-				{% if gift contains 'matte' or gift contains 'gloss' or gift contains 'instabake' %}
-					{% if gift.metafields.cfield['swatch_shade'] %}
-				"gift_shade":"{{gift.metafields.cfield['swatch_shade'] }}",
-					{% endif %}		
-
-				{% if gift.title contains 'Metallic' %}
-				"gift_lip":"metallic",
-				{% elsif gift.title contains 'Creme'%}
-				"gift_lip":"creme",
-				{% elsif gift.title contains 'Gloss'%}
-				"gift_lip":"gloss",
-				{% else %}
-				"gift_lip":"matte",
-				{% endif %}
-				{% endif %}
-			});
-            {% endfor %}
-            
-		{% endif %}
-		
-		var fallBackGift =  {{all_products[settings.defaultGWP].variants.first.id }};
-        purchaseOffer.init(giftItems, coreItems, '{{settings.purchaseOffers}}', fallBackGift);   
-		bbCheckout.init(fallBackGift, false);
-	{% else %}
-		bbCheckout.init();
-	{% endif %}
-	{%- if settings.globalSearch -%}Search.init();{% endif %}
-		Overlay.init();
-		CartQTY.init();
-		QtyChangerAtc.init();
-		AddToCart.init();
-		{% endcomment %}
-	{% if template contains 'collection' %}
-		/*
-		$('.quick_shop').fancybox({
-			beforeShow: function() {
-				var qViewGallery = $('#' + $(this.element).data('gallery'));
-				qViewGallery.splide({
-					variableWidth: !1,
-					slidesToScroll: 1,
-					slidesToShow: 1,
-					dots: !0
-				});
-			},
-			afterClose: function() {
-				var qViewGallery = $('#' + $(this.element).data('gallery'));
-				qViewGallery.splide("unsplide");
-			}
-		});
-		*/
-	{% endif %}
-      	//eventTracking.init(jtc);
-		//BackToTop.init();
-{%comment %}
-	{% if settings.bunOffer %}
-		bundleTrack.init({{coreItem}}{% if settings.bunOffAmt1 %},{{settings.bunOffAmt1}}{% endif %}{% if settings.bunOffAmt2 %},{{settings.bunOffAmt2}}{% endif %}{% if settings.bunOffAmt3 %},{{settings.bunOffAmt3}}{% endif %}{% if settings.bunOffKey1 %},{{settings.bunOffKey1}}{% endif %}{% if settings.bunOffKey2 %},{{settings.bunOffKey2}}{% endif %}{% if settings.bunOffKey3 %},{{settings.bunOffKey3}}{% endif %});
-		bbBundle.init();
-	{% endif%}
-{% endcomment %}
-	}());
-		/*
- $('.cartTrig').on('click', function(){
-  $('#rebuy-cart').addClass("is-visible");
-});
-		*/
-</script>
-
     {%- if settings.custom_javascript != blank -%}
       {{- settings.custom_javascript -}}
     {%- endif -%}
-  {%- render 'layouthub_footer' -%} 
  </body>
 
 
-
-
-
-
-
-<!-- LAYOUTHUB-V2-FOOTER --> 
-{%- render 'layouthub-footer' -%}
-<!-- END LAYOUTHUB-V2-FOOTER -->
   <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-54PJH46"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>

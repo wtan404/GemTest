@@ -152,18 +152,18 @@
       cp['bb-bottle'] ||
       cp['bottleImage'] || '';
 
-    set('_customization_color', color);
-    set('_customization_email', cp['customization-email'] || cp['customization_email']);
-    set('_customization_acknowledged', cp['customization_acknowledged'] || 'true');
-    set('_customization_thumbnail', cp['customization-thumbnail'] || cp['customization_thumbnail']);
-    set('_customization_logo_url', cp['customization-logo-url'] || cp['customization_logo_url']);
-    set('_customization_logo_position', cp['customization-logo-position'] || cp['customization_logo_position']);
-    set('_customization_logo_size', cp['customization-logo-size'] || cp['customization_logo_size']);
-    set('_customization_bottle_image_url', bottleUrl);
-    set('_customization_printable_area_top', cp['printable-area-top'] || cp['customization_printable_area_top']);
-    set('_customization_printable_area_bottom', cp['printable-area-bottom'] || cp['customization_printable_area_bottom']);
-    set('_customization_printable_area_left', cp['printable-area-left'] || cp['customization_printable_area_left']);
-    set('_customization_printable_area_right', cp['printable-area-right'] || cp['customization_printable_area_right']);
+    set('_blankCustom_color', color);
+    set('_blankCustom_email', cp['customization-email'] || cp['customization_email']);
+    set('_blankCustom_acknowledged', cp['customization_acknowledged'] || 'true');
+    set('_blankCustom_thumbnail', cp['customization-thumbnail'] || cp['customization_thumbnail']);
+    set('_blankCustom_logo_url', cp['customization-logo-url'] || cp['customization_logo_url']);
+    set('_blankCustom_logo_position', cp['customization-logo-position'] || cp['customization_logo_position']);
+    set('_blankCustom_logo_size', cp['customization-logo-size'] || cp['customization_logo_size']);
+    set('_blankCustom_bottle_image_url', bottleUrl);
+    set('_blankCustom_printable_area_top', cp['printable-area-top'] || cp['customization_printable_area_top']);
+    set('_blankCustom_printable_area_bottom', cp['printable-area-bottom'] || cp['customization_printable_area_bottom']);
+    set('_blankCustom_printable_area_left', cp['printable-area-left'] || cp['customization_printable_area_left']);
+    set('_blankCustom_printable_area_right', cp['printable-area-right'] || cp['customization_printable_area_right']);
     return out;
   }
 

@@ -1,3 +1,6 @@
+/* ============================================================================
+   SECTION 1: VENDOR LIBRARIES & POLYFILLS
+   ============================================================================ */
 // node_modules/wicg-inert/dist/inert.esm.js
 var _createClass = /* @__PURE__ */ function() {
   function defineProperties(target, props) {
@@ -595,8 +598,325 @@ function _classCallCheck(instance, Constructor) {
   }
 })();
 
-// _src/js/global.js
+
+
+
+/* ============================================================================
+   SECTION 2: EXPOSED LIBRARIES & UTILITIES (Previously utils.js)
+   ============================================================================ */
+/**
+ * Format money values based on your shop currency settings
+ */
+window.formatMoney = function(cents, formatString = theme.moneyFormat) {
+  if (typeof cents === 'string') {
+    cents = cents.replace('.', '');
+  }
+  let value = '';
+  const placeholderRegex = /\{\{\s*(\w+)\s*\}\}/;
+
+  function formatWithDelimiters(number, precision = 2, thousands = ',', decimal = '.') {
+    if (isNaN(number) || number == null) return 0;
+    number = (number / 100.0).toFixed(precision);
+    const parts = number.split('.');
+    const dollarsAmount = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, `$1${thousands}`);
+    const centsAmount = parts[1] ? decimal + parts[1] : '';
+    return dollarsAmount + centsAmount;
+  }
+
+  switch (formatString.match(placeholderRegex)[1]) {
+    case 'amount': value = formatWithDelimiters(cents, 2); break;
+    case 'amount_no_decimals': value = formatWithDelimiters(cents, 0); break;
+    case 'amount_with_comma_separator': value = formatWithDelimiters(cents, 2, '.', ','); break;
+    case 'amount_no_decimals_with_comma_separator': value = formatWithDelimiters(cents, 0, '.', ','); break;
+  }
+  return formatString.replace(placeholderRegex, value);
+};
+
+window.switchDOMContentLoaded = false;
+document.addEventListener('DOMContentLoaded', () => { window.switchDOMContentLoaded = true; });
+
+window.switchOnDOMContentLoaded = (cb) => {
+  if (window.switchDOMContentLoaded) { cb(); return; }
+  document.addEventListener('DOMContentLoaded', () => { cb(); });
+};
+
+window.requestIdleCallback = window.requestIdleCallback || function (cb) {
+  const start = Date.now();
+  return setTimeout(function () {
+    cb({ didTimeout: false, timeRemaining: function () { return Math.max(0, 50 - (Date.now() - start)); }});
+  }, 1);
+};
+
+window.cancelIdleCallback = window.cancelIdleCallback || function (id) { clearTimeout(id); };
+
+function throttle(callback, limit) {
+  var waiting = false;
+  return function () {
+    if (!waiting) {
+      callback.apply(this, arguments);
+      waiting = true;
+      setTimeout(function () { waiting = false; }, limit);
+    }
+  };
+}
+
+function objectWithDefaults(defaults, provided) {
+  filterObjectByValues(provided, (value) => { return value === null || value === undefined; });
+  return Object.assign(defaults, provided);
+}
+
+function wrap(el, tagName = 'div') {
+  const wrapper = document.createElement(tagName);
+  el.parentNode.insertBefore(wrapper, el);
+  wrapper.appendChild(el);
+  return wrapper;
+}
+
+function wrapAll(nodes, wrapper) {
+  var parent = nodes[0].parentNode;
+  var previousSibling = nodes[0].previousSibling;
+  for (var i = 0; nodes.length - i; wrapper.firstChild === nodes[0] && i++) {
+    wrapper.appendChild(nodes[i]);
+  }
+  parent.insertBefore(wrapper, previousSibling.nextSibling);
+  return wrapper;
+}
+
+function unwrap(wrapper) {
+  var docFrag = document.createDocumentFragment();
+  while (wrapper.firstChild) {
+    var child = wrapper.removeChild(wrapper.firstChild);
+    docFrag.appendChild(child);
+  }
+  wrapper.parentNode.replaceChild(docFrag, wrapper);
+}
+
+// EXPOSED FOR ALPINE.JS
+window.initTeleport = function(el) {
+  if (!el) return;
+  const teleportCandidates = el.querySelectorAll('[data-should-teleport]');
+  if (teleportCandidates.length) {
+    teleportCandidates.forEach((teleportCandidate) => {
+      teleportCandidate.setAttribute('x-teleport', teleportCandidate.dataset.shouldTeleport);
+    });
+  }
+};
+
+async function fetchSectionHTML(url, selector) {
+  const res = await fetch(url);
+  const fetchedSection = await res.text();
+  const result = querySelectorInHTMLString(selector, fetchedSection);
+  return result === null ? null : result.innerHTML;
+}
+
+function fetchConfigDefaults(acceptHeader = 'application/json') {
+  return {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json;', Accept: acceptHeader },
+  };
+}
+
+function parseDOMFromString(htmlString) {
+  window.___shapesDOMParser = window.___shapesDOMParser || new DOMParser();
+  return window.___shapesDOMParser.parseFromString(htmlString, 'text/html');
+}
+
+function querySelectorInHTMLString(selector, htmlString) {
+  return parseDOMFromString(htmlString).querySelector(selector);
+}
+
+window.__fetchCache = window.__fetchCache || {};
+const RESPONSE_TYPE_JSON = 0;
+const RESPONSE_TYPE_TEXT = 1;
+
+async function fetchAndCache(url, options, cacheTimeout = 5000, forceFresh = false, responseType) {
+  if (__fetchCache[url] && !forceFresh) return __fetchCache[url];
+  const responseReader = responseType === RESPONSE_TYPE_TEXT ? Response.prototype.text : Response.prototype.json;
+  const res = await fetch(url, options);
+  const data = responseReader.call(res);
+  if (cacheTimeout && cacheTimeout > 0) {
+    __fetchCache[url] = data;
+    setTimeout(() => { delete __fetchCache[url]; }, cacheTimeout);
+  }
+  return data;
+}
+
+async function fetchHTML(url, options, cacheTimeout = 5000, forceFresh = false) { return fetchAndCache(url, options, cacheTimeout, forceFresh, RESPONSE_TYPE_TEXT); }
+function freshHTML(url, options) { return fetchHTML(url, options, 0, true); }
+async function fetchJSON(url, options, cacheTimeout = 5000, forceFresh = false) { return fetchAndCache(url, options, cacheTimeout, forceFresh, RESPONSE_TYPE_JSON); }
+function freshJSON(url, options) { return fetchJSON(url, options, 0, true); }
+
+async function fetchHTMLFragment(url, selector, forceFresh = false) {
+  const fetchedHTMLString = forceFresh ? await freshHTML(url) : await fetchHTML(url);
+  const fragment = querySelectorInHTMLString(selector, fetchedHTMLString);
+  return fragment ? fragment.innerHTML : '';
+}
+
+function mdBreakpointMQL() { return window.matchMedia('(min-width: 768px)'); }
+function isMdBreakpoint() { return window.mdBreakpointMQL().matches; }
+function maxLgBreakpointMQL() { return window.matchMedia('(max-width: 989px)'); }
+function isMaxLgBreakpoint() { return window.maxLgBreakpointMQL().matches; }
+function lgBreakpointMQL() { return window.matchMedia('(min-width: 990px)'); }
+function isLgBreakpoint() { return window.lgBreakpointMQL().matches; }
+function motionSafeMQL() { return window.matchMedia('(prefers-reduced-motion)'); }
+function isMotionSafe() { return !window.motionSafeMQL().matches; }
+
+function kebabCase(subject) {
+  if ([' ', '_'].includes(subject)) return subject;
+  return subject.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/[_\s]/, '-').toLowerCase();
+}
+
+function clearURLSearchParams(url) {
+  for (const key of [...url.searchParams.keys()]) { url.searchParams.delete(key); }
+}
+
+function _getURLByModifyingParams(urlString, paramsInput, clear = false, append) {
+  const url = new URL(urlString, window.location.origin);
+  if (clear) clearURLSearchParams(url);
+  const params = new URLSearchParams(paramsInput);
+  const setOrAppendParam = append ? URLSearchParams.prototype.append : URLSearchParams.prototype.set;
+  for (const [key, value] of params) { setOrAppendParam.call(url.searchParams, key, value); }
+  return url;
+}
+
+function getURLWithParams(url, paramsInput, clear = false) { return _getURLByModifyingParams(url, paramsInput, clear, false); }
+function currentURLWithParams(paramsInput, clear = false) { return getURLWithParams(window.location.href, paramsInput, clear); }
+function getURLAddingParams(url, paramsInput, clear = false) { return _getURLByModifyingParams(url, paramsInput, clear, true); }
+function currentURLAddingParams(paramsInput, clear = false) { return getURLAddingParams(window.location.href, paramsInput, clear); }
+
+function iFrameCommand(iFrameEl, commandString) {
+  if (!iFrameEl || !commandString) return;
+  iFrameEl.contentWindow.postMessage(JSON.stringify({ event: 'command', func: commandString, args: '' }), '*');
+}
+
+function iFrameMethod(iFrameEl, methodString) {
+  if (!iFrameEl || !methodString) return;
+  iFrameEl.contentWindow.postMessage(JSON.stringify({ method: methodString }), '*');
+}
+
+let touchDevice = false;
+window.setTouch = function () { touchDevice = true; };
+window.isTouch = function () { return touchDevice; };
+
+// EXPOSED FOR ALPINE.JS
+window.getModalLabel = function(modalSlotName, slotEl) {
+  const modal = Alpine.store('modals')[modalSlotName];
+  if (modal && modal.open) {
+    const labelSourceEl = Array.from(slotEl.children).filter((el) => el.hasAttribute('data-modal-label'))[0];
+    if (labelSourceEl) return labelSourceEl.dataset.modalLabel;
+  }
+  return false;
+};
+
+function capitalize(string) { return string.charAt(0).toUpperCase() + string.slice(1); }
+function asyncTimeout(ms) { return new Promise((resolve) => { setTimeout(resolve, ms); }); }
+
+function getSectionId(el) {
+  if (!el._closestSectionId) { el._closestSectionId = el.closest('.shopify-section').getAttribute('id').replace('shopify-section-', ''); }
+  return el._closestSectionId;
+}
+
+function daysInMs(days) { return days * 24 * 60 * 60 * 1000; }
+function msInDays(ms) { return ms / 1000 / 60 / 60 / 24; }
+function isInTheFuture(msSinceEpoch) { return msSinceEpoch > Date.now(); }
+
+function setExpiringStorageItem(key, value, expiresIn) {
+  localStorage.setItem(key, JSON.stringify({ value, expires: Date.now() + expiresIn }));
+}
+
+function getExpiringStorageItem(key) {
+  const value = localStorage.getItem(key);
+  if (!value) return null;
+  let valueObject;
+  try { valueObject = JSON.parse(value); } catch (e) {}
+  if (valueObject && valueObject.expires) {
+    if (isInTheFuture(valueObject.expires)) return valueObject.value;
+    else { localStorage.removeItem(key); return null; }
+  }
+  return null;
+}
+
+/* ============================================================================
+   SECTION 3: THEME EVENTS & GLOBAL LISTENERS (Previously theme-events.js)
+   ============================================================================ */
+window.theme = window.theme || {};
+window.theme.events = { version: '1.0' };
+
+document.addEventListener('theme:update:cart', async () => {
+  document.dispatchEvent(new CustomEvent('shapes:cart:lock'));
+  try {
+    const response = await fetch(`${window.location.pathname}?sections=cart-items,cart-footer,cart-item-count,cart-live-region`);
+    const data = await response.json();
+    if (!data.status) {
+      document.dispatchEvent(new CustomEvent('shapes:cart:update', { bubbles: true, detail: { response: { sections: { ...data } } } }));
+    }
+  } catch (e) {
+    console.error(e);
+    document.getElementById('cart-errors').textContent = theme.strings.cartError;
+    document.dispatchEvent(new CustomEvent('theme:cart:error:other', { detail: { message: theme.strings.cartError, error: e } }));
+  } finally {
+    document.dispatchEvent(new CustomEvent('shapes:cart:unlock'));
+  }
+});
+
+const getCartDrawerEl = () => { return document.querySelector('[data-cart-drawer]'); };
+
+document.addEventListener('cart-will-open', async () => { document.dispatchEvent(new CustomEvent('theme:cart-drawer:opening', { detail: { cartDrawerEl: getCartDrawerEl() } })); });
+document.addEventListener('cart-is-open', async () => { document.dispatchEvent(new CustomEvent('theme:cart-drawer:open', { detail: { cartDrawerEl: getCartDrawerEl() } })); });
+document.addEventListener('cart-will-close', () => { document.dispatchEvent(new CustomEvent('theme:cart-drawer:closing', { detail: { cartDrawerEl: getCartDrawerEl() } })); });
+document.addEventListener('cart-is-closed', () => { document.dispatchEvent(new CustomEvent('theme:cart-drawer:closed', { detail: { cartDrawerEl: getCartDrawerEl() } })); });
+
+document.addEventListener('theme:open:cart-drawer', () => {
+  if (window.theme.settings.cart_type === 'modal' && Alpine.store('modals').modals.cart) {
+    Alpine.store('modals').closeAll();
+    Alpine.store('modals').open('cart');
+  }
+});
+
+document.addEventListener('theme:close:cart-drawer', () => {
+  if (window.theme.settings.cart_type === 'modal' && Alpine.store('modals').modals.cart) {
+    Alpine.store('modals').close('cart');
+  }
+});
+
+const cartChangeEventHandler = (e) => {
+  const { cartItemCount, itemsRootEl, lineItemEl, variantId, key } = e.detail;
+  document.dispatchEvent(new CustomEvent('theme:cart:change', { detail: { type: e.type, cartItemCount, itemsRootEl, lineItemEl, variantId, key, originalDetail: e.detail } }));
+};
+
+document.addEventListener('theme:product:add', cartChangeEventHandler);
+document.addEventListener('theme:line-item:change', cartChangeEventHandler);
+
+const cartErrorEventHandler = (e) => { document.dispatchEvent(new CustomEvent('theme:cart:error', { detail: { type: e.type, message: e.detail.message, originalDetail: e.detail } })); };
+document.addEventListener('theme:product:error:add-to-cart', cartErrorEventHandler);
+document.addEventListener('theme:line-item:error', cartErrorEventHandler);
+document.addEventListener('theme:cart:error:other', cartErrorEventHandler);
+
+if (Shopify.designMode || window.themeEventsDebugMode) {
+  const themeEvents = ['theme:variant:change', 'theme:product:add', 'theme:line-item:change', 'theme:cart:change', 'theme:cart:update', 'theme:cart-drawer:opening', 'theme:cart-drawer:open', 'theme:cart-drawer:closing', 'theme:cart-drawer:closed', 'theme:product:error:add-to-cart', 'theme:line-item:error', 'theme:cart:error:other', 'theme:cart:error'];
+  const aggregateEvents = ['theme:cart:change', 'theme:cart:error'];
+  for (const eventName of themeEvents) {
+    let color = eventName.includes('error') ? '#ef4444' : '#22c55e';
+    const message = [`%c\u25CF %c${eventName}`, `color: ${color};`, 'font-weight: bold;'];
+    if (aggregateEvents.includes(eventName)) {
+      document.addEventListener(eventName, (e) => {
+        console.groupCollapsed(...message);
+        console.log(`Underlying event: %c${e.detail.type}`, 'font-weight: bold;');
+        console.log('Event detail:', e.detail);
+        console.groupEnd();
+      });
+    } else {
+      document.addEventListener(eventName, (e) => { console.log(...message, e.detail); });
+    }
+  }
+}
+
+/*  ALPINE PLUGINS & CORE COMPONENTS */
+
+
 import { Alpine as Alpine2, AlpinePlugins } from "vendor";
+import DataIsland from "data-island";
 
 // _src/js/alpine-plugins/fetched-fragment.js
 function fetched_fragment_default(Alpine3) {
@@ -2195,45 +2515,6 @@ var ScrollingItems = class extends HTMLElement {
   }
 };
 
-// node_modules/@shopify/theme-currency/currency.js
-var moneyFormat = "${{amount}}";
-function formatMoney(cents, format) {
-  if (typeof cents === "string") {
-    cents = cents.replace(".", "");
-  }
-  let value = "";
-  const placeholderRegex = /\{\{\s*(\w+)\s*\}\}/;
-  const formatString = format || moneyFormat;
-  function formatWithDelimiters(number, precision = 2, thousands = ",", decimal = ".") {
-    if (isNaN(number) || number == null) {
-      return 0;
-    }
-    number = (number / 100).toFixed(precision);
-    const parts = number.split(".");
-    const dollarsAmount = parts[0].replace(
-      /(\d)(?=(\d\d\d)+(?!\d))/g,
-      `$1${thousands}`
-    );
-    const centsAmount = parts[1] ? decimal + parts[1] : "";
-    return dollarsAmount + centsAmount;
-  }
-  switch (formatString.match(placeholderRegex)[1]) {
-    case "amount":
-      value = formatWithDelimiters(cents, 2);
-      break;
-    case "amount_no_decimals":
-      value = formatWithDelimiters(cents, 0);
-      break;
-    case "amount_with_comma_separator":
-      value = formatWithDelimiters(cents, 2, ".", ",");
-      break;
-    case "amount_no_decimals_with_comma_separator":
-      value = formatWithDelimiters(cents, 0, ".", ",");
-      break;
-  }
-  return formatString.replace(placeholderRegex, value);
-}
-
 // node_modules/@switchthemes/live-region/index.js
 function liveRegion2(content, clear) {
   clearTimeout(window.liveRegionTimeout);
@@ -2660,8 +2941,598 @@ var _setUpFocusCarousel = (splideRoot) => {
   });
 };
 
-// _src/js/global.js
-import DataIsland from "data-island";
+/* ============================================================================
+   SECTION 5: CUSTOM ELEMENTS & COMPONENT INITIALIZATION
+   ============================================================================ */
+
+class ProductSibling extends HTMLElement {
+  constructor() {
+    super();
+    this.labelDisplay = this.querySelector('[data-sibling-vabel-value]');
+    this.productTitleItems = this.querySelectorAll('[data-sibling-product-title]');
+    if (!this.labelDisplay || !this.productTitleItems.length) return;
+    const originalText = this.labelDisplay.textContent;
+    this.productTitleItems.forEach((titleItem) => {
+      titleItem.addEventListener('mouseenter', () => { this.labelDisplay.textContent = titleItem.textContent; });
+      titleItem.addEventListener('mouseleave', () => { this.labelDisplay.textContent = originalText; });
+    });
+  }
+}
+if (!customElements.get('product-sibling')) { customElements.define('product-sibling', ProductSibling); }
+
+
+// --- SHAPES ANIMATIONS ---
+if (!window.theme.shapesAnimationsInitialized) {
+  const map = function (number, inMin, inMax, outMin, outMax) {
+    return ((number - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+  };
+
+  class ShapesAnimations {
+    setPosition() {
+      let oldPosition = this.position;
+      this.position = (document.documentElement || document.body.parentNode || document.body).scrollTop || window.pageYOffset;
+      if (oldPosition != this.position) return true;
+      return false;
+    }
+    updatePosition(percentage, speed) { return Math.round(speed * (100 * (1 - percentage))); }
+    cacheParallaxContainers() {
+      for (var i = 0; i < this.parallaxContainers.length; i++) {
+        var item = this.createParallaxItem(this.parallaxContainers[i]);
+        this.parallaxItems.push(item);
+      }
+    }
+    inViewport(element) {
+      if (!element) return false;
+      if (1 !== element.nodeType) return false;
+      var html = document.documentElement;
+      var rect = element.getBoundingClientRect();
+      return (!!rect && rect.width > 0 && rect.height > 0 && rect.bottom >= 0 && rect.right >= 0 && rect.left <= html.clientWidth && rect.top <= html.clientHeight);
+    }
+    createParallaxItem(el) {
+      const id = el.getAttribute('data-parallax-id');
+      const container = el;
+      const item = el.querySelector('[data-parallax-element]');
+      let speed = parseInt(el.getAttribute('data-parallax-speed')) * -1;
+      const blockHeight = item.clientHeight || item.offsetHeight || item.scrollHeight;
+      const isInViewPort = this.inViewport(el);
+      return { id: id, container: container, item: item, height: blockHeight, speed: speed, visible: isInViewPort };
+    }
+    observeItems() {
+      this.parallaxObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const parallaxItemIndex = this.parallaxItems.findIndex((item) => item.id === entry.target.getAttribute('data-parallax-id'));
+          if (parallaxItemIndex > -1) { this.parallaxItems[parallaxItemIndex].visible = entry.isIntersecting; }
+        });
+      }, { rootMargin: '0px 0px 20% 0px', threshold: 0 });
+      for (var i = 0; i < this.items.length; i++) { this.parallaxObserver.observe(this.items[i]); }
+    }
+    animate() {
+      for (var i = 0; i < this.parallaxContainers.length; i++) {
+        if (this.parallaxItems[i].visible) {
+          const scrollPercentage = (this.screenHeight - this.parallaxItems[i].container.getBoundingClientRect().top) / (this.screenHeight + this.parallaxItems[i].height) - 0.5;
+          const baseValue = this.intensity * (this.parallaxItems[i].speed * (scrollPercentage * 100));
+          const valueY = Math.round(baseValue * 100 + Number.EPSILON) / 100;
+          this.parallaxItems[i].item.style.transform = `translateY(${valueY}px)`;
+        }
+        this.parallaxContainers[i].classList.add('animated');
+      }
+      for (var i = 0; i < this.rotateItems.length; i++) {
+        this.rotateItems[i].style.transform = 'rotate(' + window.pageYOffset / 3 + 'deg)';
+      }
+      this.firstAnimate = true;
+    }
+    initParallax() {
+      this.screenHeight = window.innerHeight;
+      this.parallaxItems = [];
+      this.parallaxContainers = document.querySelectorAll('[data-parallax-container]');
+      this.setPosition();
+      this.cacheParallaxContainers();
+      this.intensity = map(window.theme.settings.parallaxIntensity, 0, 100, 1, 110) / 100;
+      this.animate();
+      document.addEventListener('scroll', () => {
+        if (this.setPosition()) { requestAnimationFrame(this.animate.bind(this)); }
+      }, { passive: true });
+    }
+    init() {
+      this.items = document.querySelectorAll('[data-parallax-container]');
+      this.rotateItems = document.querySelectorAll('.sticker-rotate-when-scrolling');
+      this.observeItems();
+      this.initParallax();
+      window.addEventListener('resize', () => { if (this.enable_parallax) this.initParallax(); });
+      window.addEventListener('shapes:section:hasmutated', throttle(() => { this.init(); }, 300));
+    }
+  }
+
+  const shapesAnimations = new ShapesAnimations();
+  if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+    document.addEventListener('DOMContentLoaded', () => { shapesAnimations.init(); });
+    document.addEventListener('shopify:section:load', () => { shapesAnimations.init(); });
+    const mutationHandler = throttle(() => { shapesAnimations.init(); }, 500);
+    document.addEventListener('dev:hotreloadmutation', mutationHandler);
+  }
+}
+window.theme.shapesAnimationsInitialized = true;
+
+
+// --- MY DESIGNS COMPONENT ---
+class MyDesignsComponent extends HTMLElement {
+  constructor() {
+    super();
+    this.isLoading = false;
+    this.designs = [];
+  }
+  connectedCallback() {
+    this.render();
+    this.loadDesigns();
+  }
+  render() {
+    this.innerHTML = `
+      <div class="my-designs-container">
+        <div id="loading-state" class="text-center py-8 hidden">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          <p class="mt-2 text-gray-600">Loading your designs...</p>
+        </div>
+        <div id="empty-state" class="text-center py-8 text-gray-600 hidden">
+          <p>You haven't saved any designs yet.</p>
+          <p class="mt-2">Create your first custom bottle design to see it here!</p>
+        </div>
+        <div id="error-state" class="text-center py-8 text-red-600 hidden">
+          <p>Failed to load your designs. Please try again later.</p>
+        </div>
+        <div id="designs-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
+      </div>
+    `;
+  }
+
+  async loadDesigns() {
+    try {
+      this.setLoadingState(true);
+      await this.waitForSwym();
+      const lists = await this.getSwymLists();
+      const myDesignsLists = this.findMyDesignsList(lists);
+      if (!myDesignsLists || myDesignsLists.length === 0) { this.showEmptyState(); return; }
+      const allDesigns = await this.getAllDesignsFromLists(myDesignsLists);
+      if (!allDesigns || allDesigns.length === 0) { this.showEmptyState(); return; }
+      this.designs = allDesigns;
+      this.renderDesigns();
+    } catch (error) {
+      console.error('Failed to load designs:', error);
+      this.showErrorState();
+    } finally {
+      this.setLoadingState(false);
+    }
+  }
+
+  async waitForSwym(timeoutMs = 10000) {
+    return new Promise((resolve, reject) => {
+      const startTime = Date.now();
+      const checkSwym = () => {
+        if (window._swat) return resolve(window._swat);
+        if (Date.now() - startTime > timeoutMs) return reject(new Error('Swym wishlist service not available'));
+        setTimeout(checkSwym, 250);
+      };
+      checkSwym();
+    });
+  }
+
+  async getSwymLists() {
+    const api = window._swat;
+    return new Promise((resolve, reject) => {
+      if (!api.fetchLists) { reject(new Error('fetchLists API method not available')); return; }
+      api.fetchLists({
+        callbackFn: (result) => {
+          let lists = [];
+          if (result) {
+            if (Array.isArray(result)) lists = result;
+            else if (result.lists && Array.isArray(result.lists)) lists = result.lists;
+            else if (result.data && Array.isArray(result.data)) lists = result.data;
+          }
+          resolve(lists);
+        },
+        errorFn: (error) => { reject(new Error(`Failed to fetch lists: ${error?.message || error}`)); }
+      });
+    });
+  }
+
+  findMyDesignsList(lists) {
+    return lists.filter(list => {
+      if (list?.lname === 'My Designs' || list?.lname?.startsWith('My Designs ')) return true;
+      if (list?.lprops) {
+        const attr = list.lprops['my-designs'];
+        return attr === 'true' || attr === true || attr === '1';
+      }
+      return false;
+    });
+  }
+
+  async getAllDesignsFromLists(designsLists) {
+    const allDesigns = [];
+    for (const list of designsLists) {
+      try {
+        const designs = await this.getListItems(list);
+        if (designs && designs.length > 0) {
+          const designsWithListId = designs.map(design => ({ ...design, _listId: list.lid }));
+          allDesigns.push(...designsWithListId);
+        }
+      } catch (error) { console.warn(`Failed to get designs from list ${list.lid}:`, error); }
+    }
+    allDesigns.sort((a, b) => {
+      const dateA = a.cprops?.['created-date'] ? new Date(a.cprops['created-date']) : new Date(0);
+      const dateB = b.cprops?.['created-date'] ? new Date(b.cprops['created-date']) : new Date(0);
+      return dateB - dateA;
+    });
+    return allDesigns;
+  }
+
+  async getListItems(list) {
+    if (Array.isArray(list.d) && list.d.length > 0) return list.d;
+    try {
+      const details = await this.getListDetails(list.lid);
+      if (details?.items && Array.isArray(details.items)) return details.items;
+      if (details?.list?.listcontents && Array.isArray(details.list.listcontents)) return details.list.listcontents;
+      return details?.d || [];
+    } catch (error) { return []; }
+  }
+
+  async getListDetails(listId) {
+    const api = window._swat;
+    return new Promise((resolve, reject) => {
+      if (api.fetchListDetails) {
+        api.fetchListDetails({ lid: listId }, (result) => { resolve(result); }, (error) => { reject(error); });
+      } else if (api.fetchListContents) {
+        api.fetchListContents(listId, (result) => { resolve(result); }, (error) => { reject(error); });
+      } else { reject(new Error('List details API not available')); }
+    });
+  }
+
+  renderDesigns() {
+    const grid = this.querySelector('#designs-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    this.designs.forEach((design, index) => {
+      const card = this.createDesignCard(design, index);
+      grid.appendChild(card);
+    });
+    this.showDesignsGrid();
+  }
+
+  createDesignCard(design, index) {
+    const card = document.createElement('div');
+    card.className = 'bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow';
+    const imageUrl = this.getDesignImageUrl(design);
+    const title = this.getDesignTitle(design, index);
+    const subtitle = this.getDesignSubtitle(design);
+
+    card.innerHTML = `
+      <div class="relative aspect-square bg-gray-100">
+        <img src="${imageUrl}" alt="${title}" class="w-full h-full object-cover" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzlmYTZiNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkRlc2lnbjwvdGV4dD48L3N2Zz4='">
+        <button class="delete-btn absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-black rounded-full flex items-center justify-center transition-colors shadow-md" data-design-index="${index}" title="Delete design">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+        </button>
+      </div>
+      <div class="p-4">
+        <h3 class="font-medium text-gray-900 mb-1">${title}</h3>
+        ${subtitle ? `<p class="text-sm text-gray-500 mb-4">${subtitle}</p>` : '<div class="mb-4"></div>'}
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2">Quantity</label>
+          <div class="flex flex-nowrap items-center justify-start">
+            <button type="button" class="quantity-btn-minus push-btn" aria-label="&minus;" data-action="decrement">
+              <div class="push-btn__svg w-10 h-10"><svg class="theme-icon" width="100%" height="100%" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" stroke="currentColor" stroke-width="2" d="M20 1c10.493 0 19 8.507 19 19s-8.507 19-19 19S1 30.493 1 20 9.507 1 20 1Z"/><path stroke="currentColor" stroke-width="3" d="M14 20.157h12.313"/></svg></div>
+            </button>
+            <input type="number" class="quantity-input input--no-border block max-w-[3rem] appearance-none border-0 bg-transparent p-2 text-center text-md text-scheme-text" value="${this.getMinQuantity()}" min="${this.getMinQuantity()}" step="1">
+            <button type="button" class="quantity-btn-plus push-btn" aria-label="&plus;" data-action="increment">
+              <div class="push-btn__svg w-10 h-10"><svg class="theme-icon" width="100%" height="100%" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" stroke="currentColor" stroke-width="2" d="M20 1c10.493 0 19 8.507 19 19s-8.507 19-19 19S1 30.493 1 20 9.507 1 20 1Z"/><path stroke="currentColor" stroke-width="3" d="M14 20.157h12.313M19.948 26.314V14"/></svg></div>
+            </button>
+          </div>
+          <div class="text-xs text-gray-500 mt-1">Minimum: ${this.getMinQuantity()}</div>
+        </div>
+        <div class="flex gap-2">
+          <button type="button" class="edit-design-btn push-btn push-btn--pop flex-1" data-design-index="${index}"><span class="push-btn__surface w-full">Edit Design</span></button>
+          <button type="button" class="add-to-cart-btn push-btn push-btn--pop flex-1" data-design-index="${index}"><span class="push-btn__surface w-full">Add to Cart</span></button>
+        </div>
+      </div>
+    `;
+
+    const editDesignBtn = card.querySelector('.edit-design-btn');
+    editDesignBtn.addEventListener('click', () => this.handleEditDesign(design, editDesignBtn));
+    const addToCartBtn = card.querySelector('.add-to-cart-btn');
+    addToCartBtn.addEventListener('click', () => this.handleAddToCart(design, addToCartBtn));
+    const deleteBtn = card.querySelector('.delete-btn');
+    deleteBtn.addEventListener('click', () => this.handleDeleteDesign(design, deleteBtn, index));
+
+    const quantityInput = card.querySelector('.quantity-input');
+    const decrementBtn = card.querySelector('.quantity-btn-minus');
+    const incrementBtn = card.querySelector('.quantity-btn-plus');
+    decrementBtn.addEventListener('click', () => {
+      const currentValue = parseInt(quantityInput.value) || this.getMinQuantity();
+      const minValue = this.getMinQuantity();
+      if (currentValue > minValue) quantityInput.value = currentValue - 1;
+    });
+    incrementBtn.addEventListener('click', () => {
+      const currentValue = parseInt(quantityInput.value) || this.getMinQuantity();
+      quantityInput.value = currentValue + 1;
+    });
+    quantityInput.addEventListener('input', () => {
+      const value = parseInt(quantityInput.value);
+      const minValue = this.getMinQuantity();
+      if (isNaN(value) || value < minValue) quantityInput.value = minValue;
+    });
+    return card;
+  }
+
+  getMinQuantity() { return window.CUSTOM_PRODUCT_MIN_QUANTITY || 1; }
+
+  getDesignImageUrl(design) {
+    const customProps = design.cprops || {};
+    if (customProps['customization-thumbnail']) return customProps['customization-thumbnail'];
+    return design.iu || design.viu || design.iu_url || '';
+  }
+
+  getDesignTitle(design, index) {
+    const customProps = design.cprops || {};
+    if (customProps['customization-color-name'] && customProps['customization-color-name'].trim()) return customProps['customization-color-name'].trim();
+    if (customProps['bb-design']) {
+      try {
+        const legacyDesign = JSON.parse(customProps['bb-design']);
+        if (legacyDesign.colorName && legacyDesign.colorName.trim()) return legacyDesign.colorName.trim();
+      } catch (e) { }
+    }
+    if (customProps['design-id']) return `Custom Design #${index + 1}`;
+    if (design.note && design.note.trim() && design.note !== 'Custom Design') return design.note;
+    return design.dt || design.title || `Design #${index + 1}`;
+  }
+
+  getDesignSubtitle(design) {
+    const customProps = design.cprops || {};
+    if (customProps['created-date']) {
+      try {
+        const date = new Date(customProps['created-date']);
+        return `Created ${date.toLocaleDateString()}`;
+      } catch (e) {}
+    }
+    if (customProps['customization-color']) return `Color: #${customProps['customization-color']}`;
+    return design.vt || '';
+  }
+
+  buildEditUrl(design) {
+    let baseUrl = design.du;
+    if (!baseUrl || baseUrl === '#') {
+      const productId = design.empi;
+      const variantId = design.epi;
+      if (productId) {
+        baseUrl = `/products/${productId}`;
+        if (variantId) baseUrl += `?variant=${variantId}`;
+      } else return '#';
+    }
+    try {
+      const url = new URL(baseUrl, window.location.origin);
+      const customProps = design.cprops || {};
+      const variantId = design.epi;
+      if (variantId && !url.searchParams.has('variant')) url.searchParams.set('variant', variantId);
+      
+      if (customProps['customization-color']) url.searchParams.set('color', customProps['customization-color'].replace('#', ''));
+      if (customProps['customization-logo-url']) url.searchParams.set('logoUrl', customProps['customization-logo-url']);
+      if (customProps['customization-logo-position']) url.searchParams.set('logoPos', customProps['customization-logo-position']);
+      if (customProps['customization-logo-size']) url.searchParams.set('logoSize', customProps['customization-logo-size']);
+      if (customProps['customization-email']) url.searchParams.set('email', customProps['customization-email']);
+      if (customProps['customization-color-name']) url.searchParams.set('colorName', customProps['customization-color-name']);
+
+      if (customProps['bb-design']) {
+        try {
+          const legacyDesign = JSON.parse(customProps['bb-design']);
+          if (legacyDesign.color && !url.searchParams.has('color')) url.searchParams.set('color', legacyDesign.color.replace('#', ''));
+          if (legacyDesign.logoUrl && !url.searchParams.has('logoUrl')) url.searchParams.set('logoUrl', legacyDesign.logoUrl);
+          if (legacyDesign.logoPos && !url.searchParams.has('logoPos')) url.searchParams.set('logoPos', legacyDesign.logoPos);
+          if (legacyDesign.logoSize && !url.searchParams.has('logoSize')) url.searchParams.set('logoSize', legacyDesign.logoSize);
+          if (legacyDesign.colorName && !url.searchParams.has('colorName')) url.searchParams.set('colorName', legacyDesign.colorName);
+        } catch (e) { }
+      }
+      return url.toString();
+    } catch (e) { return baseUrl; }
+  }
+
+  async handleEditDesign(design, button) {
+    try {
+      button.disabled = true;
+      const buttonText = button.querySelector('.push-btn__surface');
+      if (buttonText) buttonText.textContent = 'Loading...';
+      const editUrl = this.buildEditUrl(design);
+      if (!editUrl || editUrl === '#') throw new Error('Invalid product URL for editing');
+      window.location.href = editUrl;
+    } catch (error) {
+      console.error('Failed to edit design:', error);
+      const buttonText = button.querySelector('.push-btn__surface');
+      if (buttonText) buttonText.textContent = 'Error';
+      button.style.backgroundColor = '#fecaca';
+      setTimeout(() => { alert('Failed to open design editor. Please try again.'); }, 100);
+      setTimeout(() => {
+        if (buttonText) buttonText.textContent = 'Edit Design';
+        button.style.backgroundColor = '';
+        button.disabled = false;
+      }, 2000);
+    }
+  }
+
+  async handleAddToCart(design, button) {
+    try {
+      button.disabled = true;
+      const buttonText = button.querySelector('.push-btn__surface');
+      if (buttonText) buttonText.textContent = 'Adding...';
+      const variantId = this.extractVariantId(design);
+      if (!variantId) throw new Error('Missing variant ID');
+
+      const card = button.closest('.bg-white');
+      const quantityInput = card.querySelector('.quantity-input');
+      const quantity = quantityInput ? parseInt(quantityInput.value) || this.getMinQuantity() : this.getMinQuantity();
+
+      const properties = this.parseDesignProperties(design);
+      await this.addToCart(variantId, properties, quantity);
+
+      if (buttonText) buttonText.textContent = 'Added!';
+      button.style.backgroundColor = '#d1fae5';
+
+      setTimeout(() => {
+        if (buttonText) buttonText.textContent = 'Add to Cart';
+        button.style.backgroundColor = '';
+        button.disabled = false;
+      }, 2000);
+    } catch (error) {
+      console.error('Failed to add to cart:', error);
+      const buttonText = button.querySelector('.push-btn__surface');
+      if (buttonText) buttonText.textContent = 'Failed';
+      button.style.backgroundColor = '#fecaca';
+      setTimeout(() => {
+        if (buttonText) buttonText.textContent = 'Add to Cart';
+        button.style.backgroundColor = '';
+        button.disabled = false;
+      }, 2000);
+    }
+  }
+
+  async handleDeleteDesign(design, button, index) {
+    const confirmed = confirm('Are you sure you want to delete this design? This action cannot be undone.');
+    if (!confirmed) return;
+    try {
+      button.disabled = true;
+      button.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>`;
+      await this.deleteDesignFromSwym(design);
+      this.designs.splice(index, 1);
+      if (this.designs.length === 0) this.showEmptyState();
+      else this.renderDesigns();
+    } catch (error) {
+      console.error('Failed to delete design:', error);
+      alert('Failed to delete design. Please try again.');
+      button.disabled = false;
+      button.innerHTML = `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>`;
+    }
+  }
+
+  extractVariantId(design) {
+    return design.epi || design.vid || design.empi || this.getVariantFromUrl(design.du) || this.getVariantFromUrl(design.iu);
+  }
+
+  getVariantFromUrl(url) {
+    if (!url) return null;
+    try { return new URL(url, window.location.origin).searchParams.get('variant'); } catch (e) { return null; }
+  }
+
+  parseDesignProperties(design) {
+    const customProps = design.cprops || {};
+    const properties = {};
+    Object.keys(customProps).forEach(key => {
+      if (key.startsWith('customization-')) {
+        properties['_' + key.replace(/-/g, '_')] = customProps[key];
+      } else if (key.startsWith('printable-area-')) {
+        properties['_customization_' + key.replace(/-/g, '_')] = customProps[key];
+      }
+    });
+
+    if (customProps['bb-design']) {
+      try {
+        const legacyDesign = JSON.parse(customProps['bb-design']);
+        if (legacyDesign.color && !properties['_customization_color']) properties['_customization_color'] = legacyDesign.color;
+        if (legacyDesign.logoUrl && !properties['_customization_logo_url']) properties['_customization_logo_url'] = legacyDesign.logoUrl;
+        if (legacyDesign.logoPos && !properties['_customization_logo_position']) properties['_customization_logo_position'] = legacyDesign.logoPos;
+        if (legacyDesign.logoSize && !properties['_customization_logo_size']) properties['_customization_logo_size'] = legacyDesign.logoSize;
+        if (legacyDesign.colorName && !properties['_customization_color_name']) properties['_customization_color_name'] = legacyDesign.colorName;
+        if (legacyDesign.bottleImage && !properties['_customization_base_product_image_url']) properties['_customization_base_product_image_url'] = legacyDesign.bottleImage;
+        if (legacyDesign.printable) {
+          if (legacyDesign.printable.top && !properties['_customization_printable_area_top']) properties['_customization_printable_area_top'] = legacyDesign.printable.top;
+          if (legacyDesign.printable.bottom && !properties['_customization_printable_area_bottom']) properties['_customization_printable_area_bottom'] = legacyDesign.printable.bottom;
+          if (legacyDesign.printable.left && !properties['_customization_printable_area_left']) properties['_customization_printable_area_left'] = legacyDesign.printable.left;
+          if (legacyDesign.printable.right && !properties['_customization_printable_area_right']) properties['_customization_printable_area_right'] = legacyDesign.printable.right;
+        }
+      } catch (e) { }
+    }
+    if (!properties['_customization_acknowledged']) properties['_customization_acknowledged'] = 'true';
+    return properties;
+  }
+
+  async addToCart(variantId, properties, quantity = 1) {
+    const formData = new FormData();
+    formData.append('id', variantId);
+    formData.append('quantity', String(quantity));
+    Object.keys(properties || {}).forEach(key => { formData.append(`properties[${key}]`, properties[key]); });
+    const response = await fetch('/cart/add.js', { method: 'POST', body: formData });
+    if (!response.ok) throw new Error('Failed to add to cart');
+    return response.json();
+  }
+
+  async deleteDesignFromSwym(design) {
+    const api = window._swat;
+    return new Promise(async (resolve, reject) => {
+      try {
+        let listId = design._listId;
+        if (!listId) {
+          const lists = await this.getSwymLists();
+          const myDesignsLists = this.findMyDesignsList(lists);
+          if (!myDesignsLists || myDesignsLists.length === 0) throw new Error('No My Designs lists found');
+          let foundList = null;
+          for (const list of myDesignsLists) {
+            const designs = await this.getListItems(list);
+            const designExists = designs.some(d => d.epi === design.epi && d.empi === design.empi && d.cprops?.['design-id'] === design.cprops?.['design-id']);
+            if (designExists) { foundList = list; break; }
+          }
+          if (!foundList) throw new Error('Could not find the list containing this design');
+          listId = foundList.lid;
+        }
+
+        const product = { epi: design.epi, empi: design.empi, du: design.du };
+        if (!product.epi || !product.empi || !product.du) throw new Error('Design data missing required fields');
+
+        if (api.deleteFromList) {
+          api.deleteFromList(listId, product, async (result) => {
+            try { await this.checkAndDeleteEmptyList(listId); } catch (e) {}
+            resolve(result);
+          }, (error) => { reject(new Error(`Failed to delete design: ${error?.message || error}`)); });
+        } else { throw new Error('deleteFromList API method not available'); }
+      } catch (error) { reject(error); }
+    });
+  }
+
+  async checkAndDeleteEmptyList(listId) {
+    const api = window._swat;
+    if (!api || !api.fetchListContents || !api.deleteList) return;
+    return new Promise((resolve, reject) => {
+      api.fetchListContents(listId, (result) => {
+        try {
+          const items = Array.isArray(result) ? result : (result.items || []);
+          if (items.length === 0) {
+            api.deleteList(listId, (res) => resolve(res), (err) => reject(new Error(`Failed: ${err?.message || err}`)));
+          } else { resolve(null); }
+        } catch (error) { reject(error); }
+      }, (err) => reject(new Error(`Failed: ${err?.message || err}`)));
+    });
+  }
+
+  setLoadingState(loading) {
+    const [loadingEl, emptyEl, errorEl, gridEl] = ['#loading-state', '#empty-state', '#error-state', '#designs-grid'].map(id => this.querySelector(id));
+    if (loading) {
+      loadingEl?.classList.remove('hidden'); emptyEl?.classList.add('hidden'); errorEl?.classList.add('hidden'); gridEl?.classList.add('hidden');
+    } else { loadingEl?.classList.add('hidden'); }
+    this.isLoading = loading;
+  }
+
+  showEmptyState() {
+    const [emptyEl, errorEl, gridEl] = ['#empty-state', '#error-state', '#designs-grid'].map(id => this.querySelector(id));
+    emptyEl?.classList.remove('hidden'); errorEl?.classList.add('hidden'); gridEl?.classList.add('hidden');
+  }
+
+  showErrorState() {
+    const [emptyEl, errorEl, gridEl] = ['#empty-state', '#error-state', '#designs-grid'].map(id => this.querySelector(id));
+    emptyEl?.classList.add('hidden'); errorEl?.classList.remove('hidden'); gridEl?.classList.add('hidden');
+  }
+
+  showDesignsGrid() {
+    const [emptyEl, errorEl, gridEl] = ['#empty-state', '#error-state', '#designs-grid'].map(id => this.querySelector(id));
+    emptyEl?.classList.add('hidden'); errorEl?.classList.add('hidden'); gridEl?.classList.remove('hidden');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (!customElements.get('my-designs')) { customElements.define('my-designs', MyDesignsComponent); }
+});
+
 var { intersect, focus, collapse, morph } = AlpinePlugins;
 Alpine2.plugin(intersect);
 Alpine2.plugin(focus);
