@@ -126,9 +126,6 @@
                     {% else %}
                       src="{{ item.image | image_url: width: 200 }}" 
                     {% endif %}
-                    
-                    :src="item.properties._blankCustom_thumbnail ? item.properties._blankCustom_thumbnail : '{{ item.image | image_url: width: 200 }}'"
-                    
                     alt="{{ item.title | escape }}"
                     loading="eager"
                     width="200"
