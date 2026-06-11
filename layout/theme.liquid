@@ -96,7 +96,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="{{ 'global.bundle.js' | asset_url }}" type="module"></script>
     {% render 'js-bridge' %}
-
+    <script src="{{ 'blank-tracking.js' | asset_url }}" defer="defer"></script>
     <script>
       document.documentElement.className =
         document.documentElement.className.replace('no-js', 'js');
@@ -270,18 +270,6 @@ rdt('track', 'PageVisit');
     }]
   });
 {% endif  %}
-
-    $( document ).ready(function() {
-      $('.add-to-cart-btn').click(function() {
-        console.log('add to cart clicked');
-        /*console.log($(this).closest('.product-block').sibling('.title').find('h1').value);
-        console.log($(this).closest('.product-block').sibling('.product-block-quantity-selector').find('input[name="quantity"]').value);
-        rdt('track', 'AddToCart', {
-          value: $(this).closest('.product-block').sibling('.title').find('h1').value,
-          itemCount: $(this).closest('.product-block').sibling('.product-block-quantity-selector').find('input[name="quantity"]').value
-        });*/
-      });
-    });
     </script>
     {% # theme-check-enable AssetPreload %}
   </head>

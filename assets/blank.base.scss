@@ -103,7 +103,7 @@ a:hover, a:focus { /*color:;*/ }
 
 
 ul, ol { margin-bottom: 20px; margin-left: 30px;}
-ul { list-style-image: url(//blankbeauty.com/cdn/shop/t/114/assets/bullet_7x.png?v=26043); }
+ul { list-style-image: url(//blankbeauty.com/cdn/shop/t/114/assets/bullet_7x.png?v=26196); }
 ol { list-style: decimal; }
 	.square { list-style: square outside; }
 	.circle { list-style: circle outside; }
@@ -115,7 +115,7 @@ li { margin-bottom: 12px; }
 
 blockquote {
 	padding: 0; display:flex; font-size:18px; line-height: 1.4em;margin:10px auto;flex-flow:column;
-	&:before{ content: url(//blankbeauty.com/cdn/shop/t/114/assets/quotes.png?v=26043);} 
+	&:before{ content: url(//blankbeauty.com/cdn/shop/t/114/assets/quotes.png?v=26196);} 
 }
 .quote { font-size: 16px; line-height: 22px; text-align: center; margin: 0 0 20px 0; font-style: italic; }
 
@@ -138,7 +138,7 @@ blockquote {
 .remove_item {width:20px;}
 	.remove_item:before {content: "\f253";font-size:22px;}
 .remove:before {content: "\f128";font-size:12px;margin-left:8px}
-.arrow-icon, .fancybox-nav{position: absolute;top: calc(50% - 2rem);bottom:0;z-index:5;cursor:pointer;width: 20px;height:35px;display:flex;justify-content: center;align-items:center;background:url(//blankbeauty.com/cdn/shop/t/114/assets/sliderArrow.png?v=26043)no-repeat;background-size:contain;}
+.arrow-icon, .fancybox-nav{position: absolute;top: calc(50% - 2rem);bottom:0;z-index:5;cursor:pointer;width: 20px;height:35px;display:flex;justify-content: center;align-items:center;background:url(//blankbeauty.com/cdn/shop/t/114/assets/sliderArrow.png?v=26196)no-repeat;background-size:contain;}
 .fancybox-next, .arrow-icon.right{right:1px}
 .fancybox-prev, .arrow-icon.left{left:1px;transform:rotate(180deg)}
 .modalClose:before {content: "\f128";font-size: 29px;font-family:ionicons;position: absolute;top: 5px;right: 5px;cursor: pointer;z-index: 510;color:;}
@@ -146,11 +146,11 @@ blockquote {
 .mobileHeadDrawer.back:before{content: "<";font-size: 28px;}
 /*Applications: Header Bar icon set */
 .ion-android-mail:after {content: "\f2eb";}
-.sweetie:after {content: url(//blankbeauty.com/cdn/shop/t/114/assets/secNav-user_small.png?v=26043);}
+.sweetie:after {content: url(//blankbeauty.com/cdn/shop/t/114/assets/secNav-user_small.png?v=26196);}
 .quick_shop:after {content: "\f21f";}
-.bbLocator:after {content: url(//blankbeauty.com/cdn/shop/t/114/assets/secNav-locator_small.png?v=26043);}
-.bbSearch:after{content: url(//blankbeauty.com/cdn/shop/t/114/assets/secNav-search_small.png?v=26043);}
-.cartTrig:after {content: url(//blankbeauty.com/cdn/shop/t/114/assets/secNav-cart_small.png?v=26043);}
+.bbLocator:after {content: url(//blankbeauty.com/cdn/shop/t/114/assets/secNav-locator_small.png?v=26196);}
+.bbSearch:after{content: url(//blankbeauty.com/cdn/shop/t/114/assets/secNav-search_small.png?v=26196);}
+.cartTrig:after {content: url(//blankbeauty.com/cdn/shop/t/114/assets/secNav-cart_small.png?v=26196);}
 #headContent .theme-icon{height:24px;}
 /*Applications: Product Ratings - Intentionally misnamed to hijack icon used for rating script inject */
 .ion-ios-star:before{ content: "\f141";font-family: Ionicons;}
@@ -210,7 +210,7 @@ button{display:flex;width:auto;align-items:center;justify-content:center;text-al
 .action_button.teal:before,.action_button.gold:before {content:'\f2f6';font-family:ionicons}
 #bbNotificationOpt{width:100%}
 #bbNotificationOpt > div{display:flex;flex-direction: column;align-items: center;flex:0 0 20%}
-.gradCTA{background:url(//blankbeauty.com/cdn/shop/t/114/assets/cta_gradientBG.jpg?v=26043) repeat-x;background-size: cover;padding:10px 30px; max-width:250px;color:#724430;border:none;transition:0.3s;font-size: 14px; letter-spacing: 1px; font-weight: bold;}
+.gradCTA{background:url(//blankbeauty.com/cdn/shop/t/114/assets/cta_gradientBG.jpg?v=26196) repeat-x;background-size: cover;padding:10px 30px; max-width:250px;color:#724430;border:none;transition:0.3s;font-size: 14px; letter-spacing: 1px; font-weight: bold;}
 .gradCTA:hover{background:#ae8058 !important;color:#fff !important;}
 .button:hover, input[type="submit"]:hover, input[type="reset"]:hover, .action_button:hover { background:  !important; color: !important; transition: 0.3s; }
 .button:active, input[type="submit"]:active, input[type="reset"]:active, .action_button:active
@@ -337,7 +337,7 @@ a.ui-tabs-anchor {padding: 5px 10px;color:}
 	.ba-slider img { width: 100%; display: block; max-width: none; }
 	.ba-slider .resize { position: absolute; top: 0; left: 0; height: 100%; width: 50%; overflow: hidden; }
 	.ba-slider .handle { position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; margin-left: -2px; background: rgba(49, 235, 215, .5); cursor: ew-resize; }
-	.ba-slider .handle:after { position: absolute; top: 50%; width: 40px; height: 40px; margin: -22px 0 0 -19px; content: '\21d4'; font-weight: bold; font-size: 26px; text-align: center; line-height: 40px; background: url(//blankbeauty.com/cdn/shop/t/114/assets/cupCake.png?v=26043) no-repeat center center; background-size: 100%; }
+	.ba-slider .handle:after { position: absolute; top: 50%; width: 40px; height: 40px; margin: -22px 0 0 -19px; content: '\21d4'; font-weight: bold; font-size: 26px; text-align: center; line-height: 40px; background: url(//blankbeauty.com/cdn/shop/t/114/assets/cupCake.png?v=26196) no-repeat center center; background-size: 100%; }
 	.ba-slider .handle.ba-draggable:after { width: 30px; height: 30px; margin: -14px 0 0 -14px; line-height: 30px; font-size: 22px; }
 .baTut{display: block;margin: 10px auto 0;opacity:1}
 .prePost{background:rgba(255,255,255,0.7);left:0;right:0;bottom:20px;height:50px;align-items:center}
