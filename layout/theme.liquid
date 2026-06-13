@@ -96,7 +96,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="{{ 'global.bundle.js' | asset_url }}" type="module"></script>
     {% render 'js-bridge' %}
-    <script src="{{ 'blank-tracking.js' | asset_url }}" defer="defer"></script>
     <script>
       document.documentElement.className =
         document.documentElement.className.replace('no-js', 'js');
@@ -255,22 +254,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         crossorigin
       >
     {% endunless %}
-    <script>
-
-!function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);
-rdt('init','a2_i0fozqwxogu9');
-rdt('track', 'PageVisit');
-
-{% if template.type contains 'product' %}
-  rdt('track', 'ViewContent', {
-    products: [{
-      id:  {{product.product.selected_or_first_available_variant}},
-      category:  {{product.type}},
-      name:  {{product.title}},
-    }]
-  });
-{% endif  %}
-    </script>
     {% # theme-check-enable AssetPreload %}
   </head>
 
@@ -320,6 +303,28 @@ rdt('track', 'PageVisit');
     {%- if settings.custom_javascript != blank -%}
       {{- settings.custom_javascript -}}
     {%- endif -%}
+    
+    <script src="{{ 'blankTracking.js' | asset_url }}" defer="defer"></script>
+    <script>
+    !function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);
+    rdt('init','a2_i0fozqwxogu9');
+    </script>
+    <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.TrackingBridge) {
+      window.TrackingBridge.init({
+        pageType: {{ template.name | json }},
+        {% if template.name == 'product' %}
+        productData: {
+          id: {{ product.selected_or_first_available_variant.id | json }},
+          category: {{ product.type | json }},
+          name: {{ product.title | json }}
+        }
+        {% endif %}
+      });
+    }
+  });
+</script>
  </body>
 
 

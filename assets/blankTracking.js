@@ -5,11 +5,18 @@
 
 window.TrackingBridge = {
   // Define our mapping of theme events to tracking functions
-  init() {
+  
+  init(serverData = {}) {
+    // Fire global page view
+    if (typeof rdt !== 'undefined') rdt('track', 'PageVisit');
+    
+    // Fire specific product view
+    if (serverData.pageType === 'product' && serverData.productData) {
+      this.trackViewContent(serverData.productData);
+    }
+    
     this.bindEvents();
-    console.log('Tracking Bridge Initialized');
   },
-
   bindEvents() {
     // Standardize event handling
     document.addEventListener('shapes:cart:afteradditem', () => this.trackAddToCart());
@@ -17,12 +24,11 @@ window.TrackingBridge = {
   },
 
   trackAddToCart() {
-    // Reddit Pixel
-    if (typeof rdt !== 'undefined') {
-      rdt('track', 'AddToCart');
-    }
-    // Add additional pixels here (e.g., Meta, TikTok)
-    console.log('Tracking: AddToCart fired');
+    if (typeof rdt !== 'undefined') rdt('track', 'AddToCart');
+  },
+
+  trackViewContent(product) {
+    if (typeof rdt !== 'undefined') rdt('track', 'ViewContent', { products: [product] });
   },
 
   trackDesignSaved(data) {
@@ -33,6 +39,8 @@ window.TrackingBridge = {
       });
     }
   }
+
+
 };
 
 document.addEventListener('DOMContentLoaded', () => window.TrackingBridge.init());
